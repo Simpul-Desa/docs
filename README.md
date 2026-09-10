@@ -4,7 +4,7 @@ Situs dokumentasi publik SIMPUL DESA, dibangun dengan
 [Docusaurus](https://docusaurus.io/) 3.10: panduan produk, satu bagian per
 fitur, dan rujukan REST API yang dibangkitkan dari skema OpenAPI.
 
-Repo ini adalah satu dari empat sistem SIMPUL DESA (DATATHON 2026 — Sistem
+Repo ini adalah modul Dokumentasi, satu dari empat modul SIMPUL DESA (DATATHON 2026 — Sistem
 Intelijen Potensi dan Kesiapan Ekonomi Desa):
 
 | Modul | Repo | Peran |
