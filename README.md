@@ -7,12 +7,12 @@ fitur, dan rujukan REST API yang dibangkitkan dari skema OpenAPI.
 Repo ini adalah satu dari empat sistem SIMPUL DESA (DATATHON 2026 — Sistem
 Intelijen Potensi dan Kesiapan Ekonomi Desa):
 
-| Sistem | Repo | Peran |
+| Modul | Repo | Peran |
 |---|---|---|
-| Dokumentasi | repo ini | situs dokumentasi produk dan rujukan REST API |
-| API | [Simpul-Desa/api](https://github.com/Simpul-Desa/api) | layanan backend; pemilik skema OpenAPI yang jadi sumber halaman `/api/*` |
 | Portal | [Simpul-Desa/portal](https://github.com/Simpul-Desa/portal) | dasbor web pengguna |
-| Data | [Simpul-Desa/data](https://github.com/Simpul-Desa/data) | panen data dan pemodelan; produsen artefak yang disajikan API |
+| API | [Simpul-Desa/api](https://github.com/Simpul-Desa/api) | layanan backend yang menyajikan seluruh endpoint |
+| Data | [Simpul-Desa/data](https://github.com/Simpul-Desa/data) | panen data dan pemodelan |
+| Dokumentasi | [Simpul-Desa/docs](https://github.com/Simpul-Desa/docs) | situs dokumentasi project SIMPUL DESA |
 
 Situs ini hilir: ia tidak memproduksi apa pun untuk repo lain.
 
