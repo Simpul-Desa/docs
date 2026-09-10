@@ -1,0 +1,76 @@
+---
+id: geo-desa-api-geo-desa-idkab-get
+title: "Batas Desa Kabupaten"
+description: "Sajikan berkas GeoJSON batas desa satu kabupaten, sudah terkompresi gzip."
+sidebar_label: "Batas Desa Kabupaten"
+hide_title: true
+hide_table_of_contents: true
+api: eJztVU1vGzcQ/SvEoocEkCXV8KFQT3IlJKqT1IhkBEHkyrO7jEQvl2RIrh1F0H/vG+7KciOk6LGH6qBdcufj8c3M4y6LtA7Z6FN2SZGCmMhA2W0vK2UovHJRWZONsjndq4qMyKWvYPRK2t/nf7wTeXKBKYlAsREV5Y2jKE1PhKakjYiwt7XzMiix/qZcf2mW5k6VMLwTWzJrEVVJlShVJQ1pUUuz3lBQmpOtSVMUF8ML8YJqp60TnPQl8pk1IU5lSynuPszejD+OX68Ws8n4ajWejO/64pDhEDbKSE4d0B9RI8YBsVDAn0vd1Aw6yFLRv0KzNC0c0aJpUUxmi+nbm6vxO2B5L4OzJrSnBYIUEKHrnB5JbCSV0oOT36wBing2NYUtlVmPEl84AkK3HMGFKjDdmLLZdGfpZ73MOumJ6zQrUam1tCs+2goHXj0tVomQFTYiPBx5qiUfE3XfZQYLeCYTfFVccHCywbuXXxrlJQJH38heFooNUGSjXRa3jp1C9ACbYkYEZNc/l8tyd7H/CZtRRc1WsxR6v7/liIkOGTjI+XDIj7/32uWPeqx30k5IUbS8cRhyTqsiUTG4DxxrdwS8x6+XXZyfnya8PtAhkApNQMw5SK2VifREv7baBvFAGqugMo4Gp41tSW9pBWejbADmB2B+wJgHu0TrHp+D9A8HyhuvYbmJ0YXRYBBU7Rp9xvZncD5z3pZNwej6jet7UvqRtn0cL/t+Lq/ZsmI4vedBEVPbgvTGhjj6ZQiWTxzRtNyCqXW1rUhnXJ0gi8aruJ0zbW2NXi8W15eSvPTPys5Jsq4deJ23BkyKMp9tsuxqP5+9vb55IybT+ViMr2cnSOaYOY+GrvBEIYyoMUhaPHcrVU4FCS0fMYGIIZRRI/HNGkKZTDpDKhO5rk8q8phmWVlja9UT94QUx2XSq4pP73uiUNEjjEUTBXzDWKmICJqcBZhemr8SfSEelaYtJA0ZQXlj1mZLfTGXKW3X1UkSGC4+V00QnVCk0Q9UE8tihd4XNTWuYU2BqvTF1JTOotnaRGSsUUmF8qYiEck4/Fso2a8iSC1ztUHqVg6IRY2pbw1atCqNjOIWxpKAlWWCe69lfNj/uT9Ex2QO7VFTmpNOA453gLg6KOP3FdsdZ+7/e+E/fC90oxrl1zhwmiDrKHnSiF0nVZ8gmQqWEKu2yITHqL0HIAasHmy02+UU5I3X+z1vf2mk32Ifrw/kFeU85tC0UgV+hx5+Jh3kP3TNi/fdtfJS/Ahnt0lmy62L+eUVXiu5fbqq9rcwbIlKANpv46KQLj7zOrkWWOiepPvVdAHZ+gsmvCSD
+sidebar_class_name: "get api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Batas Desa Kabupaten"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/api/geo/desa/{idkab}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Sajikan berkas GeoJSON batas desa satu kabupaten, sudah terkompresi gzip.
+
+`idkab` yang tidak dikenal menghasilkan galat 404 (amplop JSON) dengan
+kode `WILAYAH_TIDAK_ADA`. `idkab` dikenal tetapi berkas batas desa
+kabupaten itu belum tersedia menghasilkan galat 404 (amplop JSON)
+dengan kode `TIDAK_DITEMUKAN`. Respons yang berhasil membawa header
+`Content-Encoding: gzip` dan tidak memaksa unduh berkas.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./geo-desa-api-geo-desa-idkab-get.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./geo-desa-api-geo-desa-idkab-get.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./geo-desa-api-geo-desa-idkab-get.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

@@ -1,0 +1,219 @@
+---
+title: 📙 Glosarium
+sidebar_position: 2
+description: Penamaan sah SIMPUL DESA — sembilan fitur, empat zona penanganan, delapan tema sub-skor, empat varian Jalur Ekonomi, dan lima peran pengguna.
+---
+
+# Glosarium
+
+Satu konsep, satu nama. Halaman ini memegang penamaan SIMPUL DESA: nama fitur,
+zona, skor, tema, dan peran, persis seperti yang muncul di Portal. Nama panjang
+sistem dan keempat modulnya ada di
+[Pengenalan SIMPUL DESA](/docs/intro).
+
+Yang dimuat di sini definisi, bukan angka. Cacah hasil dan parameter model
+bergerak tiap kali data dibangun ulang, jadi keduanya dibaca dari keluaran
+Data. Angka yang tanpanya sebuah definisi rusak tetap tinggal: jumlah zona,
+skala persentil, ambang median.
+
+## Lima fitur utama
+
+| Fitur | Arti |
+| --- | --- |
+| **Peta Peran** | Menempatkan tiap desa ke satu dari empat zona penanganan, sehingga jelas siapa yang harus bergerak lebih dulu: pemerintah, mitra swasta, atau perlindungan sosial |
+| **Kartu Ekonomi Desa** | Profil ekonomi lengkap tiap desa tanpa satu pun formulir. Seluruh desa dan kelurahan di provinsi percontohan terdata otomatis: nol kuesioner, nol beban bagi perangkat desa. Cakupannya di [Sumber Data](/docs/sumber-data) |
+| **Jalur Ekonomi** | Menyambung sekumpulan desa ke satu aset bersama di lokasi optimal, agar skalanya cukup besar untuk hidup. Punya empat varian: Komoditas, Gudang Kopdes, Cold Storage, dan Wisata |
+| **Desa Kembar** | Mencari desa yang profilnya paling mirip dengan desa yang sudah terbukti berhasil, sehingga jalur suksesnya bisa ditiru dengan modal kemiripan yang terukur |
+| **Citra Potensi Desa** | Menemukan sentra komoditas dari pembacaan citra satelit dan peta, sehingga potensi desa terbaca tanpa desa perlu melaporkannya |
+
+## Empat fitur tambahan
+
+| Fitur | Arti |
+| --- | --- |
+| **Asisten Desa** | Antarmuka percakapan berbasis LLM yang menjawab hanya dari data SIMPUL DESA: keluaran model, kartu, berita, termasuk metodologi skor. Topik di luar itu ditolak. Bukan sumber angka baru — semua angka diambil dari data yang sudah ada |
+| **Berita Desa** | Kumpulan berita per desa hasil panen otomatis, tersimpan per `iddesa`, tampil sebagai bagian Kartu Ekonomi Desa |
+| **Laporan Desa** | Dokumen PDF per desa yang memuat sekurangnya Peta Peran dan Kartu Ekonomi Desa. Hanya peran tertentu yang boleh membuatnya; lihat [Peran Pengguna](/docs/peran-pengguna) |
+| **Halaman Admin** | Pengelolaan pengguna dan kenaikan peran, pemantauan status sistem, penyegaran Berita Desa untuk desa terpilih, dan penghapusan berita |
+
+## Empat zona penanganan
+
+Keluaran Peta Peran: matriks dua sumbu dengan empat kuadran. Sumbu tegak Skor
+Potensi, sumbu datar Skor Kesiapan. Nomor kuadran berjalan searah jarum jam
+dari kiri-atas.
+
+```
+Potensi
+tinggi │  Kuadran 1        Kuadran 2
+       │  Zona Pemerintah  Zona Mitra
+       │
+rendah │  Kuadran 4        Kuadran 3
+       │  Zona Bantuan     Zona Poros
+       └──────────────────────────────
+          rendah            tinggi
+                  Kesiapan
+```
+
+| Kuadran | Zona | Potensi | Kesiapan | Penanganan |
+| --- | --- | --- | --- | --- |
+| 1 | **Zona Pemerintah** | tinggi | rendah | Prioritas Dana Desa, infrastruktur, dan pendampingan |
+| 2 | **Zona Mitra** | tinggi | tinggi | Langsung dipertemukan dengan pembeli tetap atau investor |
+| 3 | **Zona Poros** | rendah | tinggi | Cocok jadi pusat pengolahan bagi desa sekitarnya |
+| 4 | **Zona Bantuan** | rendah | rendah | Jangan dipaksa berusaha; bantuan tepat sasaran dan akses ke poros terdekat |
+
+Yang ditampilkan nama zonanya, bukan nomor kuadrannya. Nama zona selalu ditulis
+lengkap dengan kata "Zona".
+
+Dua keadaan di luar keempat zona itu:
+
+| Istilah | Arti |
+| --- | --- |
+| **Belum Terpetakan** | Keadaan kelima: wilayah yang bukti kesiapannya terukur tidak lebih dari separuh bobot tidak diberi zona. Menyebutnya "kesiapan rendah" berarti menyatakan desa itu tidak siap, padahal yang terjadi datanya kosong. Kartunya tetap menampilkan seluruh komponen yang seharusnya ada — yang kosong ditulis "—" beserta keterangan sumbernya, bukan disembunyikan |
+| **Keyakinan rendah** | Bendera pada desa yang skornya berjarak kurang dari 2 poin dari salah satu ambang zona. Penempatan zonanya rapuh terhadap perubahan kecil pada data atau bobot, dan kartu wajib menampilkannya. Bendera ini melekat pada penempatan zona, bukan pada skornya |
+
+## Dua skor dan ambangnya
+
+| Istilah | Arti |
+| --- | --- |
+| **Skor Potensi** | Persentil 0–100 dalam kabupaten, nilai tertinggi antar delapan sub-skor tematik |
+| **Skor Kesiapan** | Rerata berbobot empat komponen: Indeks Desa Membangun, kelembagaan ekonomi, amenitas dan keuangan, konektivitas. Pembaginya hanya bobot yang terukur. Skala 0–100 dalam kabupaten |
+| **Ambang zona** | Median kabupaten pada masing-masing sumbu, dihitung hanya dari wilayah yang kesiapannya terukur |
+
+Skor ditampilkan sebagai desil dan peringkat dalam kabupaten, bukan angka
+desimal: selisih kecil tidak boleh ditafsirkan sebagai perbedaan nyata.
+
+Wisata tidak ikut menyusun Skor Potensi. Pemodelan wisata berhenti di mutu
+lemah, jadi wisata tampil sebagai lapisan fakta registri sampai ada data
+potensi wisata yang teruji.
+
+## Delapan tema sub-skor
+
+Nama tema ditulis persis begini di kartu, peta, legenda, maupun kalimat
+Rekomendasi Aksi:
+
+| Tema | Asal sub-skornya |
+| --- | --- |
+| **Tanaman Pangan** | subsektor; dari skor tervalidasi Citra Potensi Desa |
+| **Hortikultura** | subsektor; dari skor tervalidasi Citra Potensi Desa |
+| **Perkebunan** | subsektor; dari skor tervalidasi Citra Potensi Desa |
+| **Peternakan** | subsektor; dari skor tervalidasi Citra Potensi Desa |
+| **Perikanan Budidaya** | subsektor; dari skor tervalidasi Citra Potensi Desa |
+| **Perikanan Tangkap** | dihitung dari garis pantai dan pangsa rumah tangga perikanan, hanya untuk kabupaten berpantai |
+| **Kehutanan** | subsektor; dari skor tervalidasi Citra Potensi Desa |
+| **Simpul Logistik** | dihitung dari akses dan amenitas niaga |
+
+Enam nama pertama subsektor. "Perikanan Budidaya" tidak pernah disebut
+"perikanan" saja — sejak tema perikanan dipecah dua, "perikanan" sendirian
+rancu dengan Perikanan Tangkap.
+
+| Istilah | Arti |
+| --- | --- |
+| **Potensi Dominan** | Tema tempat maksimum persentil Skor Potensi tercapai, yaitu alasan sebuah desa mendapat skornya. Bila tema pemenangnya berasal dari sel Citra Potensi Desa yang tervalidasi, Potensi Dominan menyebut komoditasnya dengan tanda pisah: `Perkebunan — Kelapa`. Perikanan Tangkap dan Simpul Logistik tidak pernah menyebut komoditas karena keduanya bukan skor per komoditas. Desa tanpa satu pun sub-skor terukur tidak punya Potensi Dominan; kolomnya kosong, bukan diisi tema tebakan |
+| **Sumber Potensi Dominan** | Empat nilai di tabel berikut, wajib tampil berdampingan dengan Potensi Dominan karena mutunya berbeda-beda |
+| **Sentralitas** | Rerata waktu tempuh dalam menit dari sebuah desa ke seluruh desa lain di kabupatennya, dihitung dari matriks waktu tempuh jalan. Makin kecil menitnya makin sentral desa itu; sebagai komponen Skor Kesiapan arahnya dibalik supaya "tinggi" selalu berarti "lebih siap". Mengukur posisi terhadap desa-desa lain, bukan jarak ke pusat kota |
+
+| Nilai | Arti |
+| --- | --- |
+| `citra` | dari sel Citra Potensi Desa yang lolos uji tertahan, jadi angkanya punya sertifikat mutu |
+| `heuristik-tervalidasi` | rumus heuristik yang sudah diuji dengan kunci jawaban dari luar dan menang; Perikanan Tangkap masuk sini |
+| `heuristik-belum-teruji` | rumus heuristik yang belum punya kunci pendukung; Simpul Logistik masuk sini |
+| `fallback-heuristik` | dari pangsa rumah tangga subsektor, dipakai ketika provinsi itu tidak punya sel tervalidasi untuk subsektor tersebut |
+
+Mutu `heuristik-belum-teruji` paling lemah di antara keempatnya. Jangan
+menyajikannya setara dengan `citra`.
+
+## Empat kode nilai kosong
+
+Nilai yang kosong di Kartu Ekonomi Desa selalu membawa kode alasan.
+Kosong-karena-tidak-dinilai berbeda dari kosong-karena-belum-terpetakan.
+
+| Kode | Arti |
+| --- | --- |
+| `TIDAK-DINILAI` | instrumennya memang tidak menilai wilayah ini, mis. kelurahan tidak dinilai Indeks Desa Membangun. Struktural, bukan cacat data |
+| `TIDAK-TERPETAKAN` | sumber sukarela benar-benar tidak menghitung wilayah itu, sehingga nilainya tidak ada sama sekali |
+| `TIDAK-BERLAKU` | temanya tidak relevan untuk wilayah ini, mis. Perikanan Tangkap di kabupaten tanpa pantai |
+| `TIDAK-ADA-DATA` | data seharusnya ada tetapi tidak diperoleh, mis. desa tanpa geometri |
+
+Nol bukan termasuk di sini. Nol pada hitungan titik minat berarti *tidak ada*,
+bukan *belum dipetakan*: angkanya ditampilkan apa adanya dan ikut menyusun
+skor, karena "tidak punya warung" memang informasi tentang kesiapan.
+
+## Istilah Kartu Ekonomi Desa
+
+| Istilah | Arti |
+| --- | --- |
+| **Rekomendasi Aksi** | Satu sampai dua kalimat tindakan per desa yang dirakit mesin dari aturan tetap (zona × Potensi Dominan × Fakta Program), bukan dari model bahasa. Tiap kalimat dapat ditelusuri ke aturannya |
+| **Fakta Program** | Lapisan berisi keikutsertaan desa pada registri program publik: Jadesta, registri desa wisata Sisparnas, daya tarik wisata Sisparnas, Kampung Perikanan Budidaya, Kampung Nelayan, dan cold storage eksisting |
+| **Belum tersentuh** | Bendera pada desa yang tidak muncul di satu pun registri program yang dipantau. Bukan cacat data melainkan pesan utama: sebagian besar desa belum tersentuh registri mana pun. Pada desa Zona Pemerintah, bendera inilah temuan terpentingnya |
+| **Kemiripan Desa Kembar** | Persen kemiripan dihitung sebagai (1 − jarak ÷ persentil-95 jarak antar desa sekabupaten) × 100 pada ruang fitur model Desa Kembar, dipotong 0–100. Relatif dalam kabupaten |
+
+Fakta Program tidak pernah masuk ke Skor Potensi maupun Skor Kesiapan.
+Registri adalah penempatan kebijakan, bukan bukti potensi; memakainya sebagai
+skor akan menghadiahi desa hanya karena sudah pernah dipilih.
+
+## Empat varian Jalur Ekonomi
+
+Satu mesin penempatan yang sama menjawab empat pertanyaan berbeda. Tiap varian
+menghasilkan daftar Desa Poros dan Desa Sejalur miliknya sendiri. Yang berlaku
+untuk keempatnya: sebuah jalur berisi 2 sampai 25 desa, dan **waktu tempuh
+maksimum** adalah kendala keras — desa yang lebih jauh dari itu tidak bisa
+menjadi anggota, bukan dikenai penalti.
+
+| Varian | Arti |
+| --- | --- |
+| **Komoditas** | Rantai usaha satu komoditas: desa-desa dengan komoditas sejenis disambungkan ke satu titik pengolahan bersama. Volume dihitung dari satu komoditas itu saja |
+| **Gudang Kopdes** | Jaringan penyimpanan lintas komoditas: desa-desa disambungkan ke satu gudang bersama yang dikelola koperasi desa, tanpa memandang jenis komoditasnya. Gudang baru hanya dibuka bila hemat tempuhnya melampaui biayanya, sehingga jumlah gudang ditentukan model |
+| **Cold Storage** | Jaringan gudang beku perikanan: desa penghasil komoditas yang wajib segera didinginkan disambungkan ke satu cold storage bersama. Gudang beku yang sudah berdiri ikut menyerap desa di sekitarnya, dan hanya kekurangannya yang dijawab dengan unit baru. Hanya berjalan di kabupaten pesisir yang volumenya mencukupi |
+| **Wisata** | Kawasan paket desa wisata: desa wisata terdaftar yang berdekatan waktu tempuh disambungkan menjadi satu kawasan yang layak dipaketkan bersama, dengan satu desa basis kawasan sebagai Desa Poros. Bobotnya bukan volume rumah tangga melainkan kematangan dan daya tampung desa wisata. Berdiri di atas fakta registri, bukan prediksi |
+
+"Cold storage" adalah pengecualian sadar atas aturan istilah Indonesia:
+istilah serapan teknis yang di dunia perikanan lebih dikenal daripada
+padanannya.
+
+## Dua peran desa
+
+| Istilah | Arti |
+| --- | --- |
+| **Desa Poros** | Desa yang menjadi lokasi aset bersama dalam satu jalur: titik pengolahan pada varian Komoditas, gudang pada Gudang Kopdes, gudang beku pada Cold Storage, dan desa basis kawasan pada Wisata |
+| **Desa Sejalur** | Desa anggota yang dilayani sebuah Desa Poros |
+
+Peran melekat per varian. Satu desa bisa menjadi Desa Poros di Gudang Kopdes
+sekaligus Desa Sejalur di sebuah jalur varian Komoditas, dan sekaligus masuk
+ke sebuah zona penanganan. Peran dan zona dua atribut berbeda, bukan satu
+daftar pilihan.
+
+Dua hal yang bisa muncul bersamaan pada satu desa dan tidak boleh disamakan:
+**cold storage eksisting** adalah unit yang berdiri di desa itu sendiri,
+sedangkan **keterlayanan cold storage** adalah desa yang berada dalam
+jangkauan sebuah unit — unitnya bisa di desa lain.
+
+## Lima peran pengguna
+
+Empat peran tersimpan plus satu keadaan tanpa login. Jangan disamakan dengan
+peran desa di atas: itu atribut desa, ini akun manusia. Matriks aksesnya di
+[Peran Pengguna](/docs/peran-pengguna).
+
+| Peran | Arti |
+| --- | --- |
+| **anonim** | Keadaan sebelum login, bukan peran tersimpan |
+| **tamu** | Peran bawaan setiap registrasi mandiri |
+| **pemerintah** | Pengguna instansi pemerintah, dinaikkan oleh admin |
+| **swasta** | Pengguna mitra swasta, dinaikkan oleh admin |
+| **admin** | Pengelola sistem |
+
+## Dua istilah dasbor
+
+| Istilah | Arti |
+| --- | --- |
+| **Lensa** | Mode tampilan Portal: satu lensa satu fitur utama yang sedang aktif, menguasai panel kiri dan wujud peta sekaligus. Rail Portal memuat lima lensa. Berganti lensa tidak berpindah halaman dan tidak mereset peta; yang berganti kacamata untuk membaca peta yang sama |
+| **Lingkaran berjenjang** | Tampilan bawaan peta saat tidak ada desa terpilih. Cakupan disajikan sebagai lingkaran pembawa cacah desa per provinsi, membuka ke lingkaran per kabupaten, lalu ke batas desa kabupaten aktif |
+
+## Cara membaca angka dan tanggal
+
+| Aturan | Contoh |
+| --- | --- |
+| Desimal memakai koma | `72,4` |
+| Ribuan memakai titik | `1.248` |
+| Persen menempel angkanya | `68%` |
+| Satuan dipisah spasi | `3,2 km` |
+| Tanggal ringkas: bulan tiga huruf, tanpa titik | `24 Agu 25` |
+| Wilayah disingkat, urut menyempit ke melebar | Desa • `Kec.` • `Kab.` • Provinsi |

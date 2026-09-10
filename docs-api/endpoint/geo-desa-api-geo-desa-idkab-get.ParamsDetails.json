@@ -1,0 +1,1 @@
+{"parameters":[{"name":"idkab","in":"path","required":true,"schema":{"type":"string","pattern":"^\\d{4}$","title":"Idkab"}}]}

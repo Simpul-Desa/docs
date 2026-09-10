@@ -1,0 +1,36 @@
+# Dependencies
+/node_modules
+
+# Production
+/build
+
+# Generated files
+.docusaurus
+.cache-loader
+
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Artefak proses kerja Claude — lokal saja, sengaja tidak ikut repo publik.
+# Keempat path ini TETAP ADA di disk dan tetap dibaca sesi berikutnya; yang
+# dicegah hanya masuknya ke repo yang di-push. Dokumen publik (README.md)
+# tidak menyebut satu pun dari keempatnya, supaya tidak ada tautan mati di
+# GitHub. Pola sama dengan repo API dan Data.
+/CLAUDE.md
+/PRD.md
+/TRACK.md
+/.claude/
+
+# Yang SENGAJA TIDAK diabaikan, walau keluaran generator: snapshot OpenAPI
+# `static/openapi/simpul-desa.json` dan MDX bangkitan `docs-api/endpoint/**`.
+# Keduanya ter-commit supaya `npm run build` tetap Node-only — tanpa Python
+# dan tanpa repo API hadir. Alasannya di README.md bagian "Rujukan REST API".

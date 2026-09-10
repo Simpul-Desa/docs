@@ -1,0 +1,73 @@
+---
+id: daftar-kabupaten-api-wilayah-kabupaten-get
+title: "Daftar Kabupaten"
+description: "Daftar kabupaten, dengan filter opsional `prov` (kode provinsi 2 digit)."
+sidebar_label: "Daftar Kabupaten"
+hide_title: true
+hide_table_of_contents: true
+api: eJzVVt9vGzcM/leEwx42wLHdIAUG78lFgsZLmxpwgmJIsoTnk23ldJKqH0k9w//7SOnOPsepgw17WR8ay6Y+fqTIj1xlHuYuG9xkX4WEJSyyu05WcDe1wnihVTbITmHmwbIS8mDAc9VhBVdzUGwmpOeWaePQECR7MFY/PbCfS11wRp+FcoIds0LMhf+le6tuVW2yBDVnM20r8GoJzMGCeTCC0U36wosCSrxXcsKt0N0CnJAlIMQcJHh20j9paER3D19Hn4Z/DM/vr0anw4v74enwoZt1Mm24BYpjVGAkRYzkfhPJPfq8f05xt76dc49XDVioOAZI2VllCg8IQfzxR0GJ+Ra4XeLB8m9BWI4eZiAd72RuuuAVZINVBmr5ZRbv+6Wh+85boeYR3iM2wfx5e1usjtc/ZevOxkwFKbM1PoUXXtIXY/K7JouayALkP+BRwwrl+ZxbtK3gu6hClQ3e9fEfnoWqzy+f/1JX2jJ0BxWojH6dQZA+WjbszpHM+vDFFvUcPLj/hPz7w9Svy2CxQF7h/r6/Jf8h0tmj/+IyPYblzmjluCNWx/0+/TncKyzn1sBcKCxf9D/VGIPysTKMkWIaa7P36OjyqhUylhlWrhfJlQtl7bRORa615DGiJohJMqEoMJzd0hOeV24fVRRIswW6Kc0GcxQNEFJVb1heVrWlKGKDHAQ1dSk3Jjp/5FO/UwI3NbnG9Qa41REXTY6zly83AR9YDla4tmjhS4gyeLarTkIVoUTJ6WZbQmAtLA924ynlGC9ELdpN9m6OydmhbFzQ7whkuAN1yHAcDd7KWnTXoLX4fow89yNCOJQ4OBSB1x6b+7UubMCvogVCLd4wrFUitf8hw01HbjR4lyEUhfBx5oxbXL0N/GV6DkrqBvyttKYcdGrNTfxbQJ95rIa95L6BWnd1C2hYGanNjRTO32zK++4O+RHWyfHxvuBsgmDIiqq+QM3ClKAoesCPaZJKLbVjTyDxhEK0Tu++0DQUm2nnF3jo4UTs1ROxV7Y6zHH71IzCYCUNIO+NG/R6TlQmyCOkBUd4+wjLpwhTotcNpmtByGdYdlHu9vp0TJYl8em0QRFT6inIhXZ+8CtOp/2LOPh5lUMc/1KXkB7W8Wmwwi8nJKOpes+vrsYfONhUQfVrkJOsHjBRTZMBZUWomY6WjayOPo+vP7HTs8mQDcejfanhMtiwYCX+BRoXFXagZO1rhchhCkzyZ1xbEAMlRwzYX1i9+E4qxhDfCQyjHHZQsyzqFy+10pXosEdAF9sj2aA7jN522FR4izAa38iJJHEeESQYjWTQGJFpHrD6SckjpjyoOUkem/Doth5r7PfJl0uiiz+XwTGI1Zh2NYczsMNSxbIKggmKzQHlr8vOVGE0VltyBErjNGZYkHkocZEDZfB/jYvcb8xxyXOxoAWvwjlXgmAp9ckgsRWxvQTVMB4BudIeR7WXMt7vvuv2ozZgeVRJNOu9oh6+PxwMq+38/V8vtXUZe/7d94wEQctV6p9V3cc3uF7QvlE/O37a9jI2CnUWGa1WOTh+beV6TV+nVYw6vBAOctlaxkq+3C6/qCOBCMS+3TP9YcpfLpKvhpEcJaH9l372tr4DjppVdOvqjg5WkC9MBU3IBYeC9APzki4Np1NufOvW3i5HKBuB/Xh2hdryN+dUm3A=
+sidebar_class_name: "get api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Daftar Kabupaten"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/api/wilayah/kabupaten"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Daftar kabupaten, dengan filter opsional `prov` (kode provinsi 2 digit).
+
+`prov` yang formatnya sah tapi kodenya tidak dikenal menghasilkan
+galat 404 dengan kode `WILAYAH_TIDAK_ADA`.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./daftar-kabupaten-api-wilayah-kabupaten-get.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./daftar-kabupaten-api-wilayah-kabupaten-get.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./daftar-kabupaten-api-wilayah-kabupaten-get.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

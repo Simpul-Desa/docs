@@ -1,0 +1,74 @@
+---
+id: ubah-peran-api-admin-pengguna-id-pengguna-peran-post
+title: "Ubah Peran"
+description: "Ubah peran satu pengguna."
+sidebar_label: "Ubah Peran"
+hide_title: true
+hide_table_of_contents: true
+api: eJzVVktz4kYQ/itTOiVVGIjjQ4qccOzyEq9tasEn24VbaAxjjWYm81iWpfTf0z2SQNgsTnLLBTRST/fXr697k3hYuGTwkAyzQijhvAUnkqdOknE3t8J4oVUySO5TWDLDLSjmwAd8VItFUNB9VI/qBg9hJ5AJK5jjKv5LvgLP8GC0UJ6hCfzutYScnfV/fVTPw+vJaHYxmt59Hl4/d9mzyGaN8me2BrVgXmQo7bnN4MWDxfuvsIIU75/h/fHl7dXV/e1wNh1dDK9nw4vhczfpJJqwEPhRhvAJ3Syim4ERMyBft2Zms5bNWS1mtPOoxvF5sMKvMUKb5NN0Oj7nYLnF41OJQTJgoeAIzUUBhQe01lKHKgTFz4Bf4rPlfwVhOULyNnBUP1/yApLBJvFrQ1cx/kItUPJF2wI8QQ8iw7MXXpLAKGPjRndJEEgld/5cZ2vS89bCXCvPladPYIwU8xiU3qujtG5aAIylkHnBXTxREA7h4ioUVC4eioBHwwuOXzyQd24FzpPLMb5URA3qcVRXlp1Gn05f+dzvReShNrp/rSDloKj+GiWkxnJntHIV2NN+n/72KzZKsxTsrliZ8IT5P4bEhby2V/uQai05ItrhnVQiiC8DH1WAWt+9xNrYV4Y5PRDcXZJJxw9z8O+iGsvnUGhBXQhqDLS1taGClEn5hCoXIMEfcyHXGT+G7pq+RzfcR264f+BGNNdoazlyFXEedAE782gSvPYgW8iw1PgCm3unfBolUNXyA8FPlViKaXdHBc+jRNmijn2EkCE9YjmCHLewVr28H573LrdCulX+UVirGFQONvhbim4ohAeC+4HWuldaioaFkdo8tMruqW7ls9PTA93bOMAQUcA2zrCZzZYO6pkgtdSOfQWJJ5xaZZXzpSbKrwk8Eu8g6SHt9yIt9Ro26G1aPF32qg4hxrdfGz4PFrOeLL03btDrOVGYIE8QKJyguhMspizMCXA3mK4FIVew7iKlJG+n55gkc0LYaStFnVLPQS4R6uC3PrLYu4sIjxcpTkH0WeocqjQ3U2lCVFXVcns2bbNFRpJ6ykTGqgQoTsR2X3aj4/IbYIJ4i/orhi9pfr3oqLMhudHN+P4zu7icDNlwPHqHecJlsGHJcvwH4uACO1ey9rVMpDCHejdAHbQWDNh3rHri6uhtzDEYRtHusBwsLh0810oXosNeAU3sjiSD5jBOtsPmAlcYZjRSvMNvKY4njxokGI1gUJg2FCwqthIS1nFpUZicoBZqDV024dFsPV/Yn5O7W4KLn/PgGMQqrtYSBwXqrSqdFRBMUGwBSJtddtmsO9EQKK1EQQtMGnJgHpTBX51z9TuuSZKnYommWYFTJwfBqiRVAhVaEdtS1OsVIFbacKhKq4j3u790+5FTsJCKimzrVSTubeO6tPfytNnNwf/fdlfXt+fffM9IwGUDvY+Ntak7/gFnu9iuIjQ3tgvZYH8/245GakO6uNmk4Pi9lWVJr7FHLO1/+PgVrICUugDJIROOnpFrXkA6fiS8P32pqfFn9iPs9UucA5RZLG864WPO128WyjjZlhyyuIVuaok/KmMnU9Kz0/BuvyECqm4M53Nu/FHZpxadju8mUxoQ9ZpZxOGfWFgR8+NvRKuj85GP4rtNIjHFARYkW+kk7oFAGdrtURUrdZoH8upgPDAxUWJKrYHJacITWyVOpfJvBC9pQQ==
+sidebar_class_name: "post api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Ubah Peran"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/api/admin/pengguna/{id_pengguna}/peran"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Ubah peran satu pengguna.
+
+Mengubah peran diri sendiri lewat endpoint ini ditolak 403
+`AKSI_DITOLAK`. `id_pengguna` yang tidak terdaftar dijawab 404
+`PENGGUNA_TIDAK_ADA`.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./ubah-peran-api-admin-pengguna-id-pengguna-peran-post.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./ubah-peran-api-admin-pengguna-id-pengguna-peran-post.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./ubah-peran-api-admin-pengguna-id-pengguna-peran-post.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

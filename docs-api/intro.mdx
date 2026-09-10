@@ -1,0 +1,305 @@
+---
+id: intro
+title: REST API
+sidebar_label: Pengenalan
+sidebar_position: 1
+slug: /intro
+description: "Titik masuk rujukan REST API SIMPUL DESA: base URL, autentikasi, amplop respons, paginasi, dan katalog kode galat."
+---
+
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import CodeBlock from '@theme/CodeBlock';
+
+{/* URL API produksi dibaca dari `customFields.urlApi` di
+    `docusaurus.config.js`, yang isinya env var `SIMPUL_URL_API`. Blok kode
+    di bawah karena itu dirender lewat komponen: pagar ``` biasa tidak bisa
+    menyisipkan nilai. */}
+
+export function BaseUrl() {
+  const {siteConfig} = useDocusaurusContext();
+  return (
+    <CodeBlock language="bash">{`# produksi
+${siteConfig.customFields.urlApi}
+
+# pengembangan lokal
+http://localhost:8000`}</CodeBlock>
+  );
+}
+
+export function ContohToken() {
+  const {siteConfig} = useDocusaurusContext();
+  return (
+    <CodeBlock language="bash">{`curl -H "Authorization: Bearer <token>" \\
+  ${siteConfig.customFields.urlApi}/api/model/peta-peran`}</CodeBlock>
+  );
+}
+
+# REST API
+
+Dasbor SIMPUL DESA membaca seluruh keluaran model lewat satu API HTTP.
+Halaman di bawah ini kontraknya: 26 endpoint, dikelompokkan menurut fitur.
+
+Halaman rujukan tiap endpoint dibangkitkan langsung dari skema OpenAPI milik
+API itu sendiri. Spec-nya bisa
+[diunduh apa adanya](/openapi/simpul-desa.json).
+
+## Base URL
+
+<BaseUrl />
+
+Instance lokal juga menyajikan Swagger UI bawaan FastAPI di `/docs` dan skema
+mentahnya di `/openapi.json`.
+
+{/* Jangkar `#authentication` dipakai panel keamanan tema OpenAPI, yang menaut
+    ke `/{info_path}#authentication` dari setiap halaman endpoint bertoken.
+    Ditulis sebagai elemen, bukan sintaks `{#id}` — sintaks itu gagal di-parse
+    di berkas `.mdx` (lihat CLAUDE.md folder ini). */}
+<span id="authentication"></span>
+
+## Autentikasi
+
+Endpoint bertoken memakai bearer token milik Supabase Auth:
+
+<ContohToken />
+
+Klien tidak mengirim peran. Server membaca `sub` dari token, mengambil peran
+akun dari tabel profil, lalu mencocokkannya dengan peran yang diizinkan
+endpoint itu. Tiga galat yang muncul di jalur ini:
+
+| Keadaan | Kode | HTTP |
+|---|---|---|
+| Token tidak dikirim, kedaluwarsa, atau tidak sah | `TIDAK_BERWENANG` | 401 |
+| Token sah tetapi peran akun tidak mencukupi | `PERAN_KURANG` | 403 |
+| Konfigurasi autentikasi belum terisi di server | `AUTH_BELUM_SIAP` | 503 |
+
+Registrasi mandiri selalu menghasilkan peran tamu, dan hanya admin yang
+menaikkannya.
+
+## Kelompok endpoint
+
+<div className="homepage-section">
+
+### Lima fitur utama
+
+<p className="section-description">Satu kelompok = satu lensa dasbor.</p>
+
+<div className="section-content">
+
+<a className="homepage-card" href="/api/endpoint/peta-peran">
+  <div className="card-content">
+    <div className="title">Peta Peran</div>
+    <div className="description">3 endpoint: daftar zona, ringkasan per kabupaten, dan baris penuh satu desa. Peran tamu ke atas.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/kartu-ekonomi-desa">
+  <div className="card-content">
+    <div className="title">Kartu Ekonomi Desa</div>
+    <div className="description">1 endpoint: satu objek kartu utuh per desa. Terbuka tanpa token.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/jalur-ekonomi">
+  <div className="card-content">
+    <div className="title">Jalur Ekonomi</div>
+    <div className="description">2 endpoint: daftar dan detail jalur, per varian. Peran tamu ke atas.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/desa-kembar">
+  <div className="card-content">
+    <div className="title">Desa Kembar</div>
+    <div className="description">1 endpoint: tetangga terdekat satu desa beserta kemiripannya. Peran tamu ke atas.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/citra-potensi-desa">
+  <div className="card-content">
+    <div className="title">Citra Potensi Desa</div>
+    <div className="description">2 endpoint: daftar sel dan detail satu sel beserta skornya. Peran tamu ke atas.</div>
+  </div>
+</a>
+
+</div>
+</div>
+
+<div className="homepage-section">
+
+### Fitur tambahan
+
+<p className="section-description">Empat fitur di luar lima lensa, masing-masing dengan batas perannya sendiri. Endpoint Halaman Admin ada di kelompok Administrasi.</p>
+
+<div className="section-content">
+
+<a className="homepage-card" href="/api/endpoint/asisten-desa">
+  <div className="card-content">
+    <div className="title">Asisten Desa</div>
+    <div className="description">1 endpoint: satu giliran percakapan, stateless dan non-streaming. Peran di atas tamu.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/berita-desa">
+  <div className="card-content">
+    <div className="title">Berita Desa</div>
+    <div className="description">1 endpoint: berita satu desa, urut tanggal terbit menurun. Peran tamu ke atas.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/laporan-desa">
+  <div className="card-content">
+    <div className="title">Laporan Desa</div>
+    <div className="description">1 endpoint: PDF satu desa, dibuat saat diminta. Peran pemerintah ke atas.</div>
+  </div>
+</a>
+
+</div>
+</div>
+
+<div className="homepage-section">
+
+### Wilayah, pencarian, dan sistem
+
+<p className="section-description">Endpoint pendukung yang dipakai peta dan kotak cari dasbor.</p>
+
+<div className="section-content">
+
+<a className="homepage-card" href="/api/endpoint/wilayah">
+  <div className="card-content">
+    <div className="title">Wilayah</div>
+    <div className="description">5 endpoint: provinsi, kabupaten, desa, ringkasan, dan titik pusat. Terbuka tanpa token.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/pencarian-desa">
+  <div className="card-content">
+    <div className="title">Pencarian Desa</div>
+    <div className="description">1 endpoint: pencarian substring nama di atas indeks kartu. Terbuka tanpa token.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/batas-desa">
+  <div className="card-content">
+    <div className="title">Batas Desa</div>
+    <div className="description">1 endpoint: GeoJSON batas desa satu kabupaten, pra-gzip. Terbuka tanpa token.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/kesehatan">
+  <div className="card-content">
+    <div className="title">Kesehatan</div>
+    <div className="description">1 endpoint: status hidup, versi, dan tanggal data panen. Terbuka tanpa token.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/administrasi">
+  <div className="card-content">
+    <div className="title">Administrasi</div>
+    <div className="description">5 endpoint: penyegaran dan penghapusan berita, daftar pengguna, kenaikan peran, status sistem. Hanya admin.</div>
+  </div>
+</a>
+
+</div>
+</div>
+
+## Peran per kelompok
+
+Tabel ini menyalin batas peran yang ditegakkan API.
+
+| Kelompok | anonim | tamu | swasta | pemerintah | admin |
+|---|:--:|:--:|:--:|:--:|:--:|
+| Kartu Ekonomi Desa · Wilayah · Pencarian Desa · Batas Desa · Kesehatan | ya | ya | ya | ya | ya |
+| Peta Peran · Jalur Ekonomi · Desa Kembar · Citra Potensi Desa · Berita Desa | — | ya | ya | ya | ya |
+| Asisten Desa | — | — | ya | ya | ya |
+| Laporan Desa | — | — | — | ya | ya |
+| Administrasi | — | — | — | — | ya |
+
+## Amplop respons
+
+Setiap respons JSON dibungkus amplop yang sama, sukses maupun gagal:
+
+```json
+{
+  "sukses": true,
+  "data": [],
+  "galat": null,
+  "meta": {"total": 38, "hal": 1, "batas": 50, "parameter": null}
+}
+```
+
+```json
+{
+  "sukses": false,
+  "data": null,
+  "galat": {"kode": "DESA_TIDAK_ADA", "pesan": "desa 3201010001 tidak dikenal"}
+}
+```
+
+`meta` hanya ada pada respons daftar. Tiga respons berada di luar amplop
+karena bukan JSON: Batas Desa (GeoJSON), Laporan Desa (PDF), dan `/openapi.json`
+beserta `/docs` bawaan FastAPI.
+
+## Paginasi
+
+Endpoint daftar menerima `hal` dan `batas`:
+
+| Parameter | Bawaan | Batas |
+|---|---|---|
+| `hal` | 1 | 1–10.000 |
+| `batas` | 50 | 1–500 |
+
+Nilai di luar rentang dijawab 422 `PARAMETER_TIDAK_VALID`. Cacah total ada di
+`meta.total`, bukan di header.
+
+## Batas laju
+
+| Jalur | Ambang |
+|---|---|
+| Semua endpoint | 120 permintaan/menit |
+| Asisten Desa | 10 permintaan/menit dan 200 permintaan/hari, per pengguna |
+
+Melewati ambang menghasilkan 429 `TERLALU_BANYAK_PERMINTAAN`.
+
+## Katalog kode galat
+
+`galat.kode` stabil dan boleh dijadikan cabang logika klien; `galat.pesan`
+untuk dibaca manusia dan bisa berubah.
+
+| Kode | HTTP | Arti |
+|---|---|---|
+| `PARAMETER_TIDAK_VALID` | 400 · 413 · 415 · 422 | Parameter atau body tidak lolos validasi |
+| `TIDAK_BERWENANG` | 401 | Token tidak ada, kedaluwarsa, atau tidak sah |
+| `PERAN_KURANG` | 403 | Peran akun tidak mencukupi, atau profil belum terdaftar |
+| `AKSI_DITOLAK` | 403 | Aksi ditolak aturannya sendiri, mis. mengubah peran diri sendiri |
+| `PERAN_TIDAK_DIKENAL` | 403 | Peran pada profil tidak dikenal layanan |
+| `TIDAK_DITEMUKAN` | 404 | Sumber daya generik tidak ada |
+| `DESA_TIDAK_ADA` | 404 | `iddesa` tidak dikenal |
+| `WILAYAH_TIDAK_ADA` | 404 | Kode provinsi atau kabupaten tidak dikenal |
+| `BERITA_TIDAK_ADA` | 404 | `id` berita tidak ada |
+| `PENGGUNA_TIDAK_ADA` | 404 | `id` pengguna tidak ada |
+| `METODE_TIDAK_DIIZINKAN` | 405 | Metode HTTP salah untuk jalur itu |
+| `KONFLIK` | 409 | Konflik keadaan generik |
+| `PEKERJAAN_BERJALAN` | 409 | Pekerjaan penyegaran lain sedang berjalan |
+| `TERLALU_BANYAK_PERMINTAAN` | 429 | Batas laju terlampaui |
+| `GALAT_SERVER` | 500 | Galat tak terduga di server |
+| `GALAT_LLM` | 502 | Layanan Asisten Desa gagal di sisi penyedia |
+| `DATA_BELUM_SIAP` | 503 | Artefak data belum dimuat di server |
+| `AUTH_BELUM_SIAP` | 503 | Konfigurasi autentikasi belum terisi |
+| `AI_BELUM_SIAP` | 503 | Kunci Asisten Desa belum dikonfigurasi |
+
+## Cache dan CORS
+
+Dua kelas jalur, dengan perlakuan berbeda.
+
+Jalur data anonim (`/api/wilayah`, `/api/desa`, `/api/model/kartu`, `/api/geo`)
+dijawab dengan `ETag` yang diturunkan dari versi salinan data, plus
+`Cache-Control` publik ber-`max-age`. `If-None-Match` yang cocok dijawab 304
+tanpa menjalankan handler.
+
+Jalur bertoken (Peta Peran, Citra Potensi Desa, Jalur Ekonomi, Desa Kembar,
+Berita Desa, Asisten Desa, Laporan Desa, Administrasi) selalu distempel
+`Cache-Control: private, no-store` dan tidak pernah dijawab 304.
+
+Untuk CORS, permintaan GET pada `/health`, `/api/wilayah`, `/api/desa`,
+`/api/model/kartu`, `/api/geo`, `/openapi.json`, dan `/docs` dibuka ke semua
+origin. Selebihnya, termasuk seluruh permintaan non-GET bahkan pada jalur
+publik, hanya diterima dari origin dasbor yang dikonfigurasi server.

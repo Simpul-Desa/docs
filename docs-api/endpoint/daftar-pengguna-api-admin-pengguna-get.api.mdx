@@ -1,0 +1,74 @@
+---
+id: daftar-pengguna-api-admin-pengguna-get
+title: "Daftar Pengguna"
+description: "Daftar pengguna terdaftar beserta perannya, berpaginasi."
+sidebar_label: "Daftar Pengguna"
+hide_title: true
+hide_table_of_contents: true
+api: eJzlV1tT20YU/is7mr7FNiSTdFr3pWRgEtpc3IG8FCgcS4u90WpX7CXE8fi/9zsryZYxNdNM35qHgKRz+c79Y5kFmvlsfJEdFZUyygdHXmVXg6yQPneqDsqabJwd020gJ2ppZrNoSATpiubVVHrpAuGTI2MWNMAbV9NMGRgaXZpLc3N3IyqJT06ZGX8tyJMryQhZkdIDEcjUbKAkUVKtAmlR4Gv32ukocpvb8tLAf5yPxE0lA42CheSNoII0zUVOOf73UkcX52IKZ14sCA611dYLn7yTAbwI15emkW/katgQc5ip4BZZGGWDzHJAHP1pgfibYK+7+K8B85o4Y5tXMxmg5mUenQoLpHSZvT0/n7yW5KTD49UKWa3JEcBL55OAwQOs30FRcZrvonQLPDh5F5WT8HxL2kuYzedIVjZeZmQWH2+TcljUrIySITIoAc07gAnzbPwcT/S1e/rxJTsO8Mo+/ro4Gv5Jw2+Hw59/HV0/u7wciqtnP2SrwdqiiVpnjDaooPnFH9mKP7dokah/gbe1qUyQM+QhAVNVrADyEP8S7Pb5YdN9sJV1XV0y/npLUYck2UF7CzCr/Yo96FMK5P8T8K/2Q/9URozDY9hfHW7Av05wduA/UOZKOOlra7z0jOrF4SH/2D+he+cSgHKLoExILVXXWuWp2Q8+e7a27OWgdjwKQTW+fSxbFG1uptZqmULsojprRDgsxLfdsyrIyu9aVUXP4rqhO4OYQBhLy2LfBOzr4JOkDCspHfucTZIAg1fTSOGad8Nj8rfWVRTSaghyGBT6a2PkOOmKCesmU3FK8+81xbqtKdhqle30s8zDVvdecBq7PHWRbsexDaWXn1PUZdK2TrbxQs7RYm9ij7nEUJihWcN2dbZLXNpC7sv77/w9Fcg/VSAWeCoVyV1nrYf3TcK5GxHM8VHZF0G6N49uhc74eZKAqfkTgu3WatbRPsH1hlgfjm2EVBSK55b0pIc1uCgfpmdfESdr40+ltcnBoL0BDf6eofcydcNOcp+w2i6VnqGjqta2vtAgJBf93ry6AkQ29/LFi90duI5DAFjEcWcagaxgTwdiRqEKKltC8IU0nrAKV03p55bvfHPEcSxxNrMDXPmDdOUPurWaLrz70t3v6DQfxBBqPz448Kqqox4CEw2hOkT7FDFnbKNYjxzG8p4WI2zb7OHGn7BkyWAGfaOwqW1Oem59GP+Ea7mrCFyymhJTGwRWUlPYjoWc8RZvurfPRdb1YSdZe/DSMm8EOCXK3Nok2W310/eTT+/E8cnZkTianO4gOWuZV4mfxOerwgRq0VfDJgLpElreYzfCBlOtsfiG7uWzlWJIRaJacA4HYIMuRCFLa2ylBuIzwcXmkWXgDtG7gcgVmKuoLW6aV+nWgUcOhKbaOmZ93Al8jsS90rTAQoVHpDyaGW7jSJzJ5LY9s+K3s48fGC4+l9ELSt3Y0EmPmzwQTceKimIdjZgR1t9InJiitmi1xhEZC3bATJkZZ8tmgy2l+YVpqpyqOVyDGVdUkhJN6huBBq1K46WaCy4IWJmXcu81GT8cPR8dpt2A9qiapdnynJYMTDZdu1Ws5eb6/w+Zfdv7QX4NB7Umla59GrplO/kXoETMkdLspyvS5hGjxbPIEsvllLz85PRqxa8bMsk7oVCeprpHJ0u5aDk+dk5k12nMd+T+sUQPefCjATRemr38nX52SOseRx2T3ri64gen2Ff6awepklSkP32WrdJRnss69LR2mCdbWS/jNyfnXITIJdnwzWZFDbpfejwQZ7FnGwVKEuc8UShShzxNWDpKq78BthQmdw==
+sidebar_class_name: "get api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Daftar Pengguna"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/api/admin/pengguna"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Daftar pengguna terdaftar beserta perannya, berpaginasi.
+
+`q` menyaring berdasarkan email, tanpa peka kapital dan tanpa perlu cocok
+penuh. `meta.total` adalah cacah seluruh baris yang lolos saringan, bukan
+cacah baris pada halaman ini.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./daftar-pengguna-api-admin-pengguna-get.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./daftar-pengguna-api-admin-pengguna-get.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./daftar-pengguna-api-admin-pengguna-get.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

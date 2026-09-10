@@ -1,0 +1,76 @@
+---
+id: kartu-detail-api-model-kartu-iddesa-get
+title: "Detail Kartu Ekonomi Desa"
+description: "Kembalikan satu Kartu Ekonomi Desa utuh apa adanya: identitas,"
+sidebar_label: "Detail Kartu Ekonomi Desa"
+hide_title: true
+hide_table_of_contents: true
+api: eJztVsty2zYU/RUMp4t2hpFkTxYddaWMPYmbptFUzsp2mUsSlmCCAEKASVSN/r3nApRDRx67i3bXlSjyPs594BzsskBrn82vsrfUhV6cN9bYVokz6Sm7ybNa+qpTLihrsnn2VrYladWQEZ5gfewj+tBvBDkSVJPZ0lyoWpqgAvn82jgZqHCyI5OLTja2laYmrwpqvMqFs0EafmikVwgBo1LZW+VVkwtt18oHPF2bO9J9V8iUNReASEXDyLpc3FLDKTq77qjFNyBtAamoKVAuAhlHDAPIOmXW+NpYbVvRUu96FIVcyCvYWmhSZnJtrs1HVXOOj2JLZi2CqqkRtWqkIS1QwXqDEjT3ZE2agng5ewlMQ/Bawv/sfLUoLi/OFm+Lxdni4yTLM8td4K5e1Ohrw30sanRH6YKcKlo46iK9LlL6oljLAE9HqEwG2fHUdpnBH0RINviseE6OwgbPnfzUq04iQ+h6mWe+2siWsvkuC1vHXj5wF2LQgIjs+uf1db07me1/yI6GD0yx2eJkhvrXitFgspojXaT8+3/gtL9hZN5Z46VnMKezGf88dFw9sV/IW1mDZQnsR85pVcVmTu88O+9GlWIV0OqgUirfN0PSoQOltVqSGVWySiZcCbYgJjDb97ex2VTXivOQXo7CpuYOAW15JysUmd+nML3WsehDhjOOi/hxXR4meIiW1+exaR0CcXM5kENjzFOGy2iw33+PcrwiVyndIdoI7+uI87gihMMi0lMVBBtIj5ApTG0tuxG0y2iBUJtnDN8ksxLN808avooW+9FJ+S+GuLwP/lxbUw9SgQf8o0DvZNyGo+Y+E3XY5FGgReu0dVe1qsIVNiAXC7O9uQE8DvXy9PT4jN3XIACqFyVTtkBHWjSV8JioToMhvfgM3meujuXCaWOZuA6UBLqZZ1Mw1zQy1zQy13SXWGkPEy+7zwfK6jtMOtuE4Px8OvWqdb1+wYYvEOAFFqjuK0Y46d2kAyN+oe0Eh/yIkJZs2TCkfBwUMbWtSG+sD/OfZyCXI0ewM+tF5GhtG0qj9bLqOxW2KyaPtL9vLi+XryR1aYeGeXCSbGDTyCHJgBujzK2NlgcyuXi3/PCbYAEQi+XFEZKVhJRBMBv8YhgQK26fGLvVqqQKaiS/QFsQQyij5uIv7C9GZWINcVTkIs9CPSNp3stjVEvxQC3FQS0rFTr6prulRPmIoMnZqNH1QQu/KE1b2nBGtLw3awjoRKxkTDuQufh19f53hovPTe8FxX1MoumpRdy0swexXRMIcCLOTe0sFi4lImONagV2suwbSoItgoXY/iK81LJUG6SG7LbUkBKp9ckgoVXxgCkRbxmCgJXllncvdXw2OZnMIjtgPdpEm4OGnkX9fUR0vh/b7pv8/H8l+teuRMPpCvJrmDrOxFOKx3o3MMwVtF7BMh4S/MZNx+98uP3gDPOhZ8PdriQvP3R6v+fXn3rZbfEej59RJpV8OkFFtfL8DCq7Je3lE3P+8Y+BfH8Sj1+EHkM/vMTUeQcxI/7HwOX2250tCulGUs0kA0zp46KqpAsjt6NrDlPWPRG/Pr8EAf0NRlgaxQ==
+sidebar_class_name: "get api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Detail Kartu Ekonomi Desa"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/api/model/kartu/{iddesa}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Kembalikan satu Kartu Ekonomi Desa utuh apa adanya: identitas,
+peta_peran, rekomendasi_aksi, potensi, kesiapan, biofisik, logistik,
+jalur_ekonomi, desa_kembar, fakta_program, dan mutu_data, tanpa
+penyaringan kolom maupun sisipan data lain.
+
+`iddesa` yang tidak dikenal menghasilkan galat 404 dengan kode
+`DESA_TIDAK_ADA`.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./kartu-detail-api-model-kartu-iddesa-get.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./kartu-detail-api-model-kartu-iddesa-get.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./kartu-detail-api-model-kartu-iddesa-get.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

@@ -1,0 +1,1428 @@
+/**
+ * Tampilan situs dokumentasi SIMPUL DESA.
+ *
+ * Kerangkanya ditiru dari docs.dyte.io (Docusaurus 3 + Infima): kanvas putih,
+ * Inter untuk badan teks dan Plus Jakarta Sans untuk judul, sidebar 300px
+ * dengan rule aksen di sisi kanan item aktif, dan kartu petak dua kolom di
+ * halaman indeks.
+ *
+ * Warna aksen dan tangga sudut BUKAN lagi dari situs itu. Sejak 9 September
+ * 2026 keduanya mengikuti `app/DESIGN.md`: oranye #ff7300 sebagai satu-satunya
+ * voltase dan sudut 16/12/10/6/pil. Kanvas tetap putih — tangga abu tanpa
+ * putih di DESIGN.md dirancang untuk latar citra satelit, bukan halaman baca.
+ * Alasannya di ADR-0014 (`docs/adr/`).
+ *
+ * Situs ini memakai SATU nilai oranye untuk semua peran — isian tombol,
+ * tautan, tab aktif, cincin fokus, penanda aktif. Teal interaksi milik
+ * DESIGN.md tidak dipakai di sini, dan versi tiga tingkat yang sempat dicoba
+ * (#ff7300 / #b35400 / #a84c00) ditolak user, 9 September 2026.
+ *
+ * Harganya kontras: #ff7300 hanya 2,73:1 di atas kanvas putih, dan teks putih
+ * di atasnya juga 2,73:1 — di bawah lantai 4,5:1 teks dan 3:1 non-teks.
+ * Diterima terbuka; rinciannya di ADR-0014.
+ */
+
+/* ==========================================================================
+   1. Token
+   ========================================================================== */
+
+:root {
+  /**
+   * Warna dasar. Aksi dan interaksi mengikuti app/DESIGN.md (ADR-0014).
+   *
+   * SATU nilai oranye untuk semua peran — isian tombol, tautan, tab aktif,
+   * cincin fokus, rule sidebar aktif — diketok user 9 September 2026 setelah
+   * versi tiga tingkat (#ff7300 / #b35400 / #a84c00) dicoba dan ditolak.
+   *
+   * Konsekuensinya kontras, dan itu diterima terbuka: #ff7300 hanya 2,73:1 di
+   * atas kanvas putih, dan teks putih di atasnya juga 2,73:1. Tautan, cincin
+   * fokus, dan teks tombol karena itu TIDAK lolos WCAG AA. Rinciannya di
+   * ADR-0014 (`docs/adr/`). Jangan menuliskannya sebagai lolos di mana pun.
+   *
+   * `link` dan `focus` sengaja tetap ada sebagai nama peran walau nilainya
+   * sama: kalau kelak utang kontras itu dibayar, yang diganti cukup dua baris
+   * ini, bukan tiga puluh tempat pemakaian.
+   */
+  --docs-color-primary: #ff7300;
+  --docs-color-primary-tint: rgba(255, 115, 0, 0.16);
+  --docs-color-primary-tint-light: rgba(255, 115, 0, 0.24);
+  --docs-color-ink: #323232;
+  --docs-color-muted: #767676;
+  --docs-color-link: var(--docs-color-primary);
+  --docs-color-link-tint: var(--docs-color-primary-tint);
+  --docs-color-focus: var(--docs-color-primary);
+  --docs-color-border: #dadde1;
+  --docs-color-text: #000;
+  --docs-color-text-100: #646464;
+  --docs-color-text-400: 71 71 71;
+  --docs-color-background: #fff;
+  --docs-color-background-100: #f8f8f8;
+  --docs-color-background-200: #efefef;
+  --docs-color-background-300: #dcdcdc;
+  --docs-color-code-background: #f6f8fa;
+
+  /* Tangga abu untuk kartu dan panel */
+  --docs-color-secondary-700: 232 232 236;
+  --docs-color-secondary-800: 245 245 247;
+  --docs-color-secondary-900: 251 251 251;
+  --docs-color-secondary-1000: 255 255 255;
+
+  /* Infima: warna. `primary-dark` adalah `primary-active` DESIGN.md; sisa
+     tangganya diturunkan dari kedua nilai itu. Tautan, tab aktif, dan cincin
+     fokus TIDAK memakai primary — ketiganya teks atau garis tipis, dan oranye
+     terang tidak lolos kontras di sana; ketiganya memakai `link`. */
+  --ifm-color-primary: #ff7300;
+  --ifm-color-primary-dark: #e46700;
+  --ifm-color-primary-darker: #cc5c00;
+  --ifm-color-primary-darkest: #a84c00;
+  --ifm-color-primary-light: #ff8622;
+  --ifm-color-primary-lighter: #ff9a44;
+  --ifm-color-primary-lightest: #ffb166;
+  --ifm-link-color: var(--docs-color-link);
+  --ifm-link-hover-color: var(--docs-color-link);
+  --ifm-menu-color-active: var(--docs-color-ink);
+  --ifm-tabs-color-active: var(--docs-color-link);
+  --ifm-tabs-color-active-border: var(--docs-color-link);
+
+  /* Infima: tipografi */
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto,
+    Ubuntu, Cantarell, 'Noto Sans', sans-serif;
+  --ifm-heading-font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ifm-font-family-monospace: 'Fira Code', SFMono-Regular, Menlo, Monaco,
+    Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --ifm-code-font-size: 92%;
+  --ifm-heading-font-weight: 600;
+
+  /* Infima: kerangka */
+  --ifm-spacing-horizontal: 1.5rem;
+  --ifm-navbar-padding-horizontal: 0.75rem;
+  --ifm-navbar-height: 3.75rem;
+  --ifm-navbar-shadow: none;
+  --ifm-navbar-item-padding-horizontal: 0.75rem;
+  --ifm-navbar-item-padding-vertical: 0.25rem;
+  --ifm-toc-border-color: #dedede;
+  --ifm-table-border-color: var(--docs-color-border);
+  --ifm-breadcrumb-item-background-active: transparent;
+  --ifm-breadcrumb-padding-horizontal: 0;
+  --ifm-menu-link-padding-vertical: 0.375rem;
+  --ifm-menu-link-padding-horizontal: 0.75rem;
+  --ifm-footer-background-color: var(--docs-color-background-100);
+  --doc-sidebar-width: 300px;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 115, 0, 0.14);
+
+  /* Sudut — tangga app/DESIGN.md. Kartu dan panel apung 16, sisipan dan blok
+     kode 12, kontrol setinggi ±36px 10, chip dan badge 6, tombol serta kotak
+     cari pil penuh. Tidak ada nilai sudut lain di berkas ini. */
+  --docs-radius-card: 16px;
+  --docs-radius-inset: 12px;
+  --docs-radius-control: 10px;
+  --docs-radius-xs: 6px;
+  --docs-radius-full: 9999px;
+
+  /* Kotak cari navbar. Token bernama `--docsearch-*` karena rupanya ditiru
+     dari DocSearch; mesin pencarinya sendiri lokal (lunr), bukan Algolia. */
+  --docsearch-searchbox-background: #ebedf0;
+  --docsearch-searchbox-focus-background: #fff;
+  --docsearch-muted-color: #969faf;
+  --docsearch-text-color: var(--ifm-font-color-base);
+  --docsearch-key-gradient: linear-gradient(-225deg, #dcdcdc, #f8f8f8);
+  --docsearch-key-shadow: inset 0 -2px 0 0 #cdcdcd, inset 0 0 1px 1px #fff,
+    0 1px 2px 1px rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme='dark'] {
+  --docs-color-border: #2e2e2e;
+  --docs-color-text: #fff;
+  --docs-color-text-100: #b4b4b4;
+  --docs-color-text-400: 153 153 153;
+  --docs-color-background: #161616;
+  --docs-color-background-100: #1c1c1c;
+  --docs-color-background-200: #2a2a2a;
+  --docs-color-background-300: #2e2e2e;
+  --docs-color-code-background: #1e1e1e;
+
+  --docs-color-secondary-700: 71 71 71;
+  --docs-color-secondary-800: 38 38 38;
+  --docs-color-secondary-900: 25 25 25;
+  --docs-color-secondary-1000: 0 0 0;
+
+  /* DESIGN.md menyatakan mode gelap belum didefinisikan ("Known Gaps"), jadi
+     oranyenya dinaikkan satu langkah di sini: #ff8622 mencapai 7,5:1 di atas
+     #161616, dan `link`, `focus`, serta isian tombol ikut karena ketiganya
+     memakai `primary`. */
+  --ifm-color-primary: #ff8622;
+  --docs-color-primary: #ff8622;
+  --docs-color-primary-tint: rgba(255, 115, 0, 0.22);
+  --docs-color-primary-tint-light: rgba(255, 115, 0, 0.3);
+  --docs-color-muted: #b4b4b4;
+  --ifm-menu-color-active: #e7e7e7;
+  --ifm-background-color: #161616;
+  --ifm-background-surface-color: #161616;
+  --ifm-footer-background-color: #1c1c1c;
+  --ifm-toc-border-color: #2e2e2e;
+  --ifm-color-content: #e7e7e7;
+
+  --docsearch-searchbox-background: #090a11;
+  --docsearch-searchbox-focus-background: #000;
+  --docsearch-muted-color: #7f8497;
+  --docsearch-key-gradient: linear-gradient(-26.5deg, #565872, #31355b);
+  --docsearch-key-shadow: inset 0 -2px 0 0 #282d55, inset 0 0 1px 1px #51577d,
+    0 2px 2px 0 rgba(3, 4, 9, 0.3);
+}
+
+/* ==========================================================================
+   2. Tipografi
+   ========================================================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--ifm-heading-font-family);
+}
+
+.markdown h1:first-child {
+  --ifm-h1-font-size: 3rem;
+}
+
+.markdown > h2 {
+  --ifm-h2-font-size: 2rem;
+}
+
+.markdown > h3 {
+  --ifm-h3-font-size: 1.5rem;
+}
+
+/* ==========================================================================
+   3. Navbar
+   ========================================================================== */
+
+nav.navbar {
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+.navbar__item,
+.menu__link {
+  font-size: 14px;
+}
+
+.navbar__link,
+.menu__link,
+.table-of-contents__link,
+.pagination-nav,
+.footer {
+  --ifm-link-hover-decoration: none;
+}
+
+.navbar__logo {
+  height: 1.75rem;
+}
+
+.navbar__title {
+  font-family: var(--ifm-heading-font-family);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+/* Caret dropdown: chevron, bukan segitiga bawaan Infima */
+.dropdown > .navbar__link:after {
+  border: 0;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' fill='none' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.293 8.293a1 1 0 0 1 1.414 0L12 14.586l6.293-6.293a1 1 0 1 1 1.414 1.414l-7 7a1 1 0 0 1-1.414 0l-7-7a1 1 0 0 1 0-1.414Z' fill='%23646464'/%3E%3C/svg%3E");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  height: 16px;
+  width: 16px;
+  margin-left: 0.15rem;
+  top: 3px;
+  transform: none;
+}
+
+.dropdown__menu {
+  border: 1px solid var(--docs-color-border);
+  border-radius: var(--docs-radius-card);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  padding: 0;
+  overflow: hidden;
+  min-width: 14rem;
+}
+
+/* Item pertama navbar dikurung kotak hairline, penanda bagian yang sedang
+   dibuka — sama seperti tab "Guides" di rujukan visualnya. */
+.navbar-boxed {
+  border: 1px solid rgb(var(--docs-color-secondary-700) / 1);
+  border-radius: var(--docs-radius-xs);
+  margin-left: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+/**
+ * Tombol ajakan di kanan navbar — SATU-SATUNYA isian berwarna di situs ini,
+ * sesuai anggaran voltase DESIGN.md (satu tombol primer per layar).
+ *
+ * Teks putih di atas isian #ff7300 — keduanya diketok user 9 September 2026.
+ * Pasangan itu 2,73:1 dan tidak lolos WCAG AA; utangnya dicatat di ADR-0014.
+ * Jangan "memperbaikinya" diam-diam dengan menggelapkan isian atau menukar
+ * teksnya ke `ink`: keduanya sudah dicoba dan ditolak user.
+ *
+ * Tingginya dikunci 2,25rem — sama dengan kotak cari di sebelahnya — supaya
+ * ketiga elemen di kanan navbar duduk pada satu garis. Padding lama
+ * `0,25rem 0,875rem` membiarkan tinggi tombol ditentukan panjang labelnya,
+ * dan label "Kembali ke Portal" membuatnya tidak lagi sepadan dengan kotak
+ * cari. Padding tetap `!important` — Infima menyetel padding butir navbar
+ * lewat token, bukan kelas.
+ *
+ * Sentuhannya mengangkat elevasi, tanpa mengubah warna: DESIGN.md meminta
+ * hover satu langkah permukaan.
+ */
+.navbar-cta {
+  display: inline-flex;
+  align-items: center;
+  height: 2.25rem;
+  margin: 0 0 0 0.75rem;
+  padding: 0 1.125rem !important;
+  background-color: var(--docs-color-primary);
+  border-radius: var(--docs-radius-full);
+  color: #fff;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition-property: box-shadow;
+  --ifm-navbar-link-hover-color: #fff;
+}
+
+.navbar-cta:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  color: #fff;
+}
+
+.navbar-cta svg {
+  display: none;
+}
+
+/**
+ * Kotak cari navbar — `@easyops-cn/docusaurus-search-local`.
+ *
+ * Bentuknya diwarisi persis dari kotak palsu yang digantikannya (kelas
+ * `.sd-search`, dibuang 8 September 2026): tinggi 36px, sudut 0,375rem, latar
+ * abu muda, teks 0,75rem, dan dua chip papan tik di kanan. Navbar tidak
+ * bergeser sedikit pun saat kotak palsu itu berganti menjadi kotak sungguhan.
+ *
+ * Kelas milik plugin ber-hash (`searchInput_YFbd`), jadi yang dipegang di sini
+ * adalah dua kelas global Infima (`.navbar__search`,
+ * `.navbar__search-input`), pemilih `[class*=...]` untuk sisanya, dan token
+ * `--search-local-*` yang memang disediakan plugin untuk panel hasilnya.
+ */
+
+:root {
+  --search-local-modal-background: var(--docs-color-background);
+  --search-local-modal-shadow: 0 0 0 1px var(--docs-color-border),
+    0 8px 24px rgba(0, 0, 0, 0.12);
+  --search-local-modal-width: 30rem;
+  --search-local-hit-background: var(--docs-color-background-100);
+  --search-local-hit-color: var(--docs-color-text);
+  /* Baris hasil terpilih diberi latar primary oleh plugin, jadi teksnya `ink`
+     dan bukan putih. Sorot kata yang cocok dan garis fokus kotaknya memakai
+     `link` dan `focus` — keduanya beroranye sama. */
+  --search-local-hit-active-color: var(--docs-color-ink);
+  --search-local-hit-shadow: none;
+  --search-local-muted-color: var(--docsearch-muted-color);
+  --search-local-highlight-color: var(--docs-color-link);
+  --search-local-input-active-border-color: var(--docs-color-focus);
+}
+
+html[data-theme='dark'] {
+  --search-local-modal-shadow: 0 0 0 1px var(--docs-color-border),
+    0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.navbar__search {
+  display: flex;
+  align-items: center;
+}
+
+/* Plugin memberi wadahnya `margin-left: 16px`; kotak palsu memakai 0,5rem. */
+[class*='searchBarContainer'] {
+  margin-left: 0.5rem;
+}
+
+.navbar__search-input {
+  width: 11rem;
+  height: 36px;
+  padding: 0 3.25rem 0 2.125rem;
+  border: 0;
+  border-radius: var(--docs-radius-full);
+  background-color: var(--docsearch-searchbox-background);
+  color: var(--docsearch-text-color);
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: text;
+  transition: background-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default),
+    box-shadow var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.navbar__search-input::placeholder {
+  color: var(--docsearch-muted-color);
+  font-weight: 500;
+}
+
+.navbar__search-input:hover {
+  background-color: var(--docsearch-searchbox-focus-background);
+  box-shadow: inset 0 0 0 2px var(--docs-color-focus);
+}
+
+.navbar__search-input:focus {
+  background-color: var(--docsearch-searchbox-focus-background);
+}
+
+[class*='searchIcon'] {
+  color: var(--docsearch-text-color);
+}
+
+/* Chip ⌘K. Plugin sudah memusatkannya sendiri lewat `top: 0; height: 100%`
+   plus flex — JANGAN menambahkan `top: 50%` + `translateY(-50%)` di sini,
+   keduanya bertumpuk dan chip terlempar ke atas kotak (terbukti). Yang
+   disetel hanya jarak tepi dan celah antar chip. */
+[class*='searchHintContainer'] {
+  right: 8px;
+  gap: 0.25rem;
+}
+
+/* Disembunyikan saat kotaknya dipakai — kalau tidak, ia menimpa teks yang
+   sedang diketik. */
+
+.navbar__search-input:focus ~ [class*='searchHintContainer'] {
+  display: none;
+}
+
+kbd[class*='searchHint'] {
+  align-items: center;
+  background: rgb(var(--docs-color-secondary-800) / 1);
+  border: 1px solid rgb(var(--docs-color-text-400) / 0.3);
+  border-radius: var(--docs-radius-xs);
+  box-shadow: none;
+  color: var(--docsearch-muted-color);
+  display: flex;
+  font-family: var(--ifm-font-family-base);
+  font-size: 11px;
+  height: 18px;
+  justify-content: center;
+  padding: 0 0 1px;
+  width: 20px;
+}
+
+@media (max-width: 996px) {
+  .navbar__search-input {
+    width: 2.25rem;
+    padding-right: 0.5rem;
+  }
+
+  .navbar__search-input:focus {
+    width: 11rem;
+  }
+
+  [class*='searchHintContainer'] {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   4. Menu bertingkat di navbar (mega menu)
+   ========================================================================== */
+
+/**
+ * Dua wilayah, dua bentuk — diketok user 9 September 2026. Kiri: lima fitur
+ * utama sebagai petak kartu berikon, tiga kolom. Kanan: empat fitur tambahan
+ * sebagai daftar tegak berikon, dipisah garis vertikal. Bentuk yang berbeda
+ * itulah yang membawa informasi kelompoknya; tanpa itu sembilan butir jadi
+ * satu tumpukan rata dan hierarkinya hilang.
+ */
+
+.sd-mega {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background: var(--docs-color-background);
+}
+
+@media (min-width: 997px) {
+  /* 52rem = tiga kolom kartu selebar ±11rem + kolom kanan 15rem. Lebih
+     sempit dari itu dan "Kartu Ekonomi Desa" pecah jadi dua baris, yang
+     membuat tinggi kartu satu baris tidak lagi rata. */
+  .sd-mega {
+    flex-direction: row;
+    min-width: 52rem;
+  }
+
+  .sd-mega__side {
+    border-left: 1px solid var(--docs-color-border);
+    padding-left: 1.25rem;
+    width: 15rem;
+    flex: none;
+  }
+}
+
+.sd-mega__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.sd-mega__heading {
+  font-family: var(--ifm-heading-font-family);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  margin: 0;
+}
+
+.sd-mega__sub {
+  color: var(--docs-color-text-100);
+  display: block;
+  font-size: 11px;
+  margin-bottom: 0.75rem;
+}
+
+/* --- Kiri: petak kartu fitur utama -------------------------------------- */
+
+.sd-mega__grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
+}
+
+@media (max-width: 996px) {
+  .sd-mega__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* "Sedikit highlight": kartu berlatar abu satu tingkat di atas kanvas, garis
+   hairline, dan latarnya naik satu tingkat abu lagi saat disentuh — bukan lima
+   kotak berwarna yang saling berebut perhatian. Tidak ada oranye pada kartu:
+   latar dan garis tepi tetap netral, sama seperti `.homepage-card`. */
+.sd-mega__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.75rem;
+  border: 1px solid var(--docs-color-border);
+  border-radius: var(--docs-radius-inset);
+  background: rgb(var(--docs-color-secondary-900) / 1);
+  color: var(--docs-color-text);
+  text-decoration: none;
+  transition: background-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default),
+    border-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default);
+}
+
+.sd-mega__card:hover {
+  background: rgb(var(--docs-color-secondary-800) / 1);
+  color: var(--docs-color-text);
+  text-decoration: none;
+}
+
+.sd-mega__card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-bottom: 0.375rem;
+  border-radius: var(--docs-radius-xs);
+  background: var(--docs-color-background);
+  color: var(--docs-color-muted);
+}
+
+.sd-mega__card-icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.sd-mega__card-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.sd-mega__card-text {
+  color: var(--docs-color-text-100);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* --- Kanan: daftar tegak fitur tambahan --------------------------------- */
+
+.sd-mega__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  margin: 0 -0.5rem;
+  padding: 0.5rem;
+  border-radius: var(--docs-radius-control);
+  color: var(--docs-color-text);
+  text-decoration: none;
+  transition: background-color var(--ifm-transition-fast)
+    var(--ifm-transition-timing-default);
+}
+
+.sd-mega__row:hover {
+  background: rgb(var(--docs-color-secondary-800) / 1);
+  color: var(--docs-color-text);
+  text-decoration: none;
+}
+
+/* Ikon menu memakai `muted`, bukan aksen: DESIGN.md menaruh ikon di abu dan
+   menahan oranye untuk satu tombol primer. Oranye di sini juga hanya 2,73:1 di
+   atas kanvas, di bawah lantai 3:1 untuk glyph. */
+.sd-mega__row-icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--docs-color-muted);
+}
+
+.sd-mega__row-icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.sd-mega__row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  min-width: 0;
+}
+
+.sd-mega__row-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.sd-mega__row-text {
+  color: var(--docs-color-text-100);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* --- Slot tangkapan layar yang belum diisi ------------------------------- */
+
+/**
+ * Kotak bergaris putus untuk tangkapan layar yang belum ada. Sengaja BUKAN
+ * gambar placeholder: kotak yang jelas-jelas kosong tidak bisa disalahbaca
+ * sebagai tampilan dasbor yang sebenarnya. Dipakai `docs/fitur-aplikasi.mdx`.
+ */
+.sd-shot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 8rem;
+  margin: 1rem 0 1.25rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--docs-color-border);
+  border-radius: var(--docs-radius-inset);
+  background: rgb(var(--docs-color-secondary-900) / 1);
+  color: var(--docs-color-text-100);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* --- Menu Sumber Daya: baris berikon ------------------------------------ */
+
+/**
+ * Pola diambil dari menu Resources docs.dyte.io: ikon garis di kiri, label
+ * sejajar, satu baris per butir. Tanpa keterangan tambahan — butirnya nama
+ * tempat, bukan fitur yang perlu dijelaskan. Ikonnya `muted`, sama seperti
+ * ikon menu Fitur.
+ */
+
+.sd-res {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  min-width: 16rem;
+}
+
+.sd-res__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: var(--docs-radius-control);
+  color: var(--docs-color-text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color var(--ifm-transition-fast)
+    var(--ifm-transition-timing-default);
+}
+
+.sd-res__row:hover {
+  background: rgb(var(--docs-color-secondary-800) / 1);
+  color: var(--docs-color-text);
+  text-decoration: none;
+}
+
+.sd-res__icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--docs-color-muted);
+}
+
+.sd-res__icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Label paling panjang ("Repo GitHub — Dokumentasi") pecah dua baris
+   pada lebar bawaan `.dropdown__menu` dan merusak irama barisnya; panelnya
+   dibiarkan melebar mengikuti isi. */
+.sd-res__label {
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   5. Sidebar
+   ========================================================================== */
+
+aside.theme-doc-sidebar-container {
+  clip-path: inset(0 -140px);
+  position: relative;
+}
+
+nav.menu {
+  font-weight: 500;
+  padding-right: 0;
+  scrollbar-gutter: auto;
+}
+
+.menu__link {
+  border-radius: var(--docs-radius-xs) 0 0 var(--docs-radius-xs);
+  --ifm-menu-color-background-active: var(--docs-color-primary-tint);
+}
+
+.menu__list-item-collapsible:hover {
+  background: none;
+}
+
+/* Rule aksen dinaikkan dari 1px ke 2px bersama peralihan ke oranye: garis
+   1px #ff7300 di atas kanvas putih hanya 2,73:1 dan nyaris hilang. Keadaan
+   aktifnya tidak bergantung pada garis itu sendirian — teksnya `ink` dan
+   latarnya tint. */
+ul.menu__list > li > a.menu__link--active {
+  border-right: 2px solid var(--docs-color-primary);
+}
+
+/* Item tingkat satu di sidebar tetap abu seperti item lain; yang membedakan
+   posisinya, bukan warnanya. */
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible > .menu__link {
+  color: var(--ifm-menu-color);
+}
+
+/**
+ * Panah ciutkan kategori diperkecil dan ditipiskan di SELURUH sidebar —
+ * `docs/` maupun `docs-api/`.
+ *
+ * Infima menggambar panah itu lewat DUA selektor yang berbeda, dan keduanya
+ * harus disebut. `.menu__caret::before` dipakai bila label kategori punya
+ * tautan sendiri sehingga panahnya jadi tombol terpisah (sidebar
+ * `docs-api/`), sementara `.menu__link--sublist-caret::after` dipakai bila
+ * label kategorinya sendiri yang bisa diklik (sidebar `docs/`, terlihat di
+ * `/docs/intro`). Menyetel salah satu saja meninggalkan panah ukuran bawaan
+ * di separuh situs.
+ *
+ * Ukuran: bawaan Infima ikon 1,25rem di dalam padding 0,75rem kiri-kanan —
+ * kotaknya ±2,75rem dan panahnya jadi elemen paling mencolok di baris
+ * kategori. Di sini ikonnya 0,75rem dengan padding 0,375rem, jadi kotak
+ * tombolnya 24 px. `background-size` ikut turun dari 2rem ke 1,5rem supaya
+ * panahnya tidak terpotong saat kotaknya menyusut.
+ *
+ * Ketebalan dan panjang lengan: ikon bawaan
+ * (`--ifm-menu-link-sublist-icon`) adalah path Material BERISI, tebalnya
+ * setara stroke 2 pada viewBox 24 dan lengannya melebar 12 satuan. Diganti
+ * polyline ber-`stroke-width: 1,25` dengan lengan 8 satuan — lebih tipis dan
+ * lebih pendek daripada bawaan, tetapi tidak setipis stroke 1 yang sempat
+ * dicoba dan terbaca terlalu ringan di samping teks kategori.
+ *
+ * Glyph diganti di sini, bukan dengan menimpa token, karena token yang sama
+ * dipakai tombol "balik ke atas" dan tombol lipat TOC seluler; keduanya di
+ * luar permintaan.
+ *
+ * Arah panah pada SVG WAJIB menunjuk ke ATAS. Infima memutarnya 180° saat
+ * terbuka dan 90° saat terciut; panah yang digambar menunjuk ke bawah akan
+ * terbalik di kedua keadaan.
+ */
+.menu__caret {
+  padding: 0.25rem 0.375rem;
+}
+
+.menu__caret::before,
+.menu__link--sublist-caret::after {
+  width: 0.75rem;
+  min-width: 0.75rem;
+  height: 0.75rem;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 14 12 10 16 14"></polyline></svg>');
+  background-size: 1.5rem 1.5rem;
+}
+
+/* ==========================================================================
+   6. Isi halaman
+   ========================================================================== */
+
+/**
+ * Tautan dalam badan teks digarisbawahi TETAP, bukan hanya saat disentuh.
+ *
+ * Alasannya kontras, bukan selera: `link` = `primary` #ff7300 hanya 2,73:1 di
+ * atas kanvas, jadi tautan yang dibedakan warna saja praktis tidak terlihat
+ * oleh pembaca yang tidak memisahkan hue itu dari teks di sekitarnya. Garis
+ * bawah membawa perbedaannya tanpa menyentuh warna — jalur perbaikan yang
+ * disebut ADR-0014 dan diketok user 9 September 2026.
+ *
+ * Sebelumnya baris ini justru MEMATIKAN garis bawah (`--ifm-link-hover-
+ * decoration: none`), warisan tiruan docs.dyte.io yang aksennya biru dan
+ * kontrasnya aman. Jangan mengembalikannya selama oranye masih memegang peran
+ * tautan.
+ *
+ * Dikecualikan tiga kelas yang bukan tautan dalam kalimat dan sudah dibedakan
+ * bentuknya sendiri: `.hash-link` (jangkar ¶ di samping judul), `.card`
+ * (petak DocCard bawaan), dan `.homepage-card` (petak kartu di halaman indeks
+ * `/docs/intro` dan `/api/intro` — sepuluh dan tiga belas kartu, judul plus
+ * keterangannya akan ikut bergaris kalau tidak disebut di sini).
+ */
+.theme-doc-markdown a:not(.hash-link):not(.card):not(.homepage-card) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.theme-doc-markdown a:not(.hash-link):not(.card):not(.homepage-card):hover {
+  text-decoration-thickness: 2px;
+}
+
+.tabs {
+  border-bottom: 1px solid var(--docs-color-border);
+}
+
+.tabs__item {
+  --ifm-tabs-padding-vertical: 0.75rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Tab aktif memakai `link`, penanda perannya sebagai interaksi. */
+.tabs__item--active {
+  border-bottom: 2px solid var(--docs-color-link);
+}
+
+.theme-code-block {
+  border: 1px solid var(--docs-color-border);
+  border-radius: var(--docs-radius-inset);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.pagination-nav__link {
+  border-color: var(--docs-color-border);
+  border-radius: var(--docs-radius-inset);
+}
+
+/**
+ * Paginasi bawah halaman, diketok user 9 September 2026: subjudul "Sebelum"
+ * dan "Berikut" dibuang, dan panah ganda Infima (« ») diganti panah tunggal.
+ * Arah tetap dibawa oleh sisi panahnya — kiri untuk mundur, kanan untuk maju —
+ * jadi membuang subjudulnya tidak menghilangkan informasi.
+ */
+.pagination-nav__sublabel {
+  display: none;
+}
+
+.pagination-nav__link--prev .pagination-nav__label::before {
+  content: '‹ ';
+}
+
+.pagination-nav__link--next .pagination-nav__label::after {
+  content: ' ›';
+}
+
+.alert {
+  border-radius: var(--docs-radius-inset);
+  box-shadow: none;
+}
+
+table thead tr {
+  border-bottom: 1px solid var(--docs-color-border);
+}
+
+/* ==========================================================================
+   7. Petak kartu halaman indeks
+   ========================================================================== */
+
+.homepage-section {
+  margin-bottom: 3rem;
+}
+
+.homepage-section h3 {
+  font-weight: 600;
+}
+
+.section-description {
+  color: var(--docs-color-text-100);
+  margin: -0.5rem 0 1.25rem;
+}
+
+.section-content {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 996px) {
+  .section-content {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+.homepage-card {
+  align-items: center;
+  background-color: rgb(var(--docs-color-secondary-900) / 1);
+  border: 1px solid rgb(var(--docs-color-secondary-800) / 1);
+  border-radius: var(--docs-radius-card);
+  color: var(--docs-color-text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  overflow: hidden;
+  padding: 0.75rem;
+  position: relative;
+  text-decoration: none;
+  transition-property: background-color, color;
+  transition-duration: var(--ifm-transition-fast);
+  --ifm-link-hover-decoration: none;
+  --ifm-link-hover-color: inherit;
+}
+
+.homepage-card:hover {
+  background-color: rgb(var(--docs-color-secondary-800) / 1);
+  color: var(--docs-color-text);
+  text-decoration: none;
+}
+
+/* Petak DocCard bawaan (halaman kelompok endpoint memakainya) ikut aturan yang
+   sama: latar naik satu tingkat abu dan garis tepi tetap netral. Bawaan tema
+   justru menjadikan garis tepinya primary. Selektor tema dimuat SETELAH
+   berkas ini, jadi awalan `html` dipakai supaya menang lewat spesifisitas,
+   bukan `!important`. */
+html .theme-doc-card-container {
+  transition-property: background-color, border, box-shadow;
+}
+
+html .theme-doc-card-container:hover {
+  background-color: rgb(var(--docs-color-secondary-800) / 1);
+  border-color: var(--ifm-color-emphasis-200);
+}
+
+/* Kartu modul di halaman Pengenalan memuat DUA tautan, jadi kartunya sendiri
+   bukan tautan: `<div>`, bukan `<a>`. Sorot dan kursor tangan dimatikan supaya
+   kartunya tidak menjanjikan klik yang tidak ada — yang bisa diklik hanya
+   baris tautan di dalamnya. */
+.homepage-card--statis {
+  cursor: default;
+}
+
+.homepage-card--statis:hover {
+  background-color: rgb(var(--docs-color-secondary-900) / 1);
+}
+
+.homepage-card__tautan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  margin-top: 0.25rem;
+  font-size: 14px;
+}
+
+.homepage-card .icon {
+  height: 48px;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+  width: 48px;
+}
+
+.icon svg {
+  height: 100%;
+  width: auto;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-content .title {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.card-content .description {
+  color: var(--docs-color-text-100);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Chip: latar tint, teks `ink`, pil penuh. Teks oranye di atas tint oranye
+   tidak terbaca — chip DESIGN.md pun membawa teks `ink`, warnanya di latar. */
+.homepage-card .tag {
+  background-color: var(--docs-color-primary-tint);
+  border-radius: var(--docs-radius-full);
+  color: var(--docs-color-ink);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+}
+
+/* Di mode gelap tint-nya duduk di atas kanvas gelap, jadi `ink` hilang; yang
+   terbaca justru oranye terangnya. */
+html[data-theme='dark'] .homepage-card .tag {
+  color: var(--ifm-color-primary);
+}
+
+/* ==========================================================================
+   8. Footer
+   ========================================================================== */
+
+/**
+ * Struktur: blok identitas di kiri, dua kolom tautan di kanan (Quick links ·
+ * Sumber Daya). Diketok user 9 September 2026; kolom ketiga (Legal) dibuang
+ * user 10 September 2026.
+ *
+ * Infima menyusun footer sebagai `.row` berisi `.col` yang membagi lebar rata.
+ * Pembagian rata itu yang dibatalkan di sini: barisnya jadi flex dengan celah
+ * tetap, kolom identitas menyerap sisa ruang, dan kedua kolom tautan menyusut
+ * mengikuti isinya sehingga menggantung di kanan seperti rujukannya.
+ */
+.footer {
+  --ifm-footer-padding-horizontal: 0;
+  border-top: 1px solid var(--docs-color-border);
+  font-size: 14px;
+  /* Jarak ke isi halaman di atasnya dilebarkan dari 2rem bawaan Infima;
+     bagian bawahnya tetap 2rem. */
+  padding-top: 4rem;
+}
+
+.footer__link-separator {
+  display: none;
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem 4rem;
+  margin: 0;
+}
+
+.footer__col {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+/* Kolom pertama tidak punya judul — isinya blok identitas. Docusaurus tetap
+   menggambar `.footer__title` kosong untuk kolom tanpa `title`; dibiarkan, ia
+   mendorong logo turun satu baris dari ketiga judul kolom di kanannya. */
+.footer__col:first-child {
+  flex: 1 1 18rem;
+  min-width: 15rem;
+}
+
+.footer__col:first-child .footer__title {
+  display: none;
+}
+
+.footer__brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--docs-color-text);
+  font-family: var(--ifm-heading-font-family);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  text-decoration: none;
+}
+
+.footer__brand-text {
+  margin: 0.75rem 0 0;
+  max-width: 22rem;
+  color: rgb(var(--docs-color-text-400) / 1);
+  line-height: 1.6;
+}
+
+/* Tombol SEKUNDER: garis tepi, bukan isian oranye. Tombol primer satu-satunya
+   ada di navbar. Bentuk pilnya menyalin `.navbar-cta` supaya keduanya terbaca
+   sekeluarga meski bobotnya berbeda. */
+.footer__brand-cta {
+  display: inline-flex;
+  align-items: center;
+  height: 2.25rem;
+  margin-top: 1.5rem;
+  padding: 0 1.125rem;
+  border: 1px solid var(--docs-color-border);
+  border-radius: var(--docs-radius-full);
+  color: var(--docs-color-text);
+  font-weight: 500;
+  line-height: 1;
+  transition: border-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default),
+    color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.footer__brand-cta:hover {
+  border-color: var(--docs-color-primary);
+  color: var(--docs-color-primary);
+  text-decoration: none;
+}
+
+.footer__link-item {
+  display: block;
+  width: max-content;
+}
+
+/* Ikon tautan keluar bawaan Docusaurus di kolom Sumber Daya. Kelasnya
+   ber-hash (`iconExternalLink_...`), jadi yang dipegang elemennya: tidak ada
+   svg lain di dalam tautan footer. */
+.footer__link-item svg {
+  display: none;
+}
+
+.footer__link-item:hover {
+  text-decoration: none;
+}
+
+.footer__title {
+  color: var(--docs-color-text);
+  font-family: var(--ifm-font-family-base);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.footer__item {
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 0;
+}
+
+.footer__copyright {
+  color: rgb(var(--docs-color-text-400) / 1);
+  font-size: 14px;
+  margin-top: 32px;
+}
+
+/* ==========================================================================
+   9. Aksesibilitas
+   ========================================================================== */
+
+/* Cincin fokus 2px pada offset 2px — geometrinya persis aturan DESIGN.md,
+   warnanya `focus` (= `primary` #ff7300). Cincin itu 2,73:1 di atas kanvas,
+   di bawah lantai 3:1 non-teks; utang yang diterima terbuka di ADR-0014. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--docs-color-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================================================
+   10. Rujukan API (`/api/*`)
+   ========================================================================== */
+
+/**
+ * `docusaurus-theme-openapi-docs` datang dengan palet Infima bawaan (hijau,
+ * ungu, teal) dan TIDAK memberi gaya apa pun untuk badge metode di sidebar —
+ * kelas `api-method get` hanya ditempelkan ke item menu, sisanya tugas situs.
+ * Bagian ini melakukan dua hal: memetakan token tema ke tangga warna situs ini
+ * (bagian 1), dan menggambar badge metodenya.
+ */
+
+:root {
+  /* Satu-satunya warna baru di berkas ini: enam warna metode HTTP. Keenamnya
+     DATA, bukan dekorasi — sama seperti warna status di DESIGN.md — jadi
+     peralihan aksen ke oranye tidak menyentuhnya. Biru GET dulu dipilih karena
+     sama dengan primary; sejak primary menjadi oranye ia berdiri sendiri, dan
+     itu memang yang diinginkan: 25 badge oranye di sidebar akan menghabiskan
+     anggaran voltase yang dijaga tombol navbar. */
+  --docs-color-metode-get: #2160fd;
+  --docs-color-metode-post: #15803d;
+  --docs-color-metode-put: #b45309;
+  --docs-color-metode-patch: #7c3aed;
+  --docs-color-metode-delete: #dc2626;
+  --docs-color-metode-lain: #646464;
+
+  --openapi-card-background-color: var(--docs-color-background-100);
+  --openapi-input-background: var(--docs-color-background-100);
+  --openapi-tree-line-color: var(--docs-color-border);
+  --openapi-code-tab-border-color: var(--docs-color-border);
+}
+
+html[data-theme='dark'] {
+  --docs-color-metode-get: #4d8bff;
+  --docs-color-metode-post: #34d399;
+  --docs-color-metode-put: #fbbf24;
+  --docs-color-metode-patch: #a78bfa;
+  --docs-color-metode-delete: #f87171;
+  --docs-color-metode-lain: #b4b4b4;
+}
+
+/* --- Badge metode di sidebar -------------------------------------------- */
+
+.api-method > .menu__link {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.api-method > .menu__link::before {
+  content: '';
+  flex-shrink: 0;
+  width: 2.75rem;
+  margin-right: 0.625rem;
+  padding: 0.0625rem 0;
+  border-radius: var(--docs-radius-xs);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+  background-color: var(--docs-color-metode-lain);
+}
+
+.api-method.get > .menu__link::before {
+  content: 'get';
+  background-color: var(--docs-color-metode-get);
+}
+
+.api-method.post > .menu__link::before {
+  content: 'post';
+  background-color: var(--docs-color-metode-post);
+}
+
+.api-method.put > .menu__link::before {
+  content: 'put';
+  background-color: var(--docs-color-metode-put);
+}
+
+.api-method.patch > .menu__link::before {
+  content: 'patch';
+  background-color: var(--docs-color-metode-patch);
+}
+
+.api-method.delete > .menu__link::before {
+  content: 'del';
+  background-color: var(--docs-color-metode-delete);
+}
+
+.api-method.head > .menu__link::before {
+  content: 'head';
+}
+
+.api-method.options > .menu__link::before {
+  content: 'opts';
+}
+
+/**
+ * Di mode gelap warna metode naik satu langkah terang, jadi teks putih di
+ * atasnya tinggal 1,6–3,0:1. Teks badge dibalik menjadi gelap; di mode terang
+ * ia tetap putih (5,0–5,9:1 pada keenam warna).
+ */
+html[data-theme='dark'] .api-method > .menu__link::before {
+  color: #161616;
+}
+
+/* --- Warna badge metode di kepala halaman ------------------------------- */
+
+/**
+ * Tema memetakan metode ke palet Infima — `badge--primary` untuk GET,
+ * `--success` POST, `--info` PUT, `--warning` PATCH, `--danger` DELETE — jadi
+ * begitu primary situs menjadi oranye, badge GET di kepala halaman ikut
+ * oranye sementara badge GET di sidebar tetap biru. Keenamnya dikembalikan ke
+ * tangga `--docs-color-metode-*`: satu metode, satu warna di seluruh situs.
+ */
+.openapi__method-endpoint .badge--primary {
+  --ifm-badge-background-color: var(--docs-color-metode-get);
+}
+
+.openapi__method-endpoint .badge--success {
+  --ifm-badge-background-color: var(--docs-color-metode-post);
+}
+
+.openapi__method-endpoint .badge--info {
+  --ifm-badge-background-color: var(--docs-color-metode-put);
+}
+
+.openapi__method-endpoint .badge--warning {
+  --ifm-badge-background-color: var(--docs-color-metode-patch);
+}
+
+.openapi__method-endpoint .badge--danger {
+  --ifm-badge-background-color: var(--docs-color-metode-delete);
+}
+
+.openapi__method-endpoint .badge--secondary {
+  --ifm-badge-background-color: var(--docs-color-metode-lain);
+}
+
+.openapi__method-endpoint .badge {
+  --ifm-badge-color: #fff;
+}
+
+html[data-theme='dark'] .openapi__method-endpoint .badge {
+  --ifm-badge-color: #161616;
+}
+
+/* --- Aksen tema disamakan dengan `link` --------------------------------- */
+
+/**
+ * Tema memakai `--ifm-color-primary` untuk sejumlah keadaan interaksi di
+ * halaman rujukan. Nilainya kebetulan sama dengan `link` sekarang, tetapi
+ * keempat kelompok di bawah tetap ditulis memakai token `link` supaya perannya
+ * terbaca — dan supaya semuanya ikut berubah bila utang kontras itu dibayar.
+ *
+ * Selektor tema berspesifisitas 0,2,0–0,3,0 dan dimuat setelah berkas ini;
+ * awalan `html` menambah satu elemen supaya override ini menang tanpa
+ * `!important`.
+ */
+html .openapi-params__list-item:hover .openapi-schema__property,
+html .openapi-schema__container:hover .openapi-schema__property {
+  color: var(--docs-color-link);
+}
+
+html .openapi-tabs__discriminator-item.active,
+html .openapi-tabs__schema-item.active {
+  border-color: var(--docs-color-link);
+  color: var(--docs-color-link);
+}
+
+html .openapi-schema-expansion__trigger:focus-visible,
+html .openapi-schema-expansion__option:focus-visible {
+  outline-color: var(--docs-color-focus);
+}
+
+html
+  .openapi-explorer__code-block-word-wrap-btn--enabled
+  .openapi-explorer__code-block-word-wrap-btn-icon {
+  color: var(--docs-color-link);
+}
+
+/* Satu-satunya isian oranye di halaman rujukan; teksnya `ink`, bukan putih. */
+html .openapi-schema-expansion__option--active {
+  color: var(--docs-color-ink);
+}
+
+/* --- Baris metode + path di kepala halaman ------------------------------ */
+
+.openapi__method-endpoint {
+  margin-bottom: 1.25rem;
+  padding: 0.625rem 0.875rem;
+  border-color: var(--docs-color-border);
+  border-radius: var(--docs-radius-inset);
+  background-color: var(--docs-color-background-100);
+}
+
+.openapi__method-endpoint-path {
+  font-size: 0.8125rem;
+  word-break: break-all;
+}
+
+/* --- Dua kolom ---------------------------------------------------------- */
+
+.openapi-left-panel__container {
+  padding-right: 1.5rem;
+}
+
+.openapi-right-panel__container {
+  align-self: flex-start;
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 1rem);
+}
+
+@media (max-width: 996px) {
+  .openapi-left-panel__container {
+    padding-right: 0;
+  }
+
+  .openapi-right-panel__container {
+    position: static;
+  }
+}
+
+/* --- Panel kode dan tab ------------------------------------------------- */
+
+.openapi-tabs__mime-item,
+.openapi-tabs__response-code-item,
+.openapi-tabs__operation-item {
+  border-radius: var(--docs-radius-xs);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8125rem;
+}
+
+.openapi-explorer__code-block-code-line {
+  font-size: 0.8125rem;
+}
+
+/**
+ * Tab bahasa aktif diberi warna khas bahasanya oleh tema — cURL mewarisi warna
+ * bash, yang dipetakan ke `--ifm-color-danger`, jadi tab terpilih tampak
+ * seperti kotak galat merah. Keempat bahasa yang situs ini tampilkan
+ * (`languageTabs` di docusaurus.config.js) dikembalikan ke aksen situs.
+ */
+/* Selektor tema untuk tab aktif berspesifisitas 0,2,0 dan dimuat setelah
+   berkas ini; wadahnya ditambahkan supaya override ini menang tanpa
+   `!important`. */
+.openapi-tabs__code-list-container .openapi-tabs__code-item--curl.active,
+.openapi-tabs__code-list-container .openapi-tabs__code-item--javascript.active,
+.openapi-tabs__code-list-container .openapi-tabs__code-item--python.active,
+.openapi-tabs__code-list-container .openapi-tabs__code-item--http.active {
+  border-color: var(--docs-color-link);
+  box-shadow: 0 0 0 3px var(--docs-color-link-tint);
+}
+
+/* Skema parameter: garis pohon dan nama kolom disamakan dengan tabel situs. */
+.openapi-schema__property {
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.openapi-schema__divider {
+  border-color: var(--docs-color-border);
+}

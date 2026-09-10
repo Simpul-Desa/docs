@@ -1,0 +1,156 @@
+---
+id: intro
+title: ⭐️ Pengenalan SIMPUL DESA
+sidebar_label: ⭐️ Pengenalan SIMPUL DESA
+sidebar_position: 1
+slug: /intro
+description: Apa itu SIMPUL DESA, masalah yang diselesaikannya, dan keempat modul yang membangunnya.
+---
+
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+
+{/* Kartu modul memuat DUA tautan — repo dan alamat yang berjalan — jadi
+    kartunya `<div>`, bukan `<a>`: HTML tidak boleh menyarangkan tautan di
+    dalam tautan. Kelas `.homepage-card--statis` yang mematikan sorot dan
+    kursor tangannya. Ketiga alamat berjalan dibaca dari `customFields` di
+    `docusaurus.config.js`, yang isinya env var `SIMPUL_URL_*`. */}
+
+export const MODUL = [
+  {
+    nama: 'Portal',
+    repo: 'portal',
+    keterangan:
+      'Dasbor web pengguna. "Portal" adalah namanya di sisi pengguna; sebutan "aplikasi web" dan "frontend" tidak dipakai.',
+    kunci: 'urlPortal',
+    labelBerjalan: 'Buka Portal',
+  },
+  {
+    nama: 'API',
+    repo: 'api',
+    keterangan:
+      'Menyajikan keluaran model sebagai endpoint. Kontraknya ada di rujukan REST API di situs ini.',
+    kunci: 'urlApi',
+    labelBerjalan: 'Buka API',
+  },
+  {
+    nama: 'Data',
+    repo: 'data',
+    keterangan:
+      'Panen data dan pemodelan. Produsen semua artefak yang dibaca API dan ditampilkan Portal.',
+    // Tanpa alamat berjalan: keluarannya artefak beku, bukan layanan.
+    kunci: null,
+    labelBerjalan: null,
+  },
+  {
+    nama: 'Dokumentasi',
+    repo: 'docs',
+    keterangan: 'Situs ini: panduan produk dan rujukan REST API.',
+    kunci: 'urlDokumentasi',
+    labelBerjalan: 'Buka situs',
+  },
+];
+
+export function IkonGithub() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M12 2C6.475 2 2 6.475 2 12a9.994 9.994 0 0 0 6.838 9.488c.5.087.687-.213.687-.476 0-.237-.013-1.024-.013-1.862-2.512.463-3.075-.612-3.25-1.175-.1-.25-.525-1.025-.9-1.238-.312-.162-.75-.562-.012-.575.7-.012 1.2.65 1.362.925.788 1.325 2.05.938 2.55.7.075-.563.313-.938.575-1.15-2.225-.25-3.65-1.125-3.65-3.213 0-1.362.487-2.437 1.275-3.275-.088-.213-.238-1.063.312-2.188 0 0 1.087-.35 3.512 1.362.7-.187 1.462-.287 2.238-.287.775 0 1.537.1 2.237.287 2.426-1.712 3.513-1.362 3.513-1.362.55 1.125.4 1.975.238 2.238.787.838 1.275 1.9 1.275 3.275 0 2.087-1.425 2.962-3.65 3.212.412.35.687.938.687 1.85 0 1.075-.012 1.988-.012 2.263 0 .262.187.575.687.475A9.997 9.997 0 0 0 22 12c0-5.525-4.475-10-10-10Z" />
+    </svg>
+  );
+}
+
+export function KartuModul() {
+  const {siteConfig} = useDocusaurusContext();
+  return (
+    <div className="section-content">
+      {MODUL.map((m) => (
+        <div className="homepage-card homepage-card--statis" key={m.repo}>
+          <div className="icon">
+            <IkonGithub />
+          </div>
+          <div className="card-content">
+            <div className="title">{m.nama}</div>
+            <div className="description">{m.keterangan}</div>
+            <div className="homepage-card__tautan">
+              <a href={`https://github.com/Simpul-Desa/${m.repo}`}>GitHub</a>
+              {m.kunci ? (
+                <a href={siteConfig.customFields[m.kunci]}>{m.labelBerjalan}</a>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+# Pengenalan SIMPUL DESA
+
+<b>SIMPUL DESA (Sistem Intelijen Potensi dan Kesiapan Ekonomi Desa)</b> menghitung
+profil potensi dan kesiapan ekonomi untuk setiap desa dari data yang sudah
+dimiliki negara dan dari turunan geospasial. Desa tidak mengisi apa pun.
+Hasilnya menjawab satu pertanyaan: aktor mana yang harus bergerak ke desa
+mana — pemerintah, swasta, atau perlindungan sosial.
+
+Rilis ini berdiri di atas lima provinsi percontohan: Lampung, Jawa Tengah,
+Nusa Tenggara Barat, Kalimantan Selatan, dan Sulawesi Selatan. Di dalamnya
+97 kabupaten dan kota serta 17.467 wilayah desa dan kelurahan, seluruhnya
+terhitung tanpa pengecualian. Angkanya dibekukan 5 September 2026; sumbernya
+disebut satu per satu di [Sumber Data](/docs/sumber-data).
+
+Sembilan fitur yang dirakit di atas basis itu ada di [Fitur](/docs/fitur).
+
+## Masalah apa yang diselesaikan
+
+Seluruh pintu masuk program pemberdayaan desa di Indonesia bersifat *opt-in*:
+desa harus mendaftar, mengisi, atau mengajukan diri. Akibatnya negara hanya
+mengenal potensi ekonomi dari sebagian kecil desa, yaitu desa yang perangkatnya
+cakap, sinyalnya bagus, dan kepala desanya aktif. Desa yang paling membutuhkan
+justru paling tidak terlihat.
+
+Instrumen yang datanya kami panen memang tidak dirancang untuk menjawab itu.
+Indeks Desa Membangun mengukur status sebuah desa, bukan usaha apa yang cocok
+di sana, dan tidak menilai kelurahan sama sekali. Registri program seperti
+Jadesta, Sisparnas, dan registri Kementerian Kelautan dan Perikanan memuat
+desa yang sudah terdaftar, jadi keikutsertaan terbaca sebagai keberhasilan
+padahal yang terbaca adalah kesediaan mendaftar. Semuanya berhenti di satu
+desa: tidak ada yang menghitung apa yang masuk akal dikerjakan beberapa desa
+bersama-sama.
+
+Tabel di bawah kesimpulannya. Kolom tengah membandingkan dengan instrumen yang
+sumbernya benar-benar kami panen, bukan dengan survei pasar; daftar sumbernya
+di [Sumber Data](/docs/sumber-data).
+
+| Yang dibutuhkan | Instrumen yang ada di sumber kami | SIMPUL DESA |
+| --- | --- | --- |
+| Cakupan tanpa pendaftaran | Registri hanya memuat desa yang mendaftar; Indeks Desa Membangun tidak menilai kelurahan | 17.467 desa dan kelurahan, seluruhnya, tanpa satu pun formulir |
+| Yang diukur | Status desa: IKS, IKE, IKL, maju atau tertinggal | Kelayakan usaha: Skor Potensi dan Skor Kesiapan, disusun dari delapan tema sub-skor |
+| Siapa yang harus bergerak lebih dulu | Belum ada pembandingnya | Peta Peran menaruh tiap desa di satu dari empat zona penanganan: Pemerintah, Mitra, Poros, Bantuan |
+| Aset bersama beberapa desa | Belum ada pembandingnya | Jalur Ekonomi menempatkan aset di lokasi optimal, empat varian, 23.318 unit hasil, waktu tempuh maksimum sebagai kendala keras |
+| Pembanding desa yang sudah berhasil | Belum ada pembandingnya | Desa Kembar mencari profil paling mirip dengan persen kemiripan terukur dalam kabupaten |
+| Potensi yang terbaca tanpa dilaporkan | Belum ada pembandingnya | Citra Potensi Desa membaca sentra komoditas dari citra satelit, 57 sel lolos uji tertahan antar kabupaten |
+| Mutu tiap angka ikut terbaca | Satu angka tanpa label asal | Sumber Potensi Dominan menempel di tiap desa, 11.458 di antaranya dari citra; empat kode nilai kosong; bendera Belum Terpetakan dan Keyakinan rendah |
+| Keikutsertaan program publik | Tersebar di registri masing-masing | Fakta Program menyatukannya per desa, dengan bendera Belum tersentuh bagi desa yang tidak muncul di registri mana pun |
+| Bentuk yang langsung bisa dipakai | Laporan agregat | Kartu Ekonomi Desa 11 seksi per desa, Laporan Desa berbentuk PDF, Berita Desa per desa, dan Asisten Desa yang menjawab hanya dari data ini |
+
+Empat baris yang kolom tengahnya kosong adalah kemampuan yang tidak dimiliki
+satu pun instrumen di antara sumber yang kami panen. Keempatnya berdiri di atas
+hitungan yang harus dijalankan untuk seluruh wilayah sekaligus: matriks waktu
+tempuh 97 kabupaten, ruang fitur seluruh 17.467 wilayah, dan model citra yang
+harus lulus uji tertahan lebih dulu sebelum angkanya boleh dipakai. Itu yang
+membuat keempatnya sulit ditiru sepotong-sepotong.
+
+Semua isinya dipanen dari statistik resmi, citra satelit, peta terbuka, dan
+registri program publik. Tidak ada satu pun kuesioner untuk perangkat desa,
+dan tidak ada data berbayar.
+
+## Empat modul
+
+SIMPUL DESA dibangun sebagai empat sistem terpisah, masing-masing dengan repo
+sendiri di GitHub. Tiga di antaranya juga punya alamat yang berjalan; Data
+tidak, karena keluarannya artefak beku, bukan layanan.
+
+<div className="homepage-section">
+
+<KartuModul />
+
+</div>

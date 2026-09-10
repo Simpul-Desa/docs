@@ -1,0 +1,1 @@
+{"parameters":[{"name":"iddesa","in":"path","required":true,"schema":{"type":"string","pattern":"^\\d{10}$","title":"Iddesa"}},{"name":"k","in":"query","required":false,"schema":{"anyOf":[{"type":"integer","minimum":1},{"type":"null"}],"title":"K"}}]}

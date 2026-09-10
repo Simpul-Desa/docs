@@ -1,0 +1,1 @@
+{"parameters":[{"name":"varian","in":"path","required":true,"schema":{"type":"string","enum":["komoditas","gudang-kopdes","cold-storage","wisata"],"title":"VarianJalurEkonomi","description":"Varian jalur ekonomi yang didukung sebagai parameter path `varian`."}},{"name":"id_jalur","in":"path","required":true,"schema":{"type":"string","title":"Id Jalur"}}]}

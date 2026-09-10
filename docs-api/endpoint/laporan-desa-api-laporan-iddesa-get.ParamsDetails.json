@@ -1,0 +1,1 @@
+{"parameters":[{"name":"iddesa","in":"path","required":true,"schema":{"type":"string","pattern":"^\\d{10}$","description":"Kode desa 10 digit","title":"Iddesa"},"description":"Kode desa 10 digit"}]}

@@ -1,0 +1,74 @@
+---
+id: ringkasan-peta-peran-api-model-peta-peran-ringkasan-get
+title: "Ringkasan Peta Peran"
+description: "Ringkasan Peta Peran per kabupaten: satu objek (`kab=`) atau daftar semua."
+sidebar_label: "Ringkasan Peta Peran"
+hide_title: true
+hide_table_of_contents: true
+api: eJztVllvGzcQ/ivEog8tIEuK4QCFij4osBG7ziFUMorCcqVZLS3RyyUZHnFUQf+9M9xDa8mRk6KP9YvM5RzfDOf4NomHpUsGt8mIe2AjbkEld50k425hhfFCq2SQ/C7UMgcHiu2kmOGW5ZAGA56rAXPgA9PpA8/Zj3P8/uv8JwYeAsvg3oNljhcBulM1VRNQBhjJzDu7WxlsWO0MMo+eDMuEgaVQ4ARKKlZwtRROTNW8wOuu1x7kvMvO8TPeViZbSDKR8yIFKXK89qVf0kSdKDxVa1BL5kUGpbACib8P8AgpO+ufsfkfV++Gfw4vZ5Or8+H1bHg+nHeTTqIxeKDkXGWYHlunZ2bQ9ozu1AyMmBU647L9cSe55B7tOL4IVvg1PsAmuZxMRm84WG7xeLfFVzBgAeFy66KAwgO6Q+CoKuhhPgVu13iw/FMQliOYe5COo+HFiheQDDYJqPXH+6ju14bUnScUCVn3aJrM/DWdZpuz7Q/JttOIqSBlsj0ohWsMqfVKZ5itpaBQvPCS9K4R3fYbtchdFdQK5HcEVWEUyvMlpquTFPBFFKFIBq/6+IdnoarzPpQPutCWoTsosNTp9h6C9FGyjuESwRzE8FSxBT3FMnf/CfjXx6Hf5IEa7xnsr/s78G8inAP4e8r0spY7o5XjjlCd9vv0872NjygWGiNRPhabMVIsYmf0HhyZ2LQCN5b6xovSoQt55bpKSKq15DGuOpRxKUKxYFBRtLo5pzN+X2I4/mmZP/WSY+W1fDTF35Qr3aMhwzHKY4KjKLBF0UqCJszCP3nq29Jdbe1up/024jxsLzRH8+hYBHHIPVs3tfFJlEBTqxcEq7ouC/aYYFNDzQR6ihCyTNAjgxy1sHob+H56npsoTUob4y+ltcxBp5oSJf6Wofc8VsNBcl+wWlVgy9CwMFKb26Fa3yEm0j87PT1siwZ4ueFSyMq2wNb1QJsm7hOppXbsM26fDPdXjBGVVppWRjn+sYNWeOjhrujFXdGjXXESd0Wv2RVxT9jP9RYIVtK89N64Qa/nRGGCPEF8cIJmTrB2srAgnN1guhaEfIR1F/sy2R8II5LMCVinbRRtSr0AudLOD37GYXqoiNuWtmrcuVLnUL5qvcvG1O9l6bY3WvM45CSp5mFs+1KA0iPUvW53+fjq/ejmHTu/GA/ZcHR1gGRcswb8BRpNMYmsrZaJFBbAJH8ETzYYTtcB+xtLFx9MxRjigxHXwBx2cLJZpA8810oXosMeAF3sjiTDIqewHbYQ3qIZjdPP4V3KMXy0IMFoBNOJjIUGF3sUEtawIo+Y8qCWSDu6bMyj22oKs9/GHz8QXLzOg2MQS5FFfuJwZCOvieXKCggmKLYEnH1ddqEyo7HsSkegNC4P5E42DTlUjMdr5DW/EMXiqViha6RRBeQgWJn6UqBEK2JvCRZLkAFiJbpDtVdmvN991e3HwYDlUZQTs1qDz+2K/Rfb7JbF/6Ryn1RW/eH5F98zEgSRjLIxN9WkuMUFK4gwUJnHNVNPC5pszbzAZqTuJfnNJgXHb6zcbulzyU5oimTCQSpb/OSr7/R1xvcc3pyvG4qKoy+QRJww3+5wn6Ed8VPug3/p54BOHXFUc7ydqzs6WEG+Il3HnHPIInffVErDxYIb39I6oEdkpdkJby8mKAuBXnpHisrp2Kn/aRF5XMct2/jSUWJCzYyvXSOPzR2X4fYfSwzJZw==
+sidebar_class_name: "get api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Ringkasan Peta Peran"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/api/model/peta-peran/ringkasan"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Ringkasan Peta Peran per kabupaten: satu objek (`kab=`) atau daftar semua.
+
+Tanpa `kab`, daftar seluruh kabupaten tetap dipaginasi dan mengisi
+`meta.total`. Dengan `kab`, satu objek dikembalikan tanpa `meta`. `kab`
+yang tidak dikenal dijawab 404 `WILAYAH_TIDAK_ADA`.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./ringkasan-peta-peran-api-model-peta-peran-ringkasan-get.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./ringkasan-peta-peran-api-model-peta-peran-ringkasan-get.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./ringkasan-peta-peran-api-model-peta-peran-ringkasan-get.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

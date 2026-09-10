@@ -1,0 +1,31 @@
+---
+title: Pengenalan Peta Peran
+sidebar_position: 1
+---
+
+# Pengenalan Peta Peran
+
+Peta Peran menempatkan tiap desa ke satu dari empat zona penanganan, sehingga
+jelas siapa yang harus bergerak lebih dulu: pemerintah, mitra swasta, atau
+perlindungan sosial.
+
+Isi halaman ini masih kerangka. Definisi sah tiap istilah ada di
+[Glosarium](/docs/glosarium); angka dibaca dari keluaran data.
+
+## Dua sumbu
+
+Keluarannya matriks dua sumbu dengan empat kuadran. Nomor kuadran berjalan
+searah jarum jam dari kiri-atas.
+
+| Kuadran | Zona | Potensi | Kesiapan |
+| --- | --- | --- | --- |
+| 1 | Zona Pemerintah | tinggi | rendah |
+| 2 | Zona Mitra | tinggi | tinggi |
+| 3 | Zona Poros | rendah | tinggi |
+| 4 | Zona Bantuan | rendah | rendah |
+
+## Membaca zona sebuah desa
+
+```bash
+curl -s "https://api.simpul-desa.example/v1/peta-peran?iddesa=3204120001"
+```

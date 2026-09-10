@@ -1,0 +1,3444 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SIMPUL DESA API",
+    "description": "Seluruh keluaran model SIMPUL DESA dibaca lewat API ini: zona penanganan tiap desa, kartu ekonomi, jalur ekonomi, desa kembar, citra potensi, berita, laporan, dan data wilayah pendukungnya. Setiap respons JSON dibungkus amplop yang sama, sukses maupun gagal. Endpoint data anonim terbuka tanpa token; selebihnya memakai bearer token dan dibatasi peran akun.",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://simpul-desa-api-production.up.railway.app",
+      "description": "Produksi"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "Pengembangan lokal"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Kesehatan"
+        ],
+        "summary": "Kesehatan",
+        "description": "Kembalikan status hidup API beserta versi dan tanggal data panen.\n\nSelalu membalas 200, termasuk ketika salinan data belum termuat di\nserver. Dalam kondisi itu `versi_data` dan `tanggal_data` bernilai\n`null`, jadi keduanya sekaligus penanda kesiapan data.\n\n`HEAD /health` juga dilayani, dengan badan respons dipotong.",
+        "operationId": "kesehatan_health_get",
+        "responses": {
+          "200": {
+            "description": "Status hidup API beserta versi dan tanggal data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_DataKesehatan_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wilayah/provinsi": {
+      "get": {
+        "tags": [
+          "Wilayah"
+        ],
+        "summary": "Daftar Provinsi",
+        "description": "Daftar seluruh provinsi yang dikenal API, berpaginasi.",
+        "operationId": "daftar_provinsi_api_wilayah_provinsi_get",
+        "parameters": [
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar provinsi berpaginasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_Provinsi__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/wilayah/ringkasan": {
+      "get": {
+        "tags": [
+          "Wilayah"
+        ],
+        "summary": "Ringkasan Wilayah",
+        "description": "Ringkasan jumlah provinsi, kabupaten, dan desa secara nasional.\n\nHasilnya satu objek, bukan daftar berpaginasi, sehingga jawabannya\ntidak menyertakan bagian meta.",
+        "operationId": "ringkasan_wilayah_api_wilayah_ringkasan_get",
+        "responses": {
+          "200": {
+            "description": "Cacah provinsi, kabupaten, dan desa secara nasional",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_RingkasanWilayah_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wilayah/pusat": {
+      "get": {
+        "tags": [
+          "Wilayah"
+        ],
+        "summary": "Pusat Wilayah",
+        "description": "Titik pusat peta untuk setiap provinsi dan kabupaten.\n\nDipakai untuk memposisikan peta bertingkat dari tampilan nasional ke\nprovinsi lalu ke kabupaten. Hasilnya satu objek, bukan daftar\nberpaginasi, sehingga jawabannya tidak menyertakan bagian meta.",
+        "operationId": "pusat_wilayah_api_wilayah_pusat_get",
+        "responses": {
+          "200": {
+            "description": "Titik pusat tiap provinsi dan kabupaten",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_PusatWilayah_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wilayah/kabupaten": {
+      "get": {
+        "tags": [
+          "Wilayah"
+        ],
+        "summary": "Daftar Kabupaten",
+        "description": "Daftar kabupaten, dengan filter opsional `prov` (kode provinsi 2 digit).\n\n`prov` yang formatnya sah tapi kodenya tidak dikenal menghasilkan\ngalat 404 dengan kode `WILAYAH_TIDAK_ADA`.",
+        "operationId": "daftar_kabupaten_api_wilayah_kabupaten_get",
+        "parameters": [
+          {
+            "name": "prov",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Prov"
+            }
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar kabupaten berpaginasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_Kabupaten__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/wilayah/desa": {
+      "get": {
+        "tags": [
+          "Wilayah"
+        ],
+        "summary": "Daftar Desa",
+        "description": "Daftar desa dalam satu kabupaten. Parameter `kab` wajib diisi\n(kode kabupaten 4 digit).\n\n`kab` yang formatnya sah tapi kodenya tidak dikenal menghasilkan\ngalat 404 dengan kode `WILAYAH_TIDAK_ADA`.",
+        "operationId": "daftar_desa_api_wilayah_desa_get",
+        "parameters": [
+          {
+            "name": "kab",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}$",
+              "title": "Kab"
+            }
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar desa satu kabupaten, berpaginasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_DesaRingkas__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/desa/cari": {
+      "get": {
+        "tags": [
+          "Pencarian Desa"
+        ],
+        "summary": "Cari Desa",
+        "description": "Cari desa lewat substring nama (`q`, tak peka kapital, minimal 2 huruf).\n\nPeringkat: baris yang `nmdesa`-nya berawalan `q` ditempatkan di atas\nbaris yang cuma mengandung `q`, seri diurutkan menaik lewat `iddesa`.\nFilter `kab` opsional menyaring hasil ke satu kabupaten. Baris yang\ndikembalikan adalah baris indeks kartu ekonomi utuh (sudah bawa\n`idkab`+`nmkab`).",
+        "operationId": "cari_desa_api_desa_cari_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "title": "Q"
+            }
+          },
+          {
+            "name": "kab",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kab"
+            }
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar desa yang cocok, berpaginasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_BarisIndeksKartu__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/kartu/{iddesa}": {
+      "get": {
+        "tags": [
+          "Kartu Ekonomi Desa"
+        ],
+        "summary": "Detail Kartu Ekonomi Desa",
+        "description": "Kembalikan satu Kartu Ekonomi Desa utuh apa adanya: identitas,\npeta_peran, rekomendasi_aksi, potensi, kesiapan, biofisik, logistik,\njalur_ekonomi, desa_kembar, fakta_program, dan mutu_data, tanpa\npenyaringan kolom maupun sisipan data lain.\n\n`iddesa` yang tidak dikenal menghasilkan galat 404 dengan kode\n`DESA_TIDAK_ADA`.",
+        "operationId": "kartu_detail_api_model_kartu__iddesa__get",
+        "parameters": [
+          {
+            "name": "iddesa",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{10}$",
+              "description": "Kode desa 10 digit",
+              "title": "Iddesa"
+            },
+            "description": "Kode desa 10 digit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Satu Kartu Ekonomi Desa utuh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_dict_str__Any__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/peta-peran": {
+      "get": {
+        "tags": [
+          "Peta Peran"
+        ],
+        "summary": "Daftar Peta Peran",
+        "description": "Daftar baris ringkas Peta Peran Desa dengan filter `prov`/`kab`/`zona`.\n\n`zona` di luar nilai yang sah dijawab 422. `prov` dan `kab`, bila diisi,\nharus kode wilayah yang dikenal; kode yang tidak dikenal dijawab 404\n`WILAYAH_TIDAK_ADA`.",
+        "operationId": "daftar_peta_peran_api_model_peta_peran_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prov",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Kode provinsi 2 digit",
+              "title": "Prov"
+            },
+            "description": "Kode provinsi 2 digit"
+          },
+          {
+            "name": "kab",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Kode kabupaten 4 digit",
+              "title": "Kab"
+            },
+            "description": "Kode kabupaten 4 digit"
+          },
+          {
+            "name": "zona",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "Zona Pemerintah",
+                    "Zona Mitra",
+                    "Zona Poros",
+                    "Zona Bantuan",
+                    "Belum Terpetakan"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Zona"
+            }
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar baris ringkas Peta Peran, berpaginasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_dict_str__Any___"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/peta-peran/ringkasan": {
+      "get": {
+        "tags": [
+          "Peta Peran"
+        ],
+        "summary": "Ringkasan Peta Peran",
+        "description": "Ringkasan Peta Peran per kabupaten: satu objek (`kab=`) atau daftar semua.\n\nTanpa `kab`, daftar seluruh kabupaten tetap dipaginasi dan mengisi\n`meta.total`. Dengan `kab`, satu objek dikembalikan tanpa `meta`. `kab`\nyang tidak dikenal dijawab 404 `WILAYAH_TIDAK_ADA`.",
+        "operationId": "ringkasan_peta_peran_api_model_peta_peran_ringkasan_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "kab",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Kode kabupaten 4 digit",
+              "title": "Kab"
+            },
+            "description": "Kode kabupaten 4 digit"
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ringkasan Peta Peran per kabupaten",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_Any_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/peta-peran/{iddesa}": {
+      "get": {
+        "tags": [
+          "Peta Peran"
+        ],
+        "summary": "Detail Peta Peran",
+        "description": "Baris penuh Peta Peran Desa (42 kolom) apa adanya.\n\nKolom mutu data seperti `keyakinan`, `sumber_dominan`, dan\n`alasan_belum_terpetakan` tetap disertakan, tidak disaring. `iddesa`\nyang tidak dikenal dijawab 404 `DESA_TIDAK_ADA`.",
+        "operationId": "detail_peta_peran_api_model_peta_peran__iddesa__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "iddesa",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{10}$",
+              "description": "Kode desa 10 digit",
+              "title": "Iddesa"
+            },
+            "description": "Kode desa 10 digit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Baris penuh Peta Peran satu desa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_dict_str__Any__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/citra-potensi": {
+      "get": {
+        "tags": [
+          "Citra Potensi Desa"
+        ],
+        "summary": "Daftar Sel Citra",
+        "description": "Daftar sel citra potensi (metadata saja), filter opsional `prov`/`target`.",
+        "operationId": "daftar_sel_api_model_citra_potensi_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prov",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter provinsi (2 digit)",
+              "title": "Prov"
+            },
+            "description": "Filter provinsi (2 digit)"
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter target komoditas (persis)",
+              "title": "Target"
+            },
+            "description": "Filter target komoditas (persis)"
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar metadata sel citra",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_dict_str__Any___"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/citra-potensi/sel": {
+      "get": {
+        "tags": [
+          "Citra Potensi Desa"
+        ],
+        "summary": "Detail Sel Citra",
+        "description": "Detail satu sel: metadata indeks digabung dengan `format_skor` dan `skor`.",
+        "operationId": "detail_sel_api_model_citra_potensi_sel_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prov",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{2}$",
+              "description": "Provinsi (2 digit), wajib",
+              "title": "Prov"
+            },
+            "description": "Provinsi (2 digit), wajib"
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Target, wajib",
+              "title": "Target"
+            },
+            "description": "Target, wajib"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Metadata dan skor satu sel citra",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_dict_str__Any__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/jalur-ekonomi/{varian}": {
+      "get": {
+        "tags": [
+          "Jalur Ekonomi"
+        ],
+        "summary": "Daftar Jalur",
+        "description": "Daftar baris ringkas jalur ekonomi, filter opsional `kab`/`iddesa`.",
+        "operationId": "daftar_jalur_api_model_jalur_ekonomi__varian__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "varian",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/VarianJalurEkonomi"
+            }
+          },
+          {
+            "name": "kab",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter kabupaten (4 digit)",
+              "title": "Kab"
+            },
+            "description": "Filter kabupaten (4 digit)"
+          },
+          {
+            "name": "iddesa",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{10}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter desa (poros atau anggota), 10 digit",
+              "title": "Iddesa"
+            },
+            "description": "Filter desa (poros atau anggota), 10 digit"
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar baris ringkas jalur ekonomi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_dict_str__Any___"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/jalur-ekonomi/{varian}/{id_jalur}": {
+      "get": {
+        "tags": [
+          "Jalur Ekonomi"
+        ],
+        "summary": "Detail Jalur",
+        "description": "Detail satu grup jalur ekonomi utuh (apa adanya + `id_jalur`).",
+        "operationId": "detail_jalur_api_model_jalur_ekonomi__varian___id_jalur__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "varian",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/VarianJalurEkonomi"
+            }
+          },
+          {
+            "name": "id_jalur",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id Jalur"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Satu grup jalur ekonomi utuh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_dict_str__Any__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/model/desa-kembar/{iddesa}": {
+      "get": {
+        "tags": [
+          "Desa Kembar"
+        ],
+        "summary": "Tetangga Desa Kembar",
+        "description": "Kembalikan tetangga desa kembar terdekat untuk satu `iddesa`.\n\n`iddesa` yang tidak dikenal di indeks kartu ekonomi dijawab 404\n`DESA_TIDAK_ADA`. Desa yang dikenal tetapi belum punya data kemiripan\ntetangga tetap dijawab 200, dengan `tetangga` kosong dan `keterangan`\nyang menjelaskan sebabnya.",
+        "operationId": "desa_kembar_api_model_desa_kembar__iddesa__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "iddesa",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{10}$",
+              "title": "Iddesa"
+            }
+          },
+          {
+            "name": "k",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "K"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tetangga terdekat beserta persentase kemiripan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_DataDesaKembar_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/berita/{iddesa}": {
+      "get": {
+        "tags": [
+          "Berita Desa"
+        ],
+        "summary": "Daftar Berita Desa",
+        "description": "Daftar Berita Desa satu desa, berpaginasi, urut tanggal terbit menurun.",
+        "operationId": "berita_desa_api_berita__iddesa__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "iddesa",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{10}$",
+              "title": "Iddesa"
+            }
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar berita satu desa, berpaginasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_ItemBerita__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/profil/saya": {
+      "get": {
+        "tags": [
+          "Akun"
+        ],
+        "summary": "Profil akun yang sedang masuk",
+        "description": "Kembalikan id dan peran akun pemanggil, dibaca dari tabel `profil`.",
+        "operationId": "profil_saya_api_profil_saya_get",
+        "responses": {
+          "200": {
+            "description": "Id dan peran akun pemanggil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_ProfilSaya_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/chat": {
+      "post": {
+        "tags": [
+          "Asisten Desa"
+        ],
+        "summary": "Kirim Pesan",
+        "description": "Jalankan satu giliran percakapan Asisten Desa.\n\nSetiap permintaan mengirim ulang seluruh riwayat percakapan lewat\n`messages`; server tidak menyimpan riwayat apa pun. Jawaban selalu\ndikirim utuh dalam satu respons, bukan bertahap per token.\n\nAmbang laju rute ini berlaku per pengguna, di atas ambang global per\nalamat IP yang berlaku untuk seluruh endpoint.\n\n`meta` pada amplop selalu `null`. Jejak fungsi, model yang dipakai,\ncacah putaran alat, dan peringatan ada di dalam `data`.",
+        "operationId": "chat_api_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermintaanChat"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Jawaban Asisten Desa beserta jejak fungsinya",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_DataJawaban_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/admin/berita/segarkan": {
+      "post": {
+        "tags": [
+          "Administrasi"
+        ],
+        "summary": "Segarkan Berita",
+        "description": "Mulai pekerjaan latar penyegaran RSS untuk daftar `iddesa` yang diminta.\n\nDuplikat dibuang sambil mempertahankan urutan. `iddesa` pertama yang\ntidak dikenal di indeks kartu ekonomi menghentikan permintaan sebelum\npekerjaan apa pun dimulai (404). Hanya satu pekerjaan boleh berjalan\npada satu waktu. Permintaan kedua ditolak (409) selama pekerjaan lain\nmasih berjalan. Pekerjaan sungguhan berjalan di latar; balasan ini hanya\nmenandakan pekerjaan sudah dimulai (202), bukan sudah selesai.",
+        "operationId": "segarkan_berita_api_admin_berita_segarkan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermintaanSegarkan"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Tanda pekerjaan penyegaran sudah dimulai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_TerimaSegarkan_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/admin/berita/{id_berita}": {
+      "delete": {
+        "tags": [
+          "Administrasi"
+        ],
+        "summary": "Hapus Berita",
+        "description": "Hapus satu berita lewat `id`; membalas 404 bila `id` tidak ada.",
+        "operationId": "hapus_berita_api_admin_berita__id_berita__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id_berita",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Id Berita"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Identitas berita yang terhapus",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_BeritaTerhapus_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/admin/pengguna": {
+      "get": {
+        "tags": [
+          "Administrasi"
+        ],
+        "summary": "Daftar Pengguna",
+        "description": "Daftar pengguna terdaftar beserta perannya, berpaginasi.\n\n`q` menyaring berdasarkan email, tanpa peka kapital dan tanpa perlu cocok\npenuh. `meta.total` adalah cacah seluruh baris yang lolos saringan, bukan\ncacah baris pada halaman ini.",
+        "operationId": "daftar_pengguna_api_admin_pengguna_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64,
+                  "pattern": "^[A-Za-z0-9@._+\\- ]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "hal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "description": "Nomor halaman",
+              "default": 1,
+              "title": "Hal"
+            },
+            "description": "Nomor halaman"
+          },
+          {
+            "name": "batas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Ukuran halaman",
+              "default": 50,
+              "title": "Batas"
+            },
+            "description": "Ukuran halaman"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar pengguna beserta perannya, berpaginasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_list_ItemPengguna__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/admin/pengguna/{id_pengguna}/peran": {
+      "post": {
+        "tags": [
+          "Administrasi"
+        ],
+        "summary": "Ubah Peran",
+        "description": "Ubah peran satu pengguna.\n\nMengubah peran diri sendiri lewat endpoint ini ditolak 403\n`AKSI_DITOLAK`. `id_pengguna` yang tidak terdaftar dijawab 404\n`PENGGUNA_TIDAK_ADA`.",
+        "operationId": "ubah_peran_api_admin_pengguna__id_pengguna__peran_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id_pengguna",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Id Pengguna"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermintaanUbahPeran"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Peran baru pengguna itu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_PeranDiubah_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/admin/status": {
+      "get": {
+        "tags": [
+          "Administrasi"
+        ],
+        "summary": "Status Sistem",
+        "description": "Status sistem: versi data, cacah isi, pekerjaan latar, dan konfigurasi.\n\n`konfigurasi` hanya berisi bendera boolean \"sudah terisi atau belum\" per\nlayanan. Nilai kunci dan kredensial tidak pernah dikirim ke pemanggil.",
+        "operationId": "status_sistem_api_admin_status_get",
+        "responses": {
+          "200": {
+            "description": "Ringkasan status sistem",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_DataStatus_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/laporan/{iddesa}": {
+      "get": {
+        "tags": [
+          "Laporan Desa"
+        ],
+        "summary": "Laporan PDF Desa",
+        "description": "PDF satu desa, gabungan Peta Peran dan Kartu Ekonomi.\n\nDibuat saat diminta, tanpa cache. `iddesa` yang tidak dikenal, tidak\nmempunyai data Kartu Ekonomi, atau tidak mempunyai baris Peta Peran,\nsama-sama dijawab 404 `DESA_TIDAK_ADA`.",
+        "operationId": "laporan_desa_api_laporan__iddesa__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "iddesa",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{10}$",
+              "description": "Kode desa 10 digit",
+              "title": "Iddesa"
+            },
+            "description": "Kode desa 10 digit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berkas PDF laporan desa",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    },
+    "/api/geo/desa/{idkab}": {
+      "get": {
+        "tags": [
+          "Batas Desa"
+        ],
+        "summary": "Batas Desa Kabupaten",
+        "description": "Sajikan berkas GeoJSON batas desa satu kabupaten, sudah terkompresi gzip.\n\n`idkab` yang tidak dikenal menghasilkan galat 404 (amplop JSON) dengan\nkode `WILAYAH_TIDAK_ADA`. `idkab` dikenal tetapi berkas batas desa\nkabupaten itu belum tersedia menghasilkan galat 404 (amplop JSON)\ndengan kode `TIDAK_DITEMUKAN`. Respons yang berhasil membawa header\n`Content-Encoding: gzip` dan tidak memaksa unduh berkas.",
+        "operationId": "geo_desa_api_geo_desa__idkab__get",
+        "parameters": [
+          {
+            "name": "idkab",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}$",
+              "title": "Idkab"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berkas GeoJSON batas desa, terkompresi gzip",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Amplop_Any_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[Any]"
+      },
+      "Amplop_BeritaTerhapus_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BeritaTerhapus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[BeritaTerhapus]"
+      },
+      "Amplop_DataDesaKembar_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataDesaKembar"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[DataDesaKembar]"
+      },
+      "Amplop_DataJawaban_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataJawaban"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[DataJawaban]"
+      },
+      "Amplop_DataKesehatan_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataKesehatan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[DataKesehatan]"
+      },
+      "Amplop_DataStatus_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[DataStatus]"
+      },
+      "Amplop_PeranDiubah_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PeranDiubah"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[PeranDiubah]"
+      },
+      "Amplop_ProfilSaya_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProfilSaya"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[ProfilSaya]"
+      },
+      "Amplop_PusatWilayah_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PusatWilayah"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[PusatWilayah]"
+      },
+      "Amplop_RingkasanWilayah_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RingkasanWilayah"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[RingkasanWilayah]"
+      },
+      "Amplop_TerimaSegarkan_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TerimaSegarkan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[TerimaSegarkan]"
+      },
+      "Amplop_dict_str__Any__": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[dict[str, Any]]"
+      },
+      "Amplop_list_BarisIndeksKartu__": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/BarisIndeksKartu"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[list[BarisIndeksKartu]]"
+      },
+      "Amplop_list_DesaRingkas__": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DesaRingkas"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[list[DesaRingkas]]"
+      },
+      "Amplop_list_ItemBerita__": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ItemBerita"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[list[ItemBerita]]"
+      },
+      "Amplop_list_ItemPengguna__": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ItemPengguna"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[list[ItemPengguna]]"
+      },
+      "Amplop_list_Kabupaten__": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Kabupaten"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[list[Kabupaten]]"
+      },
+      "Amplop_list_Provinsi__": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Provinsi"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[list[Provinsi]]"
+      },
+      "Amplop_list_dict_str__Any___": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[list[dict[str, Any]]]"
+      },
+      "BarisIndeksKartu": {
+        "properties": {
+          "iddesa": {
+            "type": "string",
+            "title": "Iddesa"
+          },
+          "nmdesa": {
+            "type": "string",
+            "title": "Nmdesa"
+          },
+          "nmkec": {
+            "type": "string",
+            "title": "Nmkec"
+          },
+          "idkab": {
+            "type": "string",
+            "title": "Idkab"
+          },
+          "nmkab": {
+            "type": "string",
+            "title": "Nmkab"
+          },
+          "zona": {
+            "type": "string",
+            "title": "Zona"
+          },
+          "keyakinan": {
+            "type": "string",
+            "title": "Keyakinan"
+          },
+          "potensi_dominan": {
+            "type": "string",
+            "title": "Potensi Dominan"
+          },
+          "desil_sp": {
+            "type": "integer",
+            "title": "Desil Sp"
+          },
+          "desil_sk": {
+            "type": "integer",
+            "title": "Desil Sk"
+          },
+          "n_program": {
+            "type": "integer",
+            "title": "N Program"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa",
+          "nmdesa",
+          "nmkec",
+          "idkab",
+          "nmkab",
+          "zona",
+          "keyakinan",
+          "potensi_dominan",
+          "desil_sp",
+          "desil_sk",
+          "n_program"
+        ],
+        "title": "BarisIndeksKartu",
+        "description": "Baris indeks kartu ekonomi utuh: payload hasil pencarian desa."
+      },
+      "BeritaTerhapus": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "terhapus": {
+            "type": "boolean",
+            "title": "Terhapus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "terhapus"
+        ],
+        "title": "BeritaTerhapus"
+      },
+      "CacahSistem": {
+        "properties": {
+          "pengguna": {
+            "type": "integer",
+            "title": "Pengguna"
+          },
+          "berita": {
+            "type": "integer",
+            "title": "Berita"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pengguna",
+          "berita"
+        ],
+        "title": "CacahSistem"
+      },
+      "DataDesaKembar": {
+        "properties": {
+          "iddesa": {
+            "type": "string",
+            "title": "Iddesa"
+          },
+          "tetangga": {
+            "items": {
+              "$ref": "#/components/schemas/TetanggaKembar"
+            },
+            "type": "array",
+            "title": "Tetangga"
+          },
+          "keterangan": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keterangan"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa",
+          "tetangga"
+        ],
+        "title": "DataDesaKembar",
+        "description": "Payload data untuk `GET /api/model/desa-kembar/{iddesa}`."
+      },
+      "DataJawaban": {
+        "properties": {
+          "jawaban": {
+            "type": "string",
+            "title": "Jawaban"
+          },
+          "jejak_fungsi": {
+            "items": {
+              "$ref": "#/components/schemas/JejakFungsi"
+            },
+            "type": "array",
+            "title": "Jejak Fungsi"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "putaran_alat": {
+            "type": "integer",
+            "title": "Putaran Alat"
+          },
+          "peringatan": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Peringatan"
+          }
+        },
+        "type": "object",
+        "required": [
+          "jawaban",
+          "jejak_fungsi",
+          "model",
+          "putaran_alat",
+          "peringatan"
+        ],
+        "title": "DataJawaban",
+        "description": "Muatan `data` respons chat, termasuk jejak dan peringatan."
+      },
+      "DataKesehatan": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "versi_data": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Versi Data"
+          },
+          "tanggal_data": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tanggal Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "versi_data",
+          "tanggal_data"
+        ],
+        "title": "DataKesehatan",
+        "description": "Payload data untuk endpoint `GET /health`."
+      },
+      "DataStatus": {
+        "properties": {
+          "versi_data": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Versi Data"
+          },
+          "tanggal_data": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tanggal Data"
+          },
+          "cacah": {
+            "$ref": "#/components/schemas/CacahSistem"
+          },
+          "penyegaran": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StatusPekerjaan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "penyegaran_terakhir": {
+            "items": {
+              "$ref": "#/components/schemas/PenyegaranDesa"
+            },
+            "type": "array",
+            "title": "Penyegaran Terakhir"
+          },
+          "konfigurasi": {
+            "$ref": "#/components/schemas/KonfigurasiSiap"
+          }
+        },
+        "type": "object",
+        "required": [
+          "versi_data",
+          "tanggal_data",
+          "cacah",
+          "penyegaran",
+          "penyegaran_terakhir",
+          "konfigurasi"
+        ],
+        "title": "DataStatus"
+      },
+      "DesaRingkas": {
+        "properties": {
+          "iddesa": {
+            "type": "string",
+            "title": "Iddesa"
+          },
+          "nmdesa": {
+            "type": "string",
+            "title": "Nmdesa"
+          },
+          "nmkec": {
+            "type": "string",
+            "title": "Nmkec"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa",
+          "nmdesa",
+          "nmkec"
+        ],
+        "title": "DesaRingkas",
+        "description": "Baris ringkas desa untuk daftar `GET /api/wilayah/desa`."
+      },
+      "Galat": {
+        "properties": {
+          "kode": {
+            "type": "string",
+            "title": "Kode"
+          },
+          "pesan": {
+            "type": "string",
+            "title": "Pesan"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kode",
+          "pesan"
+        ],
+        "title": "Galat"
+      },
+      "HasilPenyegaranDesa": {
+        "properties": {
+          "iddesa": {
+            "type": "string",
+            "title": "Iddesa"
+          },
+          "n_baru": {
+            "type": "integer",
+            "title": "N Baru"
+          },
+          "n_duplikat": {
+            "type": "integer",
+            "title": "N Duplikat"
+          },
+          "n_dibuang": {
+            "type": "integer",
+            "title": "N Dibuang"
+          },
+          "n_gagal": {
+            "type": "integer",
+            "title": "N Gagal"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Galat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa",
+          "n_baru",
+          "n_duplikat",
+          "n_dibuang",
+          "n_gagal",
+          "galat"
+        ],
+        "title": "HasilPenyegaranDesa",
+        "description": "Ringkasan satu desa dalam badan `/api/admin/status`.\n\n`n_gagal` menghitung artikel yang gagal diproses karena galat, terpisah\ndari `n_dibuang` yang menghitung artikel yang ditolak saat penyaringan\natau verifikasi editorial."
+      },
+      "ItemBerita": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "judul": {
+            "type": "string",
+            "title": "Judul"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "sumber": {
+            "type": "string",
+            "title": "Sumber"
+          },
+          "terbit_pada": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terbit Pada"
+          },
+          "dipanen_pada": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Dipanen Pada"
+          },
+          "rangkuman": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rangkuman"
+          },
+          "kategori": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Kategori"
+          },
+          "perangkum": {
+            "type": "string",
+            "title": "Perangkum"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "judul",
+          "url",
+          "sumber",
+          "terbit_pada",
+          "dipanen_pada",
+          "rangkuman",
+          "kategori",
+          "perangkum"
+        ],
+        "title": "ItemBerita",
+        "description": "Satu berita tersimpan; `perangkum` = gemini / ekstraktif / judul-rss."
+      },
+      "ItemPengguna": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "peran": {
+            "type": "string",
+            "title": "Peran"
+          },
+          "dibuat_pada": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Dibuat Pada"
+          },
+          "diubah_pada": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Diubah Pada"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "peran",
+          "dibuat_pada",
+          "diubah_pada"
+        ],
+        "title": "ItemPengguna"
+      },
+      "JejakFungsi": {
+        "properties": {
+          "fungsi": {
+            "type": "string",
+            "title": "Fungsi"
+          },
+          "argumen": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Argumen"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "sukses",
+              "gagal"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fungsi",
+          "argumen",
+          "status"
+        ],
+        "title": "JejakFungsi",
+        "description": "Satu pemanggilan fungsi yang benar-benar terjadi: jejak asal angka."
+      },
+      "Kabupaten": {
+        "properties": {
+          "idkab": {
+            "type": "string",
+            "title": "Idkab"
+          },
+          "nmkab": {
+            "type": "string",
+            "title": "Nmkab"
+          },
+          "idprov": {
+            "type": "string",
+            "title": "Idprov"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idkab",
+          "nmkab",
+          "idprov"
+        ],
+        "title": "Kabupaten",
+        "description": "Satu baris kabupaten, berikut kode provinsi induknya."
+      },
+      "KonfigurasiSiap": {
+        "properties": {
+          "supabase": {
+            "type": "boolean",
+            "title": "Supabase"
+          },
+          "gemini": {
+            "type": "boolean",
+            "title": "Gemini"
+          },
+          "gemini_chat": {
+            "type": "boolean",
+            "title": "Gemini Chat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "supabase",
+          "gemini",
+          "gemini_chat"
+        ],
+        "title": "KonfigurasiSiap",
+        "description": "Bendera boolean kesiapan konfigurasi untuk halaman `/admin`.\n\n`gemini` menandai kunci API untuk panen Berita Desa, `gemini_chat`\nuntuk Asisten Desa. Keduanya kunci terpisah, jadi satu bisa terisi\nsementara yang lain belum."
+      },
+      "Meta": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "hal": {
+            "type": "integer",
+            "title": "Hal"
+          },
+          "batas": {
+            "type": "integer",
+            "title": "Batas"
+          },
+          "parameter": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parameter"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "hal",
+          "batas"
+        ],
+        "title": "Meta"
+      },
+      "PenyegaranDesa": {
+        "properties": {
+          "iddesa": {
+            "type": "string",
+            "title": "Iddesa"
+          },
+          "dipanen_pada": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Dipanen Pada"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa",
+          "dipanen_pada"
+        ],
+        "title": "PenyegaranDesa"
+      },
+      "PerProvinsiRingkasan": {
+        "properties": {
+          "idprov": {
+            "type": "string",
+            "title": "Idprov"
+          },
+          "nama": {
+            "type": "string",
+            "title": "Nama"
+          },
+          "n_kabupaten": {
+            "type": "integer",
+            "title": "N Kabupaten"
+          },
+          "n_desa": {
+            "type": "integer",
+            "title": "N Desa"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idprov",
+          "nama",
+          "n_kabupaten",
+          "n_desa"
+        ],
+        "title": "PerProvinsiRingkasan",
+        "description": "Rincian satu provinsi di dalam ringkasan wilayah."
+      },
+      "PeranDiubah": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "peran": {
+            "type": "string",
+            "title": "Peran"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "peran"
+        ],
+        "title": "PeranDiubah"
+      },
+      "PermintaanChat": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/Pesan"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Messages"
+          },
+          "temperature": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Temperature",
+            "default": 0.4
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "PermintaanChat",
+        "description": "Badan permintaan chat. Stateless: riwayat dikirim ulang tiap kali."
+      },
+      "PermintaanSegarkan": {
+        "properties": {
+          "iddesa": {
+            "items": {
+              "type": "string",
+              "pattern": "^\\d{10}$"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Iddesa"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa"
+        ],
+        "title": "PermintaanSegarkan"
+      },
+      "PermintaanUbahPeran": {
+        "properties": {
+          "peran": {
+            "type": "string",
+            "enum": [
+              "tamu",
+              "pemerintah",
+              "swasta",
+              "admin"
+            ],
+            "title": "Peran"
+          }
+        },
+        "type": "object",
+        "required": [
+          "peran"
+        ],
+        "title": "PermintaanUbahPeran"
+      },
+      "Pesan": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "model"
+            ],
+            "title": "Role"
+          },
+          "isi": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Isi"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "isi"
+        ],
+        "title": "Pesan",
+        "description": "Satu giliran percakapan yang dikirim klien.\n\nPeran \"system\" tidak diizinkan; hanya \"user\" dan \"model\" yang diterima."
+      },
+      "ProfilSaya": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "peran": {
+            "type": "string",
+            "title": "Peran"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "peran"
+        ],
+        "title": "ProfilSaya",
+        "description": "Akun yang sedang masuk: id pengguna dan perannya."
+      },
+      "Provinsi": {
+        "properties": {
+          "idprov": {
+            "type": "string",
+            "title": "Idprov"
+          },
+          "nama": {
+            "type": "string",
+            "title": "Nama"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idprov",
+          "nama"
+        ],
+        "title": "Provinsi",
+        "description": "Satu baris provinsi: kode dan nama."
+      },
+      "PusatKabupaten": {
+        "properties": {
+          "idkab": {
+            "type": "string",
+            "title": "Idkab"
+          },
+          "nmkab": {
+            "type": "string",
+            "title": "Nmkab"
+          },
+          "idprov": {
+            "type": "string",
+            "title": "Idprov"
+          },
+          "pusat": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Pusat"
+          },
+          "n_desa": {
+            "type": "integer",
+            "title": "N Desa"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idkab",
+          "nmkab",
+          "idprov",
+          "pusat",
+          "n_desa"
+        ],
+        "title": "PusatKabupaten",
+        "description": "Pusat peta satu kabupaten + cacah desanya."
+      },
+      "PusatProvinsi": {
+        "properties": {
+          "idprov": {
+            "type": "string",
+            "title": "Idprov"
+          },
+          "nama": {
+            "type": "string",
+            "title": "Nama"
+          },
+          "pusat": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Pusat"
+          },
+          "n_desa": {
+            "type": "integer",
+            "title": "N Desa"
+          },
+          "n_kabupaten": {
+            "type": "integer",
+            "title": "N Kabupaten"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idprov",
+          "nama",
+          "pusat",
+          "n_desa",
+          "n_kabupaten"
+        ],
+        "title": "PusatProvinsi",
+        "description": "Pusat peta satu provinsi (rerata kabupaten) + cacahnya."
+      },
+      "PusatWilayah": {
+        "properties": {
+          "provinsi": {
+            "items": {
+              "$ref": "#/components/schemas/PusatProvinsi"
+            },
+            "type": "array",
+            "title": "Provinsi"
+          },
+          "kabupaten": {
+            "items": {
+              "$ref": "#/components/schemas/PusatKabupaten"
+            },
+            "type": "array",
+            "title": "Kabupaten"
+          }
+        },
+        "type": "object",
+        "required": [
+          "provinsi",
+          "kabupaten"
+        ],
+        "title": "PusatWilayah",
+        "description": "Payload `GET /api/wilayah/pusat`: titik pusat tiap provinsi dan\nkabupaten untuk kebutuhan tampilan peta."
+      },
+      "RingkasanWilayah": {
+        "properties": {
+          "n_provinsi": {
+            "type": "integer",
+            "title": "N Provinsi"
+          },
+          "n_kabupaten": {
+            "type": "integer",
+            "title": "N Kabupaten"
+          },
+          "n_desa": {
+            "type": "integer",
+            "title": "N Desa"
+          },
+          "per_provinsi": {
+            "items": {
+              "$ref": "#/components/schemas/PerProvinsiRingkasan"
+            },
+            "type": "array",
+            "title": "Per Provinsi"
+          }
+        },
+        "type": "object",
+        "required": [
+          "n_provinsi",
+          "n_kabupaten",
+          "n_desa",
+          "per_provinsi"
+        ],
+        "title": "RingkasanWilayah",
+        "description": "Payload `GET /api/wilayah/ringkasan`."
+      },
+      "StatusPekerjaan": {
+        "properties": {
+          "id_pekerjaan": {
+            "type": "string",
+            "title": "Id Pekerjaan"
+          },
+          "keadaan": {
+            "type": "string",
+            "enum": [
+              "berjalan",
+              "selesai"
+            ],
+            "title": "Keadaan"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "selesai": {
+            "type": "integer",
+            "title": "Selesai"
+          },
+          "mulai_pada": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Mulai Pada"
+          },
+          "selesai_pada": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selesai Pada"
+          },
+          "hasil": {
+            "items": {
+              "$ref": "#/components/schemas/HasilPenyegaranDesa"
+            },
+            "type": "array",
+            "title": "Hasil"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id_pekerjaan",
+          "keadaan",
+          "total",
+          "selesai",
+          "mulai_pada",
+          "selesai_pada",
+          "hasil"
+        ],
+        "title": "StatusPekerjaan"
+      },
+      "TerimaSegarkan": {
+        "properties": {
+          "id_pekerjaan": {
+            "type": "string",
+            "title": "Id Pekerjaan"
+          },
+          "n_desa": {
+            "type": "integer",
+            "title": "N Desa"
+          },
+          "keadaan": {
+            "type": "string",
+            "title": "Keadaan"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id_pekerjaan",
+          "n_desa",
+          "keadaan"
+        ],
+        "title": "TerimaSegarkan"
+      },
+      "TetanggaKembar": {
+        "properties": {
+          "iddesa": {
+            "type": "string",
+            "title": "Iddesa"
+          },
+          "nmdesa": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nmdesa"
+          },
+          "nmkec": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nmkec"
+          },
+          "idkab": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idkab"
+          },
+          "nmkab": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nmkab"
+          },
+          "persen": {
+            "type": "number",
+            "title": "Persen"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa",
+          "nmdesa",
+          "nmkec",
+          "idkab",
+          "nmkab",
+          "persen"
+        ],
+        "title": "TetanggaKembar",
+        "description": "Satu desa tetangga dalam hasil desa kembar.\n\nIdentitas tetangga (`nmdesa`, `nmkec`, `idkab`, `nmkab`) diambil dari\nindeks kartu ekonomi. Bila `iddesa` tetangga tidak ada di sana, keempat\nfield itu bernilai `null` sementara `persen` tetap terisi."
+      },
+      "VarianJalurEkonomi": {
+        "type": "string",
+        "enum": [
+          "komoditas",
+          "gudang-kopdes",
+          "cold-storage",
+          "wisata"
+        ],
+        "title": "VarianJalurEkonomi",
+        "description": "Varian jalur ekonomi yang didukung sebagai parameter path `varian`."
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Peta Peran",
+      "description": "Menempatkan tiap desa ke satu dari empat zona penanganan, sehingga jelas siapa yang harus bergerak lebih dulu: pemerintah, mitra swasta, atau perlindungan sosial. Butuh peran tamu ke atas."
+    },
+    {
+      "name": "Kartu Ekonomi Desa",
+      "description": "Profil ekonomi lengkap tiap desa tanpa satu pun formulir. Terbuka tanpa token."
+    },
+    {
+      "name": "Jalur Ekonomi",
+      "description": "Menyambung sekumpulan desa ke satu aset bersama di lokasi optimal, agar skalanya cukup besar untuk hidup. Empat varian: Komoditas, Gudang Kopdes, Cold Storage, dan Wisata. Butuh peran tamu ke atas."
+    },
+    {
+      "name": "Desa Kembar",
+      "description": "Mencari desa yang profilnya paling mirip dengan desa yang sudah terbukti berhasil, dengan kemiripan yang terukur. Butuh peran tamu ke atas."
+    },
+    {
+      "name": "Citra Potensi Desa",
+      "description": "Menemukan sentra komoditas dari pembacaan citra satelit dan peta, tanpa desa perlu melaporkannya. Butuh peran tamu ke atas."
+    },
+    {
+      "name": "Asisten Desa",
+      "description": "Antarmuka percakapan berbasis LLM yang menjawab hanya dari data SIMPUL DESA dan menolak topik di luar itu. Butuh peran di atas tamu."
+    },
+    {
+      "name": "Berita Desa",
+      "description": "Kumpulan berita per desa hasil panen otomatis, tersimpan per `iddesa`. Butuh peran tamu ke atas."
+    },
+    {
+      "name": "Laporan Desa",
+      "description": "Dokumen PDF per desa yang memuat sekurangnya Peta Peran dan Kartu Ekonomi Desa. Butuh peran pemerintah ke atas."
+    },
+    {
+      "name": "Wilayah",
+      "description": "Daftar dan ringkasan wilayah administratif (provinsi, kabupaten, desa) beserta titik pusatnya. Terbuka tanpa token."
+    },
+    {
+      "name": "Pencarian Desa",
+      "description": "Pencarian desa lewat substring nama di atas indeks kartu. Terbuka tanpa token."
+    },
+    {
+      "name": "Batas Desa",
+      "description": "GeoJSON batas desa satu kabupaten, disajikan pra-gzip sebagai berkas di luar amplop. Terbuka tanpa token."
+    },
+    {
+      "name": "Kesehatan",
+      "description": "Status hidup API beserta versi dan tanggal data panen. Terbuka tanpa token."
+    },
+    {
+      "name": "Akun",
+      "description": "Akun dan peran pengguna dasbor. Butuh peran tamu ke atas."
+    },
+    {
+      "name": "Administrasi",
+      "description": "Pengelolaan sistem: penyegaran dan penghapusan Berita Desa, daftar pengguna, kenaikan peran, dan status sistem. Hanya peran admin."
+    }
+  ]
+}

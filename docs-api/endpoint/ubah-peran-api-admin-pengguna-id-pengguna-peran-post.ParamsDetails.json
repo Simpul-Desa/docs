@@ -1,0 +1,1 @@
+{"parameters":[{"name":"id_pengguna","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Id Pengguna"}}]}

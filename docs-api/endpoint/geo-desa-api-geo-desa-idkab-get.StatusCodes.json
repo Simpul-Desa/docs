@@ -1,0 +1,1 @@
+{"responses":{"200":{"description":"Berkas GeoJSON batas desa, terkompresi gzip","content":{"application/json":{"schema":{}}}},"422":{"description":"Parameter atau badan permintaan tidak lolos validasi"}}}

@@ -1,0 +1,114 @@
+---
+title: 👥 Role Pengguna
+sidebar_position: 4
+description: Lima role SIMPUL DESA dan matriks akses per fitur — apa yang terlihat, apa yang terkunci, dan cara membukanya.
+---
+
+# Role Pengguna
+
+SIMPUL DESA mengenal empat role tersimpan plus satu keadaan tanpa login.
+Role menentukan fitur mana yang terbuka, bukan wilayah mana yang bisa
+dilihat: seluruh 17.467 desa terbaca oleh siapa pun yang boleh membuka
+fiturnya.
+
+Jangan disamakan dengan Desa Poros dan Desa Sejalur. Keduanya atribut desa di
+dalam Jalur Ekonomi, sedangkan halaman ini tentang akun manusia.
+
+## Siapa boleh apa
+
+| Fitur | Anonim | Tamu | Pemerintah | Swasta | Admin |
+| --- | :---: | :---: | :---: | :---: | :---: |
+| Kartu Ekonomi Desa | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Peta Peran | — | ✓ | ✓ | ✓ | ✓ |
+| Jalur Ekonomi | — | ✓ | ✓ | ✓ | ✓ |
+| Desa Kembar | — | ✓ | ✓ | ✓ | ✓ |
+| Citra Potensi Desa | — | ✓ | ✓ | ✓ | ✓ |
+| Berita Desa | — | ✓ | ✓ | ✓ | ✓ |
+| Asisten Desa | — | — | ✓ | ✓ | ✓ |
+| Laporan Desa | — | — | ✓ | — | ✓ |
+| Halaman Admin | — | — | — | — | ✓ |
+
+Berita Desa tampil sebagai bagian Kartu Ekonomi Desa. Anonim melihat kartunya
+tanpa bagian berita.
+
+## Anonim
+
+Keadaan sebelum login, bukan role tersimpan. Membuka Portal tanpa akun
+langsung masuk ke sini.
+
+Terbuka:
+
+- Kartu Ekonomi Desa untuk seluruh desa dalam cakupan, tanpa bagian Berita
+  Desa.
+
+Terkunci: empat lensa lainnya, Berita Desa, Asisten Desa, dan Laporan Desa.
+
+Cara membuka: daftar akun. Registrasi mandiri selesai dalam satu langkah dan
+langsung memberi role tamu.
+
+## Tamu
+
+Role bawaan setiap registrasi mandiri. Tidak ada pemilihan role saat
+mendaftar; semua akun baru masuk sebagai tamu.
+
+Terbuka:
+
+- kelima lensa Portal: Peta Peran, Kartu Ekonomi Desa, Jalur Ekonomi, Desa
+  Kembar, Citra Potensi Desa;
+- Berita Desa pada tiap kartu.
+
+Terkunci: Asisten Desa dan Laporan Desa.
+
+Cara membuka: minta kenaikan role ke admin. Tamu tidak bisa menaikkan
+rolenya sendiri.
+
+## Pemerintah
+
+Akun instansi pemerintah, dinaikkan admin dari tamu. role paling lengkap di
+luar admin.
+
+Terbuka:
+
+- semua yang dimiliki tamu;
+- Asisten Desa;
+- Laporan Desa — PDF per desa yang memuat sekurangnya Peta Peran dan Kartu
+  Ekonomi Desa.
+
+Terkunci: Halaman Admin.
+
+## Swasta
+
+Akun mitra swasta, dinaikkan admin dari tamu.
+
+Terbuka:
+
+- semua yang dimiliki tamu;
+- Asisten Desa.
+
+Terkunci: Laporan Desa dan Halaman Admin. Ini satu-satunya beda swasta dengan
+pemerintah.
+
+## Admin
+
+Pengelola sistem.
+
+Terbuka:
+
+- semua fitur tanpa kecuali;
+- Halaman Admin: daftar pengguna, kenaikan dan penurunan role, pemantauan
+  status sistem, penyegaran Berita Desa untuk desa terpilih, dan penghapusan
+  satu berita yang nyasar.
+
+Penyegaran Berita Desa selalu untuk daftar desa yang admin sebutkan. Tidak ada
+mode "segarkan semua desa".
+
+## Cara berpindah role
+
+Registrasi mandiri selalu menghasilkan tamu. Kenaikan ke pemerintah, swasta,
+atau admin hanya dilakukan admin lewat Halaman Admin, dan penurunan role
+lewat jalur yang sama.
+
+Belum ada alur verifikasi instansi otomatis: admin yang memutuskan sebuah akun
+milik instansi pemerintah atau mitra swasta.
+
+Autentikasi dan penyimpanan akun memakai Supabase.

@@ -1,0 +1,66 @@
+---
+id: kesehatan-health-get
+title: "Kesehatan"
+description: "Kembalikan status hidup API beserta versi dan tanggal data panen."
+sidebar_label: "Kesehatan"
+hide_title: true
+hide_table_of_contents: true
+api: eJztVk1z2zYQ/SsYnmXZ7anjnpyxJ3bTNJqR04vtsZYkQsIEAYQAnKoa/fe+BShLslJ52umxF5sCFm8f9uMtVkWgxhfnd8UH6WVLgUzxMClq6atBuaCsKc6x1ZekVUdG+EAhetGqOjpxMbsRJY4NgcSzHLwSNUwA0TSk8Y1lR0aa6b25N3OpSUfRJyzy4sezs4kIcujJx050MgBfeLgxwEhnS6ljn0wiBVGrewNX8DMVl0DoRWdNreBUhSgWyf8jn1skFouRxrhUysEoTcBYmKj1YiKeqFZwW0cySziWHVw3uJqTIFATtrwiN3JJN1hcX11citNWkg7tQjzFhsBK05KMmohamgbWJbH3QXpnjce2s8GaZlpMCuvkQBzRmxox7Tbhfsx4j40MMBoPSqRkVSBE/G8/GfN/lgFgVtYEaQJDkXNaVYnF6ZNnvFXhq1b2xF9uYI5BZe9Iy8gjLJ2E59JaLVEfkyKooHllnk3WKBh2xQ7M8tMXlNMBWGK9A+bDoEyzi5UtgLVN5T7i/sn15GWFM1qsH7ZYv6dQXDIC8HYr4d8i3o4hzZgMmg1t+SSrnLivUQ2y5lYaL7t3k1c0dqAZctt8r3tvRkttqc4dEU1Ar0hTO6tMEIv3V7cv9Tj9Dn/whEcKxzLT2Voey8sH3geQk57MMcNZMngrNsndBm0nCu8Tz+9eoZfHayvYQHqHGUIjGznsULtNFoBq3zC8zmYlgu2PGr5LFhwWGggEsbnHkOpacQZJz3a4hiHK1+E5VnWzF/C3wppjkC+44b8D9FGmVjgI7luFnPt7B+iid9q6u72afQC79TonqrUsblnLHIUWP8YCxUKWb58CFAdkomhDcP789NSr3kV9gtKnE3LqBAmuY8UBnEY3HUjpb7ScQr0O+4MtO6/S7bagwNS2It1aH85/OoOQHhyEXvMsSqqtbUc59F5WcVBhOWdVzPV1fXs7eydpyDke48VO+ErJjMUxG3AYlPlik+VG2W4+zj7/Ki6v5hcs2AdMMBnjEFtMHB2RcCN69IgWu8dqVVJFQstvmIQs+sqoc/En6ivPK9yBdR8DS3AMJ6KjAVNRYkTaXvGwg4vtT7aBO9x+mIhKhQEwFjPCYw+TUgUgaHIWZCZpoiT1+ZZmXcseEfJoGgzOqZjL5HYz8X6Zf/qN6WK7w5iiVC8CI7LBcO+Bm2tK9BRdNKIhCNRUXG0kLTkiY41Kk7+MeBSgxBz+2k6anzGotSxVyzMbTwnqSIkc+myQ2arUAErwxDWCwHW6UeMU8bPpD9Oz1L0ojz7LmqGUx79V4tV2jv7/IPpPHkRjJwX5Rzh1oGI4I6mFV6N23BWjdqAxuZN5ZbUqycvPg16veflrlMMS6/h8pkFRyS13x2MDR2tuWYhNJ5esXVUlHQvTM+LOng9eQywALyKG4Yp2/gugOOGs
+sidebar_class_name: "get api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Kesehatan"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/health"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Kembalikan status hidup API beserta versi dan tanggal data panen.
+
+Selalu membalas 200, termasuk ketika salinan data belum termuat di
+server. Dalam kondisi itu `versi_data` dan `tanggal_data` bernilai
+`null`, jadi keduanya sekaligus penanda kesiapan data.
+
+`HEAD /health` juga dilayani, dengan badan respons dipotong.
+
+<ParamsDetails>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./kesehatan-health-get.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./kesehatan-health-get.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

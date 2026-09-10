@@ -1,0 +1,1 @@
+{"parameters":[{"name":"id_berita","in":"path","required":true,"schema":{"type":"integer","minimum":1,"title":"Id Berita"}}]}

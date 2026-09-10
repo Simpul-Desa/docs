@@ -1,0 +1,120 @@
+---
+title: 🌐 Sumber Data
+sidebar_position: 3
+sidebar_label: Sumber Data
+description: Cakupan wilayah SIMPUL DESA, seluruh sumber yang dipanen, kunci join antar sumber, dan catatan mutu yang sudah diketahui.
+---
+
+# Sumber Data
+
+SIMPUL DESA tidak meminta desa mengisi apa pun. Seluruh isinya dipanen dari
+statistik resmi, citra satelit, peta terbuka, dan registri program publik.
+Halaman ini menyebut sumbernya satu per satu, cara sumber-sumber itu
+disambungkan, dan apa yang sudah diketahui salah pada masing-masing.
+
+## Cakupan
+
+Lima provinsi percontohan:
+
+| Provinsi | Kode |
+| --- | --- |
+| Lampung | 18 |
+| Jawa Tengah | 33 |
+| Nusa Tenggara Barat | 52 |
+| Kalimantan Selatan | 63 |
+| Sulawesi Selatan | 73 |
+
+Di dalamnya 97 kabupaten dan kota, dan 17.467 wilayah desa dan kelurahan.
+Seluruh model dan fitur berdiri di atas basis yang sama: satu desa yang masuk
+Peta Peran pasti punya Kartu Ekonomi Desa, dan sebaliknya.
+
+Rilis data dibekukan 5 September 2026. Beku berarti angkanya tidak lagi
+bergerak tanpa keputusan. Cacat yang sudah diketahui tetap ada di dalamnya,
+dan disebut satu per satu di bagian catatan mutu.
+
+## Daftar sumbernya
+
+Delapan belas sumber, dipisah dua halaman karena keduanya diperlakukan
+berbeda oleh pipeline:
+
+- [Sumber pipeline utama](/docs/sumber-data/pipeline-utama) — sembilan sumber
+  yang mengisi tabel induk yang dibaca semua model.
+- [Sumber tambahan](/docs/sumber-data/tambahan) — sembilan sumber di luar
+  tabel induk, digabungkan di hilir oleh fitur yang membutuhkannya.
+
+Cara keduanya disambungkan, dan apa yang sudah diketahui salah, tetap di
+halaman ini.
+
+## Kunci join
+
+Kerangka wilayahnya kode desa BPS. Semua sumber yang membawa kode desa
+disambungkan lewat kode itu, dan bridging ke kode Kemendagri disediakan SIG
+BPS.
+
+Sumber yang tidak membawa kode desa, dan itu hampir seluruh registri program,
+disambungkan lewat koordinat: nama kabupaten dipakai untuk menyempitkan
+pencarian, lalu titik registri diuji jatuh di dalam poligon batas desa yang
+mana.
+
+Aturan yang berlaku di seluruh pipeline: **kode wilayah yang diklaim sumber
+eksternal tidak dipercaya; koordinat yang menang.** Tiga registri berbeda
+terbukti membawa kode kabupaten yang tidak cocok dengan letak titiknya
+sendiri.
+
+## Catatan mutu
+
+Empat hal yang sudah terbukti menyesatkan dan sudah punya penangkal di kode.
+
+**Kode wilayah klaim.** Seperti di atas: kode kabupaten pada tiga sumber
+perikanan dan pariwisata tidak konsisten dengan kode BPS, dan penggabungan
+yang mempercayainya menaruh data di kabupaten yang salah.
+
+**Koordinat placeholder.** Sebagian baris data pariwisata memakai koordinat
+kantor pusat di Jakarta alih-alih koordinat desanya. Titik itu dideteksi dan
+disaring sebelum dipakai, sehingga desa yang koordinatnya palsu tidak ikut
+terhitung sebagai desa wisata di lokasi mana pun.
+
+**Nol berarti nol.** Enam hitungan titik minat dari OpenStreetMap nyaris
+kosong di banyak wilayah. Dulu nol diperlakukan sebagai "tidak terpetakan"
+lalu bobotnya dibagi ulang; akibatnya lebih dari separuh wilayah kehilangan
+komponen amenitas, dan wilayah yang datanya kosong justru diuntungkan. Sejak
+6 September 2026 nol ditampilkan apa adanya dan ikut menyusun Skor Kesiapan.
+Konsekuensinya diterima sadar: desa yang benar-benar belum dipetakan
+OpenStreetMap terbaca sama dengan desa yang memang tidak punya fasilitas itu.
+
+**Sertifikat portal sumber.** Beberapa portal pemerintah menyajikan
+sertifikat TLS yang sudah kedaluwarsa. Pemanen menyesuaikan diri untuk host
+itu dan mencatatnya terbuka sebagai temuan kualitas layanan, bukan
+menyembunyikannya.
+
+Selain keempatnya, tiga kabupaten membawa cacat batas wilayah dari sumber
+hulu, dan tiga kode Kemendagri belum tertambal.
+
+## Tidak semua tema sama kuatnya
+
+Alasan sebuah desa mendapat Skor Potensi tidak selalu berdiri di atas bukti
+yang sama kuatnya. Setiap desa membawa Sumber Potensi Dominan yang menyebut
+dari mana angkanya datang, jadi mutunya terbaca langsung di data dan tidak
+perlu dicari di dokumen.
+
+| Sumber Potensi Dominan | Wilayah |
+| --- | --- |
+| `citra` — model citra satelit, lulus uji tertahan antar kabupaten | 11.458 |
+| `heuristik-tervalidasi` — heuristik yang menang di kunci jawaban luar | 1.085 |
+| `heuristik-belum-teruji` — Simpul Logistik, belum ada kunci yang mendukung | 3.733 |
+| `fallback-heuristik` — provinsi tanpa sel citra yang layak, jatuh ke pangsa rumah tangga | 1.139 |
+
+Definisi keempat nilainya di [Glosarium](/docs/glosarium). Jangan membaca
+`heuristik-belum-teruji` setara dengan `citra`.
+
+## Yang tidak menyusun skor
+
+**Wisata.** Pemodelan potensi wisata dijalankan dan hasilnya berhenti di mutu
+lemah pada tiga provinsi, tak satu pun mencapai ambang layak. Karena itu
+wisata tidak masuk Skor Potensi. Yang tampil di Portal fakta registrinya:
+desa wisata terdaftar, kategori verifikasi, dan cacah daya tarik wisata.
+
+**Fakta Program.** Keikutsertaan desa pada registri program publik tidak
+pernah masuk Skor Potensi maupun Skor Kesiapan. Registri adalah penempatan
+kebijakan, bukan bukti potensi; memakainya sebagai skor akan menghadiahi desa
+hanya karena sudah pernah dipilih.

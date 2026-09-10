@@ -1,0 +1,1 @@
+{"responses":{"200":{"description":"Berkas PDF laporan desa","content":{"application/pdf":{}}},"422":{"description":"Parameter atau badan permintaan tidak lolos validasi"}}}

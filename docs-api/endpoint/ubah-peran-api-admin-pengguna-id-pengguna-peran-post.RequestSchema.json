@@ -1,0 +1,1 @@
+{"title":"Body","body":{"required":true,"content":{"application/json":{"schema":{"properties":{"peran":{"type":"string","enum":["tamu","pemerintah","swasta","admin"],"title":"Peran"}},"type":"object","required":["peran"],"title":"PermintaanUbahPeran"}}}}}

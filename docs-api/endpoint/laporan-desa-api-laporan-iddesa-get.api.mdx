@@ -1,0 +1,74 @@
+---
+id: laporan-desa-api-laporan-iddesa-get
+title: "Laporan PDF Desa"
+description: "PDF satu desa, gabungan Peta Peran dan Kartu Ekonomi."
+sidebar_label: "Laporan PDF Desa"
+hide_title: true
+hide_table_of_contents: true
+api: eJzlVU1v4zYQ/SuE0MMWUGwnyKFwT144bdNsW6P2ntapM5IYmyuK5JJUUtfQf+8bSk6cTVDsvQfLJDVffPPm6ZBF2oZs+in7QM56MmIuA2W3eVbJUHrlorImm2aL+U8iUGwFjikXWypas4X1QkbCgx0r/G7Iw+aqtsY2arQ2azNXRUsRvnhUqlEmwj2ScSRKKndyJO5UxUHvxJ7MVkRVUQ3LWhrSeb9dm0Y2rjV7UsiChC/S5AJH7eD4bFiQV+GkvnxtAjV0xg/E/0yPVIjLyaW4m18tZ5vV9Xx2s5nNZ3ejLM+sgwtf/brC5XUPzYbL3JBTm+PBpi99s9nKCK8gy9aruAech+yX1WrxXpKXHtvbDog68tTIKH1IBgYbBO9DwFsxzo7iDmsvv7TKSySPvpWIDKQayqaHLO4de4XoldlmHDQiIrv+tV5Xh/NJ9132dfNubCVT48T5BFffKi42qqg50nWfv/sGJ76El8FZE2TgYi4mE/576fhe+pqAPBgz4CSGG5bWRGkiu5BzWpUJ4rGr7nHUdSjh8uLidcDFEbe+0QUx09CgRCYs+85rq20QD6SxCyrjaHDaWW5g356E7TQbo4PjobLxoYe/S93zD8fetF7DchejC9PxOCiQSp+x4Rmcz5y3VVtydaPWjTwp/Uj7Ea70CvkFW9ZcTn4aFDG1LUnvbIjTHyZA8ZWjNFvZFJSGTNuadEL/yLAl86HvwSnPnujBSbKBNrwvegMGRZl7myyH/i+vf1t8/CB4CMRscf2qkqXUrW93osY/cTMbEEOLU7dKFVSS0PIRQ44YQhk1Ff9YQ2iTSXdIbSI3yEed5lce5/czIcXzNpGu5tv7XJQqeoSxIE7Au0Li+ogw9C9PqpM04VFp2tOOMwJyqBNUYCSWMqUdWCt+Xf7xO5eL13UbBDVOW9cLD+tCLgK6JYNoqIWMQOa2pEfiylTOgmx9IjLWqEaAj0Vb06Bl0UKwfhRBalmoHVKzElHNOpSg7w36aoFWBEWZwtgSamXJYe71iE9G56MJD6QDPRoy3K1BLI4izcM174fqRbcOzzP2f5PsgflR/h3HThPUFAimkTsMk/8JqqNgOXAHq+kgvpgsHkU2ORwKCvKj113Hx19a6VnPsXxAdVTwzEAgKhV4DXG5Jx3kf7Th3Z+Dln8v3tbht+oeDsnsmRkYD95hWcv98yeju4XlTlKVPjGH4eWsLKWLJ25fSy3ryJMy/ny1gim1jM+TegxqkR8XHPzNigBWslgxubvuqcBEdq6v6/4FmrXjqA==
+sidebar_class_name: "get api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Laporan PDF Desa"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/api/laporan/{iddesa}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+PDF satu desa, gabungan Peta Peran dan Kartu Ekonomi.
+
+Dibuat saat diminta, tanpa cache. `iddesa` yang tidak dikenal, tidak
+mempunyai data Kartu Ekonomi, atau tidak mempunyai baris Peta Peran,
+sama-sama dijawab 404 `DESA_TIDAK_ADA`.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./laporan-desa-api-laporan-iddesa-get.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./laporan-desa-api-laporan-iddesa-get.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./laporan-desa-api-laporan-iddesa-get.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

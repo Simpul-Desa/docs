@@ -1,0 +1,74 @@
+---
+id: detail-peta-peran-api-model-peta-peran-iddesa-get
+title: "Detail Peta Peran"
+description: "Baris penuh Peta Peran Desa (42 kolom) apa adanya."
+sidebar_label: "Detail Peta Peran"
+hide_title: true
+hide_table_of_contents: true
+api: eJzlVk1z2zYQ/SsYTg/JjCwpHh866kkZexI3TaOpnZPtSksSkWCCIAKAcVSN/nvfApTEWB47l556Iggs3n7g4S02WaClzyY32UwGEjPpyGR3g6yUvnDKBtWYbJK9Jae8sNK0K3GwE+fSk3h1diqqRjf1a0GWBJVk1jS8NbfmA8+Kug2tKAmbvLTSBSUWlVxTpQyZxUAsfFvn0s3Lpu5mAHBrFqTJk5nnUrf1PEhn4bbCuggYWFEqDyyeGYigSqp4BlGa5VAsVInwaXGLQMxyv1xJQxrfe3qgXJyNz8Ti/OJqOr++PJ9+mE/Pp4thNsgaxEic9mWJxEs4U3rOzue8YOZk1bxuSvnD5Dx5nM+XMgDDy6J1KqxR1k32/vp69laSkw6/d1vU1pKjWiInHw0MfuAqQWC34opbCiuMnfzaKicRSnCtBHKxkjVlk00W1pZ3+cA5ZwwagMhb/769LTdvxttfssfH+AFxC/Yi3oxRiKXiYIMKmpEuk//tT2ziJJz0tjFeeg7mdDzmz0+RxhPzIaVaNCZIE3gvWatVESs/uvcMsOlla10TuZPc+bbqHHdVyJtGSxD3kM1VMuFsQL3owKw/fYkFp7JU7If0rAebCtwBNvm9LJDoYO/CtFrHxHcezhkX+EswNfzo4MdoKxTwqRPbAXGBGciiJuY5w1k02G4fR9mnyU1yt0PrxfsuxnmcEeBARnoug9AE0r3IFE5tCT4fwK+jBaBWLxi+T2Y5iuefNXwbLba92/JfHOJsD/5SWVMNUoK7+HtAH2Vkw1FxX0DtmNwDmtZWN/amVEW4AQMGYmrWd3cIj6HOTk+P79k+B4GgWpGzAuPaOehpIAyT/mmIsRffSOPPq5guNq0aVrmkWlFyJtkICjeKCjdihTuJCjfaJHnaRnVz33ba1Tocd7YKwfrJaORVbVt9woYnQDkBi8q24DCHrR06KOkDrYe46UfKNGPLiuMa9EGBqZuC9KrxYfLrGCpztFGapaxz6Dwy1U1F6Xx3CnzFCpJI3Nfh/TGxk6yT1SgkyYCro8yXJlruFOXy4+zzH4JbhpjOLo8iuUKncpC6Cl9ioYs1FP1tpcqpIKHlAwXGEMqoifgHJGaZjDnE8+L+hhoOREUOYimrxqA7DsQ9wcXhN4pyxdmDJoUKDjAN9NRjDS1VBSBoso3jJsmkiF34QWla04o9ouStWXK7Flcyuu1UXfx+9elPDhfLVesFRVKK2E491cBNxBU1tbY1YklQwaG4MKVtwLrkiExjVI1+7fK2IhHI4HkQGrTh3/AU0DJXK7gWNSS+IiVS6ZNBilbFW6ZEZKAgxMoNmrmXKj4evhmOo0SAHnXSzq6Znse+3Ws7j49rc+g9/6fXTUf7IL+HkdWEpwbKF+/bprv/N+jECpaRvbGP7DQAP5PukYIbxleSrTebnLz87PR2y9NfW+n43YPhNwRMOd8dCAXHjzHU5gtpL585jVd/dfr4Wjz9XnkqhW4Sh8MMwTXhPwxxFoenVex1K0llfIptusVpUUgbetuOXiIsKHutfHdxDVtquVaH90eSjcFuwOhPhoRqRYtrZvl2u48wsj72i+2/Zcv9Mg==
+sidebar_class_name: "get api-method"
+info_path: api/intro
+custom_edit_url: null
+hide_send_button: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Detail Peta Peran"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/api/model/peta-peran/{iddesa}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Baris penuh Peta Peran Desa (42 kolom) apa adanya.
+
+Kolom mutu data seperti `keyakinan`, `sumber_dominan`, dan
+`alasan_belum_terpetakan` tetap disertakan, tidak disaring. `iddesa`
+yang tidak dikenal dijawab 404 `DESA_TIDAK_ADA`.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./detail-peta-peran-api-model-peta-peran-iddesa-get.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./detail-peta-peran-api-model-peta-peran-iddesa-get.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./detail-peta-peran-api-model-peta-peran-iddesa-get.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      
