@@ -1,0 +1,150 @@
+---
+title: 🗺️ Perhitungan Peta Peran
+sidebar_position: 2
+sidebar_label: Peta Peran
+description: Metodologi lengkap perhitungan Skor Potensi, Skor Kesiapan, bobot pilar, dan penentuan 4 zona intervensi kebijakan pada Peta Peran.
+---
+
+# Perhitungan Peta Peran
+
+**Peta Peran** adalah instrumen pengarah kebijakan utama dalam SIMPUL DESA. Fitur ini menempatkan setiap desa dan kelurahan ke dalam salah satu dari **empat zona penanganan ekonomi** berdasarkan persilangan dua indikator utama: **Skor Potensi (SP)** dan **Skor Kesiapan (SK)**.
+
+Tujuannya adalah menjawab pertanyaan fundamental bagi perencana pembangunan daerah: *Aksi apa yang paling mendesak, dan pihak mana yang paling tepat memimpin intervensi di desa ini?*
+
+---
+
+## Empat Zona Penanganan Kebijakan
+
+Kombinasi antara potensi komoditas dan kesiapan infrastruktur menghasilkan empat kuadran kebijakan:
+
+```
+                  SKOR POTENSI (SP)
+                         ▲
+                         │
+         ZONA MITRA      │      ZONA POROS
+    (Potensi Tinggi,     │  (Potensi Tinggi,
+     Kesiapan Rendah)    │   Kesiapan Tinggi)
+   Intervensi: Infrastruktur│ Intervensi: Investasi & Hilirisasi
+   Pemimpin: Pemerintah/BUMN │ Pemimpin: Swasta / Kolaborasi
+ ────────────────────────┼────────────────────────► SKOR KESIAPAN (SK)
+                         │       (Garis potong: Median Kabupaten)
+        ZONA BANTUAN     │    ZONA PEMERINTAH
+    (Potensi Rendah,     │  (Potensi Rendah,
+     Kesiapan Rendah)    │   Kesiapan Tinggi)
+   Intervensi: Jaring Pengaman│ Intervensi: Sentra Jasa/Logistik
+   Pemimpin: Kemensos/Dana Desa│ Pemimpin: Layanan Publik Pemda
+                         │
+```
+
+1. **Zona Poros (Potensi Tinggi, Kesiapan Tinggi)**  
+   Desa lumbung ekonomi yang siap melesat. Wilayah ini memiliki komoditas unggulan sekaligus infrastruktur dan kelembagaan yang matang. Intervensi difokuskan pada investasi swasta, hilirisasi industri perdesaan, dan penempatan aset bersama rantai pasok.
+2. **Zona Mitra (Potensi Tinggi, Kesiapan Rendah)**  
+   Kaya akan hasil alam dan potensi pertanian, tetapi terhambat oleh akses jalan, kelembagaan tani yang lemah, atau minimnya fasilitas keuangan. Intervensi wajib dipimpin oleh pemerintah melalui pembangunan konektivitas dan penyediaan sarana pascapanen.
+3. **Zona Bantuan (Potensi Rendah, Kesiapan Rendah)**  
+   Wilayah yang rentan secara ekonomi dan tertinggal dalam sarana dasar. Memerlukan intervensi perlindungan sosial, peningkatan gizi/kesehatan, perbaikan fasilitas mendasar, dan transfer dana desa sebelum dipacu untuk target produktivitas pasar.
+4. **Zona Pemerintah (Potensi Rendah, Kesiapan Tinggi)**  
+   Umumnya berupa wilayah perkotaan, pinggiran kota, atau desa pesisir jasa yang sarana fisiknya maju namun tidak berbasis pada produksi komoditas primer. Berperan strategis sebagai penyedia jasa perbankan, simpul logistik, pergudangan, dan pasar bagi desa-desa di sekitarnya.
+
+---
+
+## 1. Perhitungan Skor Potensi (SP)
+
+Skor Potensi mengukur keunggulan komparatif desa pada sektor riil berbasis sumber daya alam dan logistik.
+
+### Delapan Sub-Skor Tematik
+Setiap desa dinilai pada **8 sub-skor tematik**:
+1. **Pangan** — Komoditas padi sawah, padi ladang, dan jagung.
+2. **Hortikultura** — Sayuran dan buah-buahan (bawang merah, cabai, pisang, dll.).
+3. **Perkebunan** — Kelapa, kopi, cengkeh, karet, sawit, tebu, kakao.
+4. **Peternakan** — Sapi potong, kambing, domba, babi, unggas pedaging.
+5. **Perikanan Budidaya** — Tambak dan kolam (nila, bandeng, lele, udang).
+6. **Kehutanan** — Kayu sengon, jati, dan hasil hutan lainnya.
+7. **Perikanan Tangkap (`SUB_tangkap`)** — Panjang garis pantai desa (`log(1 + x)`) dikombinasikan dengan pangsa rumah tangga nelayan tangkap dari Sensus Pertanian 2023.
+8. **Simpul Logistik (`SUB_simpul`)** — Kedekatan waktu tempuh OSRM ke ibu kota kabupaten, pelabuhan, dan bandara terdekat, dipadukan dengan titik fasilitas niaga dan logistik OpenStreetMap.
+
+### Normalisasi Persentil Intra-Kabupaten
+Seluruh indikator sub-skor dinormalisasi menjadi skala **persentil 0–100 dalam kabupaten masing-masing**. Nilai 85 berarti desa tersebut berada di atas 85% desa lain di kabupaten yang sama pada tema tersebut.
+
+### Formula Nilai Maksimum (Anti Saling-Menghapus)
+Berbeda dengan indeks komposit konvensional yang merata-ratakan seluruh sektor, Skor Potensi SIMPUL DESA menggunakan **operator maksimum**:
+
+```text
+Skor Potensi (SP) = maks(Sub-skor 1, Sub-skor 2, ..., Sub-skor 8)
+```
+
+Tema di mana nilai maksimum tersebut tercapai ditetapkan sebagai **Potensi Dominan** desa.
+
+> [!NOTE]
+> **Mengapa Menggunakan Nilai Maksimum, Bukan Rata-Rata?**  
+> Mengadopsi prinsip metodologi *Index of Multiple Deprivation (IMD) England*, operator maksimum diterapkan agar desa spesialis tidak dihukum. Sebuah desa sentra perkebunan lada kelas dunia tidak boleh memperoleh skor potensi yang rendah hanya karena mereka tidak memiliki kolam ikan atau sawah padi. Keunggulan unggulan tertinggi adalah cerminan potensi ekonomi desa tersebut.
+
+### Label Tingkat Keyakinan Validasi
+Untuk menjaga keterbukaan ilmiah, setiap potensi dominan diberi label asal metode pada kolom `sumber_dominan`:
+- `citra` (11.458 desa) — Model geospasial Citra Potensi v5 yang telah **lolos uji tertahan antar-kabupaten** (AP >= 0,40 dan validasi bootstrap).
+- `heuristik-tervalidasi` (1.085 desa) — Formula `SUB_tangkap` yang **diuji menggunakan kunci lapangan Kepmen-KP** kampung nelayan resmi dan terbukti akurat.
+- `heuristik-belum-teruji` (3.733 desa) — Label `Simpul Logistik`. Membawa sedikit sinyal namun belum memiliki registri kunci luar yang independen karena kelangkaan data POI logistik terbuka di pedesaan. Status ini secara jujur ditampilkan di dasbor.
+- `fallback-heuristik` (1.139 desa) — Subsektor yang provinsinya belum memiliki model citra berstatus LAYAK, sehingga menggunakan proporsi rumah tangga tani dari Sensus Pertanian.
+
+---
+
+## 2. Perhitungan Skor Kesiapan (SK)
+
+Skor Kesiapan mencerminkan daya dukung kelembagaan, kematangan administratif, ketersediaan fasilitas publik, dan kemudahan aksesibilitas desa.
+
+### Empat Pilar Berbobot Seimbang (Masing-Masing 25%)
+
+| Komponen | Bobot | Indikator Penyusun | Catatan Khusus |
+|---|:---:|---|---|
+| **`SK_INDEKS`** | **25%** | Indeks Desa Membangun (IDM 2024 Kemendesa) yang mencakup dimensi sosial, ekonomi, dan lingkungan. | Kelurahan tidak dinilai oleh IDM; bobot dialihkan otomatis tanpa menghukum nilai kelurahan. |
+| **`SK_KELEMBAGAAN`** | **25%** | Rasio lumbung pangan, penggilingan padi, dan **koperasi pertanian** per 1.000 rumah tangga tani. | Penyebut dihaluskan dengan formula `maks(ruta, 50)` agar desa berpenduduk sangat sedikit tidak mendistorsi rasio secara ekstrem. |
+| **`SK_AMENITAS`** | **25%** | Kepadatan titik fasilitas layanan dasar (fasilitas kesehatan, sekolah) dan amenitas finansial (kantor bank, ATM, kantor pos) dari OpenStreetMap. | Menerapkan prinsip **Nol adalah Nol Nyata**: ketiadaan fasilitas tercatat sebagai nol nyata, bukan dianggap sebagai data hilang yang diuntungkan. |
+| **`SK_KONEKTIVITAS`** | **25%** | Waktu tempuh ke ibu kota kabupaten (OSRM) + **Sentralitas Jaringan OSRM** (rata-rata waktu tempuh dari desa tersebut ke seluruh desa lain se-kabupaten) + kepadatan pasar/toko niaga. | Sentralitas OSRM memiliki cakupan 99,7% dan bebas dari bias ketimpangan pemetaan jalan. |
+
+### Formula Rata-Rata Berbobot dengan Pembagi Dinamis
+Masing-masing komponen dinormalisasi min-maks (0–100) dalam kabupaten. Skor Kesiapan dihitung dengan rumus:
+
+```text
+Skor Kesiapan (SK) = (w1·K1 + w2·K2 + w3·K3 + w4·K4) / total_bobot_terukur
+```
+
+Di mana `w_i = 0,25`. Jika ada komponen yang tidak berlaku (misalnya kelurahan tanpa skor IDM), pembagi hanya menghitung bobot pilar yang benar-benar terukur (dalam kasus ini 0,75). Dengan demikian, kelurahan tidak dirugikan nilai nol buatan.
+
+---
+
+## 3. Penetapan Ambang Batas & Garis Kuadran
+
+### Garis Potong Median Kabupaten
+Ambang pemisah antara Potensi Tinggi/Rendah dan Kesiapan Tinggi/Rendah ditentukan oleh **nilai median masing-masing kabupaten**, bukan ambang statis nasional.
+
+**Alasan Kebijakan:**
+Setiap kabupaten memiliki kondisi geografis dan fiskal yang berbeda. Sebuah desa di pedalaman pegunungan dengan waktu tempuh 45 menit mungkin tergolong terisolasi di Jawa Tengah, namun sangat strategis di pulau terluar Nusa Tenggara Barat. Garis potong median menjadikannya **alat prioritisasi intra-kabupaten yang adil**.
+
+### Ketentuan Wilayah Khusus
+1. **Kategori "Belum Terpetakan"**:  
+   Wilayah yang memiliki data kesiapan terukur kurang dari atau sama dengan 50% dari total bobot tidak dipaksakan masuk ke salah satu zona. Statusnya dinyatakan sebagai "Belum Terpetakan" disertai rincian data yang belum lengkap agar pemerintah daerah dapat memprioritaskan pendataan lapangan.
+2. **Penanda "Keyakinan Rendah"**:  
+   Wilayah yang posisinya berada dalam jarak kurang dari 2 poin dari garis potong median ditandai memiliki keyakinan rendah. Posisinya rawan berpindah kuadran jika terjadi sedikit perubahan data, sehingga disajikan dengan catatan kehati-hatian.
+3. **Penyajian Desil & Peringkat**:  
+   Di tingkat pengguna, skor disajikan dalam format **desil (1–10) dan peringkat se-kabupaten**, bukan angka desimal halus, guna mencegah perdebatan administratif atas selisih desimal yang tidak signifikan secara ekonomi.
+
+---
+
+## 4. Bukti Pengujian & Validasi Empiris
+
+Keandalan metodologi Peta Peran telah diverifikasi melalui serangkaian pengujian terukur:
+
+### Uji 1: Penemuan Kembali Sentra Komoditas (Kunci Tertahan ST2023)
+Dievaluasi pada 174 pengujian kabupaten berpasangan, membandingkan metode baru dengan prototipe lama:
+- **Average Precision (AP)** meningkat drastis dari **0,28** menjadi **0,51**.
+- **Precision@25** meningkat dari **0,24** menjadi **0,49**.
+- **Recall@50** naik dari **0,43** menjadi **0,74**.
+- Metode baru unggul di **151 dari 174 kabupaten uji**.
+
+### Uji 2: Validasi Terhadap Fakta Nyata Lapangan
+Pengujian menggunakan registri desa unggulan publik nasional (`kunci_eksternal.json`):
+- **Desa Devisa Lada Hitam (Lampung Timur)**: 6 dari 6 desa kunci resmi menempati peringkat teratas (median peringkat #10,5 dari 264 desa).
+- **Sentra Kopi Temanggung (Jawa Tengah)**: 3 dari 3 desa kunci resmi masuk 50 besar kabupaten (median peringkat #38 dari 289 desa).
+- **Kampung Nelayan Resmi Kepmen-KP**: Formula `SUB_tangkap` berhasil menempatkan desa-desa nelayan binaan pemerintah tepat di desil teratas perikanan tangkap.
+
+### Uji 3: Ketahanan Zona (*Robustness*)
+Ketika skema pembobotan pilar Skor Kesiapan diubah-ubah, sebanyak **66,4% wilayah tetap berada di kuadran zona yang sama**, membuktikan bahwa klasifikasi zona stabil dan tidak rentan terhadap manipulasi parameter bobot.

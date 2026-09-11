@@ -1,0 +1,125 @@
+---
+title: 🛰️ ML Citra Potensi Desa
+sidebar_position: 4
+sidebar_label: Citra Potensi Desa
+description: Pemodelan machine learning geospasial katalog v5 untuk memprediksi sentra komoditas unggulan desa serta transparansi validasi holdout antar-kabupaten.
+---
+
+# Machine Learning Citra Potensi Desa
+
+Komponen **Citra Potensi Desa** bertugas menebak sentra komoditas unggulan pertanian, perkebunan, peternakan, perikanan, dan kehutanan pada level desa **murni dari data penginderaan jauh dan geospasial terbuka** tanpa survei kuesioner.
+
+Model ini menjawab tantangan pendataan nasional: bagaimana memetakan keunggulan komparatif alamiah desa secara akurat, obyektif, dan murah dengan memanfaatkan citra satelit dan data topografi yang tersedia untuk seluruh wilayah Indonesia.
+
+---
+
+## Masalah & Pendekatan Pemodelan
+
+Banyak desa yang secara alamiah subur dan cocok untuk komoditas tertentu, tetapi tidak terdata di dinas terkait karena aparat desanya kurang aktif melaporkan. Sebaliknya, ada desa yang mendapatkan bantuan bibit komoditas tertentu meskipun kondisi tanah dan iklim mikronya tidak mendukung.
+
+Citra Potensi Desa mengatasi masalah ini dengan memprediksi kelayakan komoditas berdasarkan biofisik lahan:
+
+```
+[ Citra Satelit & Peta Terbuka ]
+Tutupan Lahan 100m · Elevasi/Relief SRTM 90m · Hidrologi/Pantai · Jaringan Jalan OSRM
+                                   │
+                                   ▼
+[ Rekayasa Fitur Geospasial: 17 Variabel Lingkungan ]
+                                   │
+                                   ▼
+[ Pertarungan Dua Algoritma (Katalog v5) ]
+Greedy Pooled Forward Selection  VS  Hierarchical Bayesian Poisson (PyMC)
+                                   │
+                                   ▼
+[ Protokol Uji Tertahan Antar-Kabupaten (Spatial Holdout) ]
+Model dilatih di Kab A, B, C ──► Diuji di Kab D (Data Tidak Pernah Dilihat)
+                                   │
+                                   ▼
+[ Hasil Evaluasi: 57 Komoditas Berstatus LAYAK (AP ≥ 0,40) ]
+```
+
+---
+
+## Dua Algoritma yang Bertarung di Katalog v5
+
+Untuk setiap sel analisis (kombinasi antara **Provinsi × Komoditas Sasaran**), SIMPUL DESA mengadu dua pendekatan pemodelan dan memilih algoritma dengan kinerja evaluasi tertinggi:
+
+### 1. Greedy Pooled Forward Selection (Pemilihan Variabel Maju)
+Pendekatan berbasis seleksi bertahap yang memilih maksimal 5 variabel geospasial terbaik. Algoritma mencari kombinasi fitur yang secara konsisten memaksimalkan *Average Precision* (AP) di seluruh kabupaten latih.
+- **Kelebihan**: Sangat transparan, mudah dijelaskan kepada publik dan pembuat kebijakan (misalnya: *"Potensi tambak bandeng tinggi jika proporsi tambak luas, elevasi rendah, dan garis pantai panjang"*).
+- **Skor Akhir**: Rata-rata tertimbang dari fitur-fitur terpilih setelah dinormalisasi min-maks per kabupaten.
+
+### 2. Hierarchical Bayesian Poisson Regression (Bayes Hierarkis)
+Model regresi Poisson spasial yang memperhitungkan variasi karakteristik antar-kabupaten menggunakan *random intercept*.
+- **Kelebihan**: Mampu membedakan pengaruh karakteristik wilayah lokal dan baseline komoditas secara umum.
+- **Estimasi Matematis**: Dihitung menggunakan algoritma ADVI (*Automatic Differentiation Variational Inference*) melalui pustaka PyMC. Prediksi untuk kabupaten baru dilakukan dengan memanfaatkan *intercept* populasi.
+
+---
+
+## Fitur-Fitur Geospasial yang Digunakan
+
+Model tidak menggunakan data administratif kependudukan atau fasilitas buatan (seperti IDM atau titik pos ronda), melainkan murni bersandar pada 17 indikator geospasial dan agregat pertanian:
+
+1. **Tutupan Lahan BPS (Resolusi 100 Meter)**:
+   - Proporsi sawah, kebun campuran, perkebunan monokultur, tegalan/ladang, hutan lahan kering/basah, permukiman terbangun, dan perairan tambak.
+2. **Karakteristik Medan & Topografi (SRTM 90 Meter)**:
+   - Elevasi rata-rata di atas permukaan laut (meter).
+   - Rentang relief topografi (perbedaan titik tertinggi dan terendah).
+   - Proksi kemiringan lereng: `relief / maks(sqrt(luas), 0,3)`.
+3. **Aksesibilitas & Posisi Spasial**:
+   - Panjang garis pantai di dalam batas desa (km).
+   - Waktu tempuh jalan raya menuju ibu kota kabupaten (menit OSRM).
+4. **Agregat Sektor Primer**:
+   - Kepadatan rumah tangga tani: `n_ruta_tani / luas_km2`.
+   - Pengaruh lingkungan tetangga: Karakteristik agregat desa-desa di sekitar dalam radius 7 kilometer.
+
+---
+
+## Protokol Uji Tertahan Antar-Kabupaten (*Spatial Holdout*)
+
+Untuk mencegah model "menghafal" pola data (*overfitting*), SIMPUL DESA menerapkan protokol validasi spasial yang sangat ketat:
+
+> [!IMPORTANT]
+> **Tidak Ada Kebocoran Data Antar-Wilayah Tetangga**  
+> Validasi k-fold acak konvensional sering menghasilkan akurasi semu karena desa tetangga memiliki karakteristik tanah yang serupa. Di SIMPUL DESA, **seluruh penyetelan model hanya dilakukan pada kabupaten latih**. Angka kabupaten uji tidak pernah dilihat atau disentuh oleh model selama proses seleksi variabel.
+
+Setiap sel dievaluasi menggunakan metrik **Average Precision (AP)** yang diperkuat dengan **2.000 kali pengacakan ulang (*bootstrap resampling*)** untuk menghasilkan selang kepercayaan 95% (*confidence interval*).
+
+### Empat Status Kelayakan Model:
+- **LAYAK (AP >= 0,40)** — Model memiliki akurasi presisi tinggi, terbukti mampu menemukan sentra komoditas di wilayah baru, dan hasilnya dimasukkan ke dalam basis data produksi.
+- **LEMAH (AP antara 0,25 hingga 0,40)** — Sinyal ada tetapi belum cukup kuat; dijadikan bahan studi dan tidak dipakai menentukan skor utama.
+- **TANPA-SINYAL (AP di bawah 0,25)** — Komoditas terbukti tidak memiliki korelasi fisik dengan citra tutupan lahan; temuan dilaporkan apa adanya.
+- **LABEL-TIPIS** — Memiliki kurang dari 4 kabupaten dengan basis data historis minimal 20 desa; model menolak berspekulasi.
+
+---
+
+## Hasil Produksi: 57 Sel Komoditas Layak
+
+Dari total 90 sel yang diuji di 5 provinsi percontohan, sebanyak **57 sel komoditas dinyatakan LAYAK** masuk ke tahap produksi:
+
+| Peringkat | Komoditas | Provinsi | Nilai Average Precision (AP) |
+|:---:|---|---|:---:|
+| 1 | **Perikanan Nila** | Jawa Tengah | **0,92** |
+| 2 | **Perikanan Bandeng** | Sulawesi Selatan | **0,90** |
+| 3 | **Padi Ladang** | Kalimantan Selatan | **0,86** |
+| 4 | **Peternakan Sapi** | Nusa Tenggara Barat | **0,83** |
+| 5 | **Perkebunan Kelapa** | Sulawesi Selatan | **0,78** |
+| ... | *(52 komoditas lainnya)* | Seluruh 5 Provinsi | >= 0,40 |
+
+Nilai skor komoditas yang lolos uji ini dikonversi menjadi indeks persentil 0–100 di tingkat kabupaten, menjadi masukan utama bagi pilar sektor primer pada fitur Peta Peran dan Kartu Ekonomi Desa.
+
+---
+
+## Transparansi Ilmiah: Mengapa Dimensi Wisata Ditolak?
+
+Salah satu prinsip terpenting dari proyek SIMPUL DESA adalah **kejujuran atas batas kemampuan data**.
+
+Tim pengembang melakukan eksperimen ekstensif untuk memprediksi potensi desa wisata menggunakan data penginderaan jauh (tutupan hutan, pantai, topografi, dan POI pariwisata). Hasil pengujian validasi holdout menunjukkan bahwa dimensi wisata **berhenti di bawah ambang kelayakan di seluruh provinsi**:
+- Sulawesi Selatan: AP = 0,369 (LEMAH)
+- Nusa Tenggara Barat: AP = 0,299 (LEMAH)
+- Lampung: AP = 0,259 (LEMAH)
+- Jawa Tengah: AP = 0,229 (TANPA-SINYAL)
+- Kalimantan Selatan: AP = 0,161 (TANPA-SINYAL)
+
+**Keputusan Metodologis:**  
+Karena tidak ada satu pun model wisata yang mencapai ambang AP >= 0,40, **tidak ada skor estimasi wisata yang dimasukkan ke dalam Skor Potensi desa**. Sebagai gantinya, data desa wisata resmi dari Kemenpar (Jadesta dan Sisparnas) dilampirkan murni sebagai lapisan fakta keterlayanan program.

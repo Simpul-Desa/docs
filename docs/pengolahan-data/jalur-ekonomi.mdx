@@ -1,0 +1,113 @@
+---
+title: 🚚 Optimisasi Jalur Ekonomi
+sidebar_position: 6
+sidebar_label: Jalur Ekonomi
+description: Metode optimisasi berkendala MILP OR-Tools CP-SAT, matriks waktu tempuh OSRM, dan perakitan 4 varian rantai pasok aset bersama pada Jalur Ekonomi.
+---
+
+# Optimisasi Jalur Ekonomi
+
+**Jalur Ekonomi** menghubungkan sekumpulan desa ke satu fasilitas atau aset bersama di lokasi paling optimal agar mencapai **skala ekonomi (*economies of scale*)** yang layak dan menguntungkan.
+
+Di banyak daerah, komoditas desa tidak berkembang bukan karena kurang produksi, melainkan karena volume per desa terlalu kecil untuk membiayai fasilitas pascapanen modern (seperti gudang pendingin beku, mesin pengering gabah, atau pusat pengolahan kopi). Jalur Ekonomi memecahkan kendala ini dengan merangkai desa-desa ke dalam pola hubungan **Desa Poros** dan **Desa Sejalur**.
+
+---
+
+## Konsep Hub-and-Spoke: Poros & Sejalur
+
+Struktur Jalur Ekonomi menggunakan arsitektur jaringan *hub-and-spoke*:
+
+```
+           [ Desa Sejalur A ]
+           (Pemasok Bahan Mentah)
+                  │ 14 menit
+                  ▼
+  [ Desa Sejalur B ] ──18 menit──► [ DESA POROS ] ◄──12 menit── [ Desa Sejalur C ]
+  (Pemasok Bahan Mentah)           (Lokasi Fasilitas Bersama:  (Pemasok Bahan Mentah)
+                                   Gudang / Cold Storage / RPH)
+                                         │
+                                         ▼ 25 menit (Akses Jalan Utama)
+                                  [ Pasar Induk / Pelabuhan ]
+```
+
+1. **Desa Poros**: Desa simpul yang ditetapkan sebagai lokasi fisik penempatan aset bersama karena keunggulan posisi geografis, waktu tempuh rata-rata terpendek dari desa-desa sekitar, dan kelayakan infrastruktur dasar.
+2. **Desa Sejalur**: Desa-desa satelit di sekitar poros yang terhubung dalam satu koridor rantai pasok dan memanfaatkan fasilitas bersama tersebut dalam batas waktu tempuh yang rasional.
+
+---
+
+## Mengapa Optimisasi Riset Operasi, Bukan Prediksi?
+
+Menentukan lokasi aset bersama **bukanlah soal prediksi statistik**, melainkan persoalan **optimisasi berkendala (*Capacitated Facility Location Problem - CFLP*)**:
+
+- Jika fasilitas ditempatkan di setiap desa, biaya investasi membengkak dan utilitas fasilitas menjadi sangat rendah (aset mangkrak).
+- Jika fasilitas ditempatkan terlalu sedikit atau terlalu jauh, ongkos angkut dan waktu tempuh membuat hasil panen rusak di jalan.
+- Ada kendala kapasitas minimal (`V_min`), kapasitas maksimal (`V_max`), dan batas waktu tempuh maksimal kendaraan (`T_maks`).
+
+SIMPUL DESA menggunakan solver industri kelas dunia **Google OR-Tools CP-SAT** (*Constraint Programming / Mixed-Integer Linear Programming*) untuk memecahkan persamaan ini secara matematis hingga mendapatkan jaminan solusi optimal global.
+
+> [!TIP]
+> **Keunggulan MILP atas Klastering Tradisional**  
+> Dalam uji tanding di 3 kabupaten percontohan (90 kombinasi komoditas), pendekatan solver MILP CP-SAT mengungguli metode klastering spasial klasik (*max-p-regions*):  
+> - **Cakupan volume berkualitas**: **87,0%** (MILP) vs 35,0% (*max-p*).  
+> - **Rata-rata waktu tempuh**: Lebih singkat, yaitu **10,6 menit** (MILP) vs 14,5 menit (*max-p*).  
+> - **Tingkat kemenangan**: MILP menang di 75 skenario, seri di 15 skenario, dan tidak pernah kalah dari metode klastering lama.
+
+---
+
+## Tulang Punggung: Matriks Waktu Tempuh OSRM 97 Kabupaten
+
+Kunci keakuratan Jalur Ekonomi adalah penggunaan **waktu tempuh nyata di jalan raya**, bukan jarak garis lurus (*Euclidean distance*).
+
+SIMPUL DESA membangun dan membekukan matriks waktu tempuh berdimensi N x N untuk seluruh pasangan desa di 97 kabupaten menggunakan mesin navigasi **OSRM (Open Source Routing Machine)** berbasis data jalan OpenStreetMap:
+- Memperhitungkan kontur jalan, batas kecepatan, jembatan penyeberangan, dan jaringan jalan resmi.
+- Menghilangkan asumsi jarak garis lurus yang sering keliru ketika menghadapi kendala bentang alam (seperti terhalang lembah atau sungai tanpa jembatan).
+- Seluruh matriks disimpan dalam format terkompresi `.npz` dengan cakupan **99,7% desa terpetakan sempurna**.
+
+---
+
+## Empat Varian Jalur Ekonomi
+
+SIMPUL DESA mengoperasikan empat varian rantai pasok dengan karakteristik dan formulasi solver yang disesuaikan:
+
+| Varian | Cakupan Wilayah | Satuan Volume Dasar | Parameter Batas Utama | Solusi Produksi |
+|---|:---:|---|---|:---:|
+| **1. Komoditas** | 97 Kabupaten | Jumlah rumah tangga petani satu komoditas spesifik (`kom_prov_*`). | `T_maks` = 30-60 menit, `V_min` = 200-1.000 ruta tani. | **22.049 Jalur** (1.712 komoditas × kab) |
+| **2. Gudang Kopdes** | 97 Kabupaten | Total seluruh rumah tangga tani lintas komoditas (`n_ruta_tani`). | `T_maks` = 40 menit, `V_min` = 2.500 ruta tani (Inpres 17/2025). | **860 Titik Gudang Bersama** |
+| **3. Cold Storage** | 45 Kab Pesisir | Rumah tangga perikanan budidaya & tangkap kelas rantai dingin. | `T_maks` = 45 menit, unit eksisting beroperasi tetap dibuka. | **32 Unit Baru** + 9 Unit Eksisting |
+| **4. Wisata** | 95 Kabupaten | Bobot daya tarik desa wisata registri Jadesta Kemenpar v2. | `T_maks` = 60 menit, pembagian beban daya tampung rute. | **Koridor Wisata Terpadu** |
+
+---
+
+### Rincian Pelaksanaan per Varian
+
+### 1. Varian Komoditas (Pascapanen Sektor Primer)
+Mengelompokkan desa-desa penghasil komoditas sejenis (padi, jagung, kelapa, kopi, sapi, ikan budidaya) ke fasilitas pengolahan primer terdekat.
+- Menghasilkan **22.049 koridor jalur**, mencakup rata-rata **85,6% volume komoditas** di seluruh Jawa, Nusa Tenggara, Lampung, Kalimantan Selatan, dan Sulawesi Selatan.
+- Rata-rata persentil ke-90 waktu tempuh petani ke poros hanya **23,6 menit**.
+- Sebanyak **1.145 kombinasi kabupaten × komoditas terbukti mencapai titik optimal global matematika (*gap optimalitas di bawah 0,55%*)**.
+
+### 2. Varian Gudang Koperasi Desa (Gudang Kopdes)
+Menentukan lokasi gudang penyimpanan bersama multi-komoditas tingkat antardesa untuk mendukung penguatan ketahanan pangan dan koperasi desa (merujuk pada Instruksi Presiden No. 17 Tahun 2025 dan standar Gudang SRG Bappebti kapasitas ±1.200 ton).
+- Menghasilkan **860 titik gudang optimal**, mencakup **88,7% total rumah tangga petani**.
+- Rata-rata waktu tempuh petani ke gudang kopdes terdekat adalah **20,7 menit**.
+
+### 3. Varian Cold Storage (Rantai Dingin Perikanan Pesisir)
+Memetakan kebutuhan ruang pendingin beku untuk hasil tangkapan laut dan tambak di 45 kabupaten pesisir:
+- **Prinsip Kejujuran**: Model memasukkan 9 titik fasilitas *cold storage* yang sudah ada di lapangan sebagai titik yang wajib dipertahankan.
+- Solver hanya mengusulkan **32 titik cold storage BARU** pada wilayah-wilayah sentra nelayan yang selama ini belum terjangkau rantai dingin (melayani 222 desa sejalur).
+- Sebanyak 76 desa dilaporkan terlayani oleh fasilitas lama, sehingga anggaran pemerintah tidak dialokasikan secara tumpang tindih.
+
+### 4. Varian Wisata (Koridor Perjalanan Terpadu)
+Merangkai desa-desa wisata di 95 kabupaten menjadi satu paket koridor perjalanan wisata yang saling melengkapi (misalnya memadukan desa wisata alam, desa kuliner, dan desa kerajinan tangan) agar memperpanjang masa tinggal wisatawan dan membagi manfaat ekonomi ke desa-desa penyangga.
+
+---
+
+## Verifikasi Kepatuhan Kendala (*Zero Violation*)
+
+Sebelum dirilis ke publik, seluruh hasil komputasi dari keempat varian diuji oleh skrip validator independen `uji_jalur.py`:
+- Memeriksa **23.318 unit fasilitas** yang dihasilkan solver.
+- Memastikan tidak ada satu pun desa yang melanggar batas kapasitas minimal (`V_min`).
+- Memastikan tidak ada desa yang ditugaskan ke poros di luar batas toleransi waktu tempuh (`T_maks`).
+- Memastikan tidak ada duplikasi penugasan desa yang sama ke beberapa poros dalam satu varian.
+
+Hasil audit mencatat **nol pelanggaran kendala keras (*exit code 0*)**, menjamin bahwa setiap rekomendasi Jalur Ekonomi yang tampil di dasbor SIMPUL DESA siap dieksekusi secara teknis dan operasional di lapangan.

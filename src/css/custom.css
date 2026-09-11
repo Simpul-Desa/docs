@@ -2,7 +2,7 @@
  * Tampilan situs dokumentasi SIMPUL DESA.
  *
  * Kerangkanya ditiru dari docs.dyte.io (Docusaurus 3 + Infima): kanvas putih,
- * Inter untuk badan teks dan Plus Jakarta Sans untuk judul, sidebar 300px
+ * Google Sans Flex untuk teks & judul (mengikuti app/DESIGN.md), sidebar 300px
  * dengan rule aksen di sisi kanan item aktif, dan kartu petak dua kolom di
  * halaman indeks.
  *
@@ -85,14 +85,14 @@
   --ifm-tabs-color-active-border: var(--docs-color-link);
 
   /* Infima: tipografi */
-  --ifm-font-family-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto,
-    Ubuntu, Cantarell, 'Noto Sans', sans-serif;
-  --ifm-heading-font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui,
+  --ifm-font-family-base: 'Google Sans Flex', system-ui, -apple-system,
+    'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif;
+  --ifm-heading-font-family: 'Google Sans Flex', ui-sans-serif, system-ui,
     -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --ifm-font-family-monospace: 'Fira Code', SFMono-Regular, Menlo, Monaco,
-    Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --ifm-font-family-monospace: 'Geist Mono', 'Fira Code', SFMono-Regular,
+    Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   --ifm-code-font-size: 92%;
-  --ifm-heading-font-weight: 600;
+  --ifm-heading-font-weight: 500;
 
   /* Infima: kerangka */
   --ifm-spacing-horizontal: 1.5rem;
@@ -216,15 +216,21 @@ nav.navbar {
   --ifm-link-hover-decoration: none;
 }
 
-.navbar__logo {
-  height: 1.75rem;
+.navbar__brand {
+  margin-right: 0;
 }
 
-.navbar__title {
-  font-family: var(--ifm-heading-font-family);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
+.navbar__logo {
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  margin-right: 0;
+}
+
+.navbar__logo img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
 }
 
 /* Caret dropdown: chevron, bukan segitiga bawaan Infima */
@@ -736,6 +742,62 @@ ul.menu__list > li > a.menu__link--active {
   color: var(--ifm-menu-color);
 }
 
+/* --- Badge ML (Machine Learning) di sidebar ------------------------------ */
+
+.sidebar-badge-ml > .menu__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-badge-ml > .menu__link::after {
+  content: 'ML';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  padding: 0.125rem 0.375rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  border-radius: var(--docs-radius-xs);
+  background-color: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  flex-shrink: 0;
+  transition: all var(--ifm-transition-fast) ease;
+}
+
+.sidebar-badge-ml > .menu__link:hover::after {
+  background-color: rgba(124, 58, 237, 0.18);
+  border-color: rgba(124, 58, 237, 0.4);
+}
+
+.sidebar-badge-ml > .menu__link--active::after {
+  background-color: #7c3aed;
+  color: #ffffff;
+  border-color: #7c3aed;
+}
+
+html[data-theme='dark'] .sidebar-badge-ml > .menu__link::after {
+  background-color: rgba(168, 85, 247, 0.16);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+html[data-theme='dark'] .sidebar-badge-ml > .menu__link:hover::after {
+  background-color: rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
+html[data-theme='dark'] .sidebar-badge-ml > .menu__link--active::after {
+  background-color: #a855f7;
+  color: #0f172a;
+  border-color: #a855f7;
+}
+
 /**
  * Panah ciutkan kategori diperkecil dan ditipiskan di SELURUH sidebar —
  * `docs/` maupun `docs-api/`.
@@ -859,6 +921,17 @@ ul.menu__list > li > a.menu__link--active {
 
 .pagination-nav__link--next .pagination-nav__label::after {
   content: ' ›';
+}
+
+/* Jarak antara konten utama dan footer */
+main.docMainContainer,
+main[class*='docMainContainer'],
+.docMainContainer {
+  padding-bottom: 3.5rem;
+}
+
+.pagination-nav {
+  margin-bottom: 2rem;
 }
 
 .alert {
@@ -1066,13 +1139,26 @@ html[data-theme='dark'] .homepage-card .tag {
 .footer__brand-mark {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--docs-color-text);
-  font-family: var(--ifm-heading-font-family);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
   text-decoration: none;
+}
+
+.footer__brand-logo {
+  height: 3.5rem;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.footer__brand-logo--dark {
+  display: none;
+}
+
+[data-theme='dark'] .footer__brand-logo--light {
+  display: none;
+}
+
+[data-theme='dark'] .footer__brand-logo--dark {
+  display: block;
 }
 
 .footer__brand-text {

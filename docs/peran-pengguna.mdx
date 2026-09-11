@@ -1,114 +1,90 @@
 ---
-title: 👥 Role Pengguna
+title: 👥 Peran Pengguna
 sidebar_position: 4
-description: Lima role SIMPUL DESA dan matriks akses per fitur — apa yang terlihat, apa yang terkunci, dan cara membukanya.
+sidebar_label: Peran Pengguna
+description: Lima tingkatan peran pengguna di SIMPUL DESA dan matriks hak akses per fitur — fitur yang terbuka, fitur yang dibatasi, serta tata cara perubahannya.
 ---
 
-# Role Pengguna
+# Peran Pengguna
 
-SIMPUL DESA mengenal empat role tersimpan plus satu keadaan tanpa login.
-Role menentukan fitur mana yang terbuka, bukan wilayah mana yang bisa
-dilihat: seluruh 17.467 desa terbaca oleh siapa pun yang boleh membuka
-fiturnya.
+SIMPUL DESA menerapkan sistem kendali akses berbasis peran (*Role-Based Access Control*) yang terdiri dari **empat peran akun tersimpan** dan **satu status pengunjung umum tanpa login (*anonim*)**.
 
-Jangan disamakan dengan Desa Poros dan Desa Sejalur. Keduanya atribut desa di
-dalam Jalur Ekonomi, sedangkan halaman ini tentang akun manusia.
+Peran pengguna mengatur **fitur apa saja yang dapat digunakan**, bukan wilayah mana yang boleh dilihat. Seluruh data 17.467 desa dan kelurahan di lima provinsi percontohan dapat diakses secara merata oleh pengguna selama fitur yang bersangkutan terbuka untuk perannya.
 
-## Siapa boleh apa
+> **Penting**: Peran pengguna pada halaman ini merujuk pada hak akses akun pengguna sistem, dan berbeda dengan konsep *peran desa* di dalam Jalur Ekonomi (yaitu status Desa Poros dan Desa Sejalur).
+
+## Matriks Hak Akses Fitur
+
+Tabel berikut merangkum fitur apa saja yang dapat diakses oleh setiap tingkatan peran pengguna:
 
 | Fitur | Anonim | Tamu | Pemerintah | Swasta | Admin |
 | --- | :---: | :---: | :---: | :---: | :---: |
-| Kartu Ekonomi Desa | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Peta Peran | — | ✓ | ✓ | ✓ | ✓ |
-| Jalur Ekonomi | — | ✓ | ✓ | ✓ | ✓ |
-| Desa Kembar | — | ✓ | ✓ | ✓ | ✓ |
-| Citra Potensi Desa | — | ✓ | ✓ | ✓ | ✓ |
-| Berita Desa | — | ✓ | ✓ | ✓ | ✓ |
-| Asisten Desa | — | — | ✓ | ✓ | ✓ |
-| Laporan Desa | — | — | ✓ | — | ✓ |
-| Halaman Admin | — | — | — | — | ✓ |
+| **Kartu Ekonomi Desa** | ✓* | ✓ | ✓ | ✓ | ✓ |
+| **Peta Peran** | — | ✓ | ✓ | ✓ | ✓ |
+| **Jalur Ekonomi** | — | ✓ | ✓ | ✓ | ✓ |
+| **Desa Kembar** | — | ✓ | ✓ | ✓ | ✓ |
+| **Citra Potensi Desa** | — | ✓ | ✓ | ✓ | ✓ |
+| **Berita Desa** | — | ✓ | ✓ | ✓ | ✓ |
+| **Asisten Desa** | — | — | ✓ | ✓ | ✓ |
+| **Laporan Desa (PDF)** | — | — | ✓ | — | ✓ |
+| **Halaman Admin** | — | — | — | — | ✓ |
 
-Berita Desa tampil sebagai bagian Kartu Ekonomi Desa. Anonim melihat kartunya
-tanpa bagian berita.
+*\*Catatan*: Pengguna **Anonim** dapat melihat Kartu Ekonomi Desa, namun bagian Berita Desa di dalamnya disembunyikan.
 
-## Anonim
+---
 
-Keadaan sebelum login, bukan role tersimpan. Membuka Portal tanpa akun
-langsung masuk ke sini.
+## Rincian Tingkatan Peran
 
-Terbuka:
+### 1. Anonim (Pengunjung Publik)
+Status awal ketika pengguna membuka Portal SIMPUL DESA tanpa masuk log (*login*). Status ini bukan merupakan akun yang tersimpan di basis data.
 
-- Kartu Ekonomi Desa untuk seluruh desa dalam cakupan, tanpa bagian Berita
-  Desa.
+- **Fitur Terbuka**: Kartu Ekonomi Desa untuk seluruh 17.467 desa dan kelurahan (tanpa bagian Berita Desa).
+- **Fitur Dibatasi**: Empat lensa utama lainnya (Peta Peran, Jalur Ekonomi, Desa Kembar, Citra Potensi Desa), Berita Desa, Asisten Desa, dan unduh Laporan Desa.
+- **Cara Akses Lanjutan**: Lakukan pendaftaran akun secara mandiri. Registrasi selesai dalam satu langkah dan akun baru akan otomatis memperoleh peran **Tamu**.
 
-Terkunci: empat lensa lainnya, Berita Desa, Asisten Desa, dan Laporan Desa.
+### 2. Tamu (Pengguna Terdaftar)
+Peran standar (*default*) yang langsung diperoleh setiap pengguna baru setelah menyelesaikan pendaftaran mandiri. Tidak ada opsi pemilihan peran saat pendaftaran awal.
 
-Cara membuka: daftar akun. Registrasi mandiri selesai dalam satu langkah dan
-langsung memberi role tamu.
+- **Fitur Terbuka**:
+  - Kelima lensa utama di Portal: Peta Peran, Kartu Ekonomi Desa, Jalur Ekonomi, Desa Kembar, dan Citra Potensi Desa.
+  - Komponen Berita Desa pada setiap profil desa.
+- **Fitur Dibatasi**: Asisten Desa, unduh Laporan Desa, dan Halaman Admin.
+- **Cara Kenaikan Peran**: Mengajukan permohonan kenaikan peran kepada Administrator sistem.
 
-## Tamu
+### 3. Pemerintah (Instansi Pemerintah)
+Peran terverifikasi khusus bagi aparatur instansi kementerian, lembaga pemerintah, atau dinas pemerintah daerah. Peran ini diberikan oleh Admin melalui persetujuan manual.
 
-Role bawaan setiap registrasi mandiri. Tidak ada pemilihan role saat
-mendaftar; semua akun baru masuk sebagai tamu.
+- **Fitur Terbuka**:
+  - Seluruh fitur yang dimiliki peran Tamu.
+  - **Asisten Desa**: Tanya-jawab cerdas dengan asisten berbasis data SIMPUL DESA.
+  - **Laporan Desa**: Unduh dokumen resmi ringkasan analisis desa berformat PDF siap cetak.
+- **Fitur Dibatasi**: Halaman Admin.
 
-Terbuka:
+### 4. Swasta (Mitra Usaha & Investor)
+Peran terverifikasi bagi mitra swasta, pelaku usaha agribisnis, penyerap hasil panen (*offtaker*), koperasi, maupun investor yang mencari peluang investasi komoditas desa.
 
-- kelima lensa Portal: Peta Peran, Kartu Ekonomi Desa, Jalur Ekonomi, Desa
-  Kembar, Citra Potensi Desa;
-- Berita Desa pada tiap kartu.
+- **Fitur Terbuka**:
+  - Seluruh fitur yang dimiliki peran Tamu.
+  - **Asisten Desa**: Eksplorasi data potensi dan peluang komoditas secara interaktif.
+- **Fitur Dibatasi**: Unduh Laporan Desa (PDF) dan Halaman Admin. Hak unduh dokumen resmi Laporan Desa khusus disediakan bagi instansi pemerintah dan admin.
 
-Terkunci: Asisten Desa dan Laporan Desa.
+### 5. Admin (Pengelola Sistem)
+Administrator teknis yang bertanggung jawab atas operasional dan tata kelola sistem SIMPUL DESA.
 
-Cara membuka: minta kenaikan role ke admin. Tamu tidak bisa menaikkan
-rolenya sendiri.
+- **Fitur Terbuka**:
+  - Seluruh fitur sistem tanpa pengecualian.
+  - **Halaman Admin (`/admin`)**: Manajemen daftar pengguna, persetujuan kenaikan dan penurunan peran, pemantauan kesehatan server, serta penyegaran atau kurasi Berita Desa.
+- **Catatan Operasional**: Penyegaran Berita Desa dijalankan khusus untuk daftar desa tertentu yang dipilih oleh Admin, tidak ada opsi penyegaran massal seluruh desa sekaligus demi menjaga performa server.
 
-## Pemerintah
+---
 
-Akun instansi pemerintah, dinaikkan admin dari tamu. role paling lengkap di
-luar admin.
+## Alur Pengelolaan & Perubahan Peran
 
-Terbuka:
+1. **Pendaftaran Akun**: Setiap pengguna yang mendaftar secara mandiri akan langsung menempati peran **Tamu**.
+2. **Kenaikan Peran**: Peningkatan peran menjadi **Pemerintah**, **Swasta**, atau **Admin** dilakukan secara terkurasi oleh Administrator melalui panel Halaman Admin.
+3. **Verifikasi Instansi**: Saat ini belum diterapkan verifikasi dokumen instansi secara otomatis; verifikasi identitas dilakukan secara manual oleh Administrator.
+4. **Infrastruktur Akun**: Layanan autentikasi, manajemen sesi login, dan penyimpanan kredensial pengguna dikelola secara aman menggunakan platform **Supabase**.
 
-- semua yang dimiliki tamu;
-- Asisten Desa;
-- Laporan Desa — PDF per desa yang memuat sekurangnya Peta Peran dan Kartu
-  Ekonomi Desa.
-
-Terkunci: Halaman Admin.
-
-## Swasta
-
-Akun mitra swasta, dinaikkan admin dari tamu.
-
-Terbuka:
-
-- semua yang dimiliki tamu;
-- Asisten Desa.
-
-Terkunci: Laporan Desa dan Halaman Admin. Ini satu-satunya beda swasta dengan
-pemerintah.
-
-## Admin
-
-Pengelola sistem.
-
-Terbuka:
-
-- semua fitur tanpa kecuali;
-- Halaman Admin: daftar pengguna, kenaikan dan penurunan role, pemantauan
-  status sistem, penyegaran Berita Desa untuk desa terpilih, dan penghapusan
-  satu berita yang nyasar.
-
-Penyegaran Berita Desa selalu untuk daftar desa yang admin sebutkan. Tidak ada
-mode "segarkan semua desa".
-
-## Cara berpindah role
-
-Registrasi mandiri selalu menghasilkan tamu. Kenaikan ke pemerintah, swasta,
-atau admin hanya dilakukan admin lewat Halaman Admin, dan penurunan role
-lewat jalur yang sama.
-
-Belum ada alur verifikasi instansi otomatis: admin yang memutuskan sebuah akun
-milik instansi pemerintah atau mitra swasta.
-
-Autentikasi dan penyimpanan akun memakai Supabase.
+> [!TIP]
+> **Uji Coba Langsung dengan Akun Demo**  
+> Ingin menguji hak akses masing-masing tingkatan peran di atas secara langsung? Buka menu [Akun Demo](/docs/akun-demo) untuk melihat daftar akun uji coba resmi yang siap digunakan.

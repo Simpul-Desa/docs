@@ -1,28 +1,25 @@
 ---
-title: Sumber tambahan
+title: Sumber Tambahan
 sidebar_position: 2
-description: Sembilan sumber di luar tabel induk SIMPUL DESA, dibaca langsung oleh fitur tertentu dan digabungkan di hilir.
+description: Sembilan sumber data sektoral khusus di luar tabel induk yang digabungkan pada tahap hilir untuk fitur tertentu.
 ---
 
-# Sumber tambahan
+# Sumber Tambahan
 
-Sembilan sumber berikut di luar tabel induk. Fitur tertentu membacanya
-langsung, dan penggabungannya selalu dilakukan di hilir.
+Selain sembilan sumber pada tabel induk, SIMPUL DESA memanfaatkan **sembilan sumber data sektoral tambahan**. Data dari sumber-sumber ini tidak dimuat ke dalam tabel induk wilayah, melainkan dibaca dan diintegrasikan secara spesifik pada tahap pemrosesan akhir (*downstream*) oleh fitur yang memerlukannya (khususnya fitur Jalur Ekonomi varian Cold Storage dan Wisata, serta lapisan Fakta Program).
 
-| Sumber | Yang diambil |
+| Sumber Data & Instansi | Data yang Digunakan & Cakupan |
 | --- | --- |
-| [Sisparnas Kemenpar](https://sisparnas.kemenpar.go.id) | 3.858 titik daya tarik wisata berkoordinat, dihitung per desa |
-| [Satu Data Pariwisata Kemenpar](https://satudata.kemenpar.go.id) | registri 1.548 desa wisata berkoordinat, 1.145 di antaranya berhasil disambungkan ke desa |
-| [Wikidata](https://query.wikidata.org) | objek wisata bergeotag sebagai pelengkap; cakupannya tipis |
-| [Portal Satu Data KKP](https://portaldata.kkp.go.id) | titik cold storage eksisting, unit pengolahan ikan, produksi pembesaran, kampung budidaya |
-| [PIPP KKP](https://pipp.kkp.go.id) | 686 pelabuhan perikanan untuk skor perikanan varian Cold Storage |
-| [SIPCS KKP](https://sipcs.kkp.go.id) dan [GISHUB Kemenhub](https://gishub.kemenhub.go.id) | titik cold storage versi lain, dipakai sebagai pembanding saja |
-| [Satu Data Sulsel](https://satudata.sulselprov.go.id) | produksi perikanan 2024 untuk kalibrasi ton per rumah tangga |
-| [Satu Data NTB](https://data.ntbprov.go.id) | produksi perikanan 2024 untuk kalibrasi ton per rumah tangga |
-| [JDIH KKP](https://jdih.kkp.go.id) | keputusan menteri penetapan kampung nelayan |
+| [**Sisparnas Kemenpar**](https://sisparnas.kemenpar.go.id) | Sebaran spasial 3.858 titik daya tarik wisata (ODTW) berkoordinat, diagregasikan per desa. |
+| [**Satu Data Pariwisata Kemenpar**](https://satudata.kemenpar.go.id) | Direktori 1.548 desa wisata berkoordinat, di mana sebanyak 1.145 desa di antaranya berhasil dipetakan secara spasial ke wilayah desa resmi. |
+| [**Wikidata**](https://query.wikidata.org) | Data objek wisata sekunder bergeotag sebagai pelengkap titik minat wisata wilayah. |
+| [**Portal Satu Data KKP**](https://portaldata.kkp.go.id) | Sebaran lokasi unit *cold storage* eksisting, unit pengolahan ikan (UPI), volume produksi budidaya pembesaran, dan penetapan Kampung Budidaya. |
+| [**PIPP KKP**](https://pipp.kkp.go.id) | Sebaran 686 pelabuhan perikanan aktif, digunakan dalam pemodelan akses logistik varian Cold Storage. |
+| [**SIPCS KKP**](https://sipcs.kkp.go.id) & [**GISHUB Kemenhub**](https://gishub.kemenhub.go.id) | Basis data titik gudang pendingin versi kementerian terkait, dimanfaatkan sebagai data pembanding validasi silang. |
+| [**Satu Data Sulsel**](https://satudata.sulselprov.go.id) | Statistik produksi perikanan tangkap dan budidaya tahun 2024 untuk kalibrasi konversi volume per rumah tangga nelayan di Sulawesi Selatan. |
+| [**Satu Data NTB**](https://data.ntbprov.go.id) | Statistik produksi perikanan 2024 untuk kalibrasi konversi volume per rumah tangga di Nusa Tenggara Barat. |
+| [**JDIH KKP**](https://jdih.kkp.go.id) | Surat Keputusan Menteri Kelautan dan Perikanan mengenai penetapan resmi lokasi Kampung Nelayan (KALAJU, Kalamo, KNMP). |
 
-Beberapa kandidat sumber sudah disurvei tetapi belum dipakai, di antaranya
-Podes BPS dan Statistik ODTW 2023.
+> **Catatan Survei Sumber**: Sejumlah kandidat sumber data resmi lainnya telah dievaluasi dan disurvei, namun belum diintegrasikan ke dalam rilis saat ini—di antaranya kuesioner Potensi Desa (Podes) BPS dan Publikasi Statistik ODTW 2023.
 
-Cakupan wilayahnya, kunci join antar sumber, dan catatan mutu tiap sumber ada
-di [Sumber Data](/docs/sumber-data).
+Informasi mengenai integrasi spasial dan catatan penanganan data selengkapnya dapat dipelajari di halaman [Sumber Data](/docs/sumber-data).

@@ -1,23 +1,51 @@
 ---
 title: Peta Peran
 sidebar_position: 1
-description: Peta Peran seperti yang terlihat di Portal, beserta tautan ke halaman lengkapnya.
+description: Panduan visual dan interaksi fitur Peta Peran pada antarmuka Portal SIMPUL DESA.
 ---
 
 # Peta Peran
 
-Peta Peran menempatkan tiap desa ke satu dari empat zona penanganan, sehingga
-jelas siapa yang harus bergerak lebih dulu: pemerintah, mitra swasta, atau
-perlindungan sosial. Zonanya dibaca dari posisi desa pada dua sumbu, Skor
-Potensi dan Skor Kesiapan, dengan ambang median kabupaten.
+Fitur **Peta Peran** dirancang untuk menjawab pertanyaan mendasar dalam perencanaan pembangunan daerah: **pihak mana yang harus bergerak lebih dulu ke desa mana**. Melalui fitur ini, setiap desa dipetakan ke dalam salah satu dari empat zona penanganan berdasarkan perbandingan antara **Skor Potensi** dan **Skor Kesiapan** terhadap nilai median di kabupaten terkait.
 
-Halaman ini menunjukkan Peta Peran **seperti yang terlihat di Portal**.
-Penjelasan konsepnya, termasuk istilah dan cara angkanya dihitung, ada di
-[halaman Peta Peran](/docs/fitur/peta-peran/pengenalan).
+Halaman ini memandu cara membaca dan berinteraksi dengan fitur Peta Peran **seperti yang terlihat pada antarmuka Portal**. Untuk penjelasan konsep mendalam, metodologi perhitungan, dan rujukan rumus analitik, silakan pelajari [Panduan Teknis Peta Peran](/docs/fitur/peta-peran/pengenalan) serta [Glosarium](/docs/glosarium).
 
-<div className="sd-shot" role="img" aria-label="Slot tangkapan layar Peta Peran, belum diisi">Tangkapan layar menyusul — lensa Peta Peran, peta berwarna per zona penanganan</div>
+---
 
-Yang perlu terlihat: empat zona penanganan pada peta, penanda desa terpilih,
-dan panel kiri yang menyebut zona beserta alasannya.
+## Tampilan Antarmuka di Portal
 
-Slotnya masih kosong sampai Portal dan API-nya dijalankan pemilik proyek.
+Ketika lensa **Peta Peran** diaktifkan pada bilah navigasi Portal, antarmuka menyajikan peta tematik wilayah yang terintegrasi dengan panel analitik interaktif:
+
+<div className="sd-shot" role="img" aria-label="Tangkapan layar lensa Peta Peran pada Portal">
+  <b>Tampilan Antarmuka Peta Peran di Portal</b><br />
+  Peta tematik interaktif dengan pewarnaan zona per desa, dilengkapi panel informasi analitik di sisi kiri layar.
+</div>
+
+### Elemen Utama yang Ditampilkan
+
+1. **Peta Tematik Warna Wilayah**:
+   - Seluruh desa dan kelurahan diwarnai secara visual sesuai dengan zona penanganannya:
+     - **Zona Pemerintah**: Prioritas intervensi Dana Desa, pembangunan infrastruktur dasar, dan pendampingan intensif.
+     - **Zona Mitra**: Memiliki potensi dan kesiapan tinggi, siap dipertemukan langsung dengan mitra swasta, penyerap hasil panen (*offtaker*), atau investor.
+     - **Zona Poros**: Kesiapan tinggi dengan potensi produksi terbatas, sangat ideal menjadi simpul logistik atau pusat pengolahan bagi desa sekitarnya.
+     - **Zona Bantuan**: Prioritas perlindungan sosial dan pembukaan akses menuju desa poros terdekat.
+   - Peta dapat digeser (*pan*), diperbesar (*zoom*), atau dipilih per desa untuk melihat batas poligon wilayah secara detail.
+
+2. **Panel Detail Desa (Sisi Kiri)**:
+   - Saat sebuah desa dipilih pada peta, panel samping akan menampilkan ringkasan analitik:
+     - **Identitas Wilayah**: Nama resmi desa/kelurahan, kecamatan, kabupaten, dan kode wilayah BPS.
+     - **Status Zona Penanganan**: Nama zona resmi beserta rekomendasi arah tindakan.
+     - **Skor & Posisi Relatif**: Nilai Skor Potensi dan Skor Kesiapan dalam bentuk persentil dan desil kabupaten.
+     - **Potensi Dominan**: Tema ekonomi dan komoditas unggulan yang menjadi pendorong skor potensi desa.
+
+3. **Penanda Khusus Transparansi Data**:
+   - **Status "Belum Terpetakan"**: Ditampilkan khusus untuk desa yang bukti kesiapannya terukur $\le 50\%$, menandakan data survei lapangan belum memadai untuk menentukan zona secara objektif.
+   - **Label "Keyakinan Rendah"**: Muncul jika posisi skor desa berada sangat tipis dari garis ambang batas median ($< 2$ poin), memberi peringatan bahwa penempatan zona sensitif terhadap perubahan kecil pada data.
+
+---
+
+## Interaksi Pengguna
+
+- **Memilih Wilayah**: Gunakan kolom pencarian di bagian atas atau klik langsung pada poligon desa di peta untuk memuat profil lengkapnya.
+- **Melihat Rekomendasi Aksi**: Panel samping langsung menyajikan kalimat panduan intervensi yang dirumuskan secara terukur untuk desa terpilih.
+- **Eksplorasi Lanjutan**: Klik tautan menuju **Kartu Ekonomi Desa** pada panel untuk meninjau rincian indikator ekonomi lengkap desa tersebut.

@@ -25,19 +25,53 @@ const sidebars = {
     'glosarium',
     {
       type: 'category',
-      label: '🌐 Sumber Data',
-      // Halaman induknya tetap punya isi sendiri — cakupan, kunci join, dan
-      // catatan mutu — jadi kategorinya menaut ke dokumen itu, bukan ke
-      // indeks bangkitan.
-      link: {type: 'doc', id: 'sumber-data/index'},
-      items: ['sumber-data/pipeline-utama', 'sumber-data/tambahan'],
+      label: '📊 Data',
+      items: [
+        {
+          type: 'category',
+          label: '🌐 Sumber Data',
+          link: {type: 'doc', id: 'sumber-data/index'},
+          items: ['sumber-data/pipeline-utama', 'sumber-data/tambahan'],
+        },
+        {
+          type: 'category',
+          label: '⚙️ Pengolahan Data',
+          link: {type: 'doc', id: 'pengolahan-data/index'},
+          items: [
+            'pengolahan-data/peta-peran',
+            'pengolahan-data/kartu-ekonomi-desa',
+            {
+              type: 'doc',
+              id: 'pengolahan-data/citra-potensi-desa',
+              label: 'Citra Potensi Desa',
+              className: 'sidebar-badge-ml',
+            },
+            {
+              type: 'doc',
+              id: 'pengolahan-data/desa-kembar',
+              label: 'Desa Kembar',
+              className: 'sidebar-badge-ml',
+            },
+            {
+              type: 'doc',
+              id: 'pengolahan-data/jalur-ekonomi',
+              label: 'Jalur Ekonomi',
+              className: 'sidebar-badge-ml',
+            },
+          ],
+        },
+      ],
     },
-    'peran-pengguna',
+    {
+      type: 'category',
+      label: '👥 Pengguna',
+      items: ['peran-pengguna', 'akun-demo'],
+    },
     {
       // TANPA `link`: kategori ini tidak punya halaman sendiri, jadi
       // mengekliknya hanya membuka kedua subkelompoknya.
       type: 'category',
-      label: '📌 Fitur di Aplikasi',
+      label: '📌 Fitur pada Aplikasi',
       items: [
         {
           type: 'category',
@@ -62,6 +96,7 @@ const sidebars = {
         },
       ],
     },
+    'pengembangan-lebih-lanjut',
   ],
 
   // Seluruh fitur di satu pohon. Lima fitur utama masing-masing kategori

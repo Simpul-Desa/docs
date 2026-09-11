@@ -29,7 +29,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const URL_PORTAL = process.env.SIMPUL_URL_PORTAL || '/docs/intro';
 const URL_API =
   process.env.SIMPUL_URL_API ||
-  'https://simpul-desa-api-production.up.railway.app';
+  'https://api-simpul-desa.up.railway.app';
 const URL_DOKUMENTASI = process.env.SIMPUL_URL_DOKUMENTASI || '/';
 
 // Menu bertingkat Fitur. Nama fitur ditulis persis seperti di GLOSSARY.md
@@ -212,9 +212,7 @@ const resourceMenu = `
 const config = {
   title: 'Simpul Desa',
   tagline: 'Dokumentasi proyek Simpul Desa',
-  // Tanpa `favicon` dan tanpa `themeConfig.image`: seluruh gambar bawaan
-  // generator (logo dino, favicon, kartu sosial) sudah dibuang, dan proyek
-  // ini belum punya penggantinya. Isi keduanya begitu marka itu ada.
+  favicon: 'img/logo-simpul-desa.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -244,8 +242,26 @@ const config = {
     urlDokumentasi: URL_DOKUMENTASI,
   },
 
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
+      },
+    },
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossorigin: 'anonymous',
+      },
+    },
+  ],
+
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Plus+Jakarta+Sans:wght@400..800&family=Fira+Code:wght@400..600&display=swap',
+    'https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Geist+Mono:wght@400..700&family=Fira+Code:wght@400..600&display=swap',
   ],
 
   // Even if you don't use internationalization, you can use this field to set
@@ -378,13 +394,22 @@ const config = {
         {language: 'python', variant: 'Requests', logoClass: 'python'},
         {language: 'http', variant: 'HTTP', logoClass: 'http'},
       ],
+      image: 'img/logo-docs-simpul-desa-black.png',
       colorMode: {
         defaultMode: 'light',
         disableSwitch: false,
-        respectPrefersColorScheme: true,
+        respectPrefersColorScheme: false,
       },
       navbar: {
-        title: 'Simpul Desa',
+        logo: {
+          alt: 'SIMPUL DESA',
+          src: 'img/logo-docs-simpul-desa-black.png',
+          srcDark: 'img/logo-docs-simpul-desa-white.png',
+          href: '/',
+          target: '_self',
+          width: 133,
+          height: 40,
+        },
         hideOnScroll: false,
         items: [
           {
@@ -405,7 +430,7 @@ const config = {
             docId: 'intro',
             docsPluginId: 'api',
             position: 'left',
-            label: 'REST API',
+            label: 'REST APIs',
           },
           {
             // Satu-satunya butir navbar yang TIDAK punya sidebar: seluruh
@@ -452,7 +477,7 @@ const config = {
           {
             items: [
               {
-                html: `<div class="footer__brand"><a class="footer__brand-mark" href="/"><span>Simpul Desa</span></a><p class="footer__brand-text">Dokumentasi SIMPUL DESA: panduan pemakaian dasbor dan rujukan REST API-nya.</p><a class="footer__brand-cta" href="${URL_PORTAL}">Kembali ke Portal</a></div>`,
+                html: `<div class="footer__brand"><a class="footer__brand-mark" href="/"><img class="footer__brand-logo footer__brand-logo--light" src="/img/logo-docs-simpul-desa-black.png" alt="SIMPUL DESA" /><img class="footer__brand-logo footer__brand-logo--dark" src="/img/logo-docs-simpul-desa-white.png" alt="SIMPUL DESA" /></a><p class="footer__brand-text">Dokumentasi SIMPUL DESA: panduan pemakaian dasbor dan rujukan REST APIs-nya.</p><a class="footer__brand-cta" href="${URL_PORTAL}">Kembali ke Portal</a></div>`,
               },
             ],
           },
@@ -461,7 +486,7 @@ const config = {
             items: [
               {label: 'Panduan', to: '/docs/intro'},
               {label: 'Fitur', to: '/docs/fitur'},
-              {label: 'REST API', to: '/api/intro'},
+              {label: 'REST APIs', to: '/api/intro'},
               {label: 'Glosarium', to: '/docs/glosarium'},
               {label: 'Peran Pengguna', to: '/docs/peran-pengguna'},
             ],

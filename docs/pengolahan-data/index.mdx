@@ -1,0 +1,93 @@
+---
+title: ⚙️ Pengolahan Data
+sidebar_position: 1
+sidebar_label: Ikhtisar Pengolahan Data
+description: Arsitektur lengkap pengolahan data SIMPUL DESA dari data mentah, tabel induk, tiga model machine learning, hingga perakitan fitur produk.
+---
+
+# Ikhtisar Pengolahan Data
+
+SIMPUL DESA memproses data dari **18 sumber resmi** untuk memetakan kondisi ekonomi **17.467 desa dan kelurahan** di 5 provinsi percontohan. Seluruh proses analisis dijalankan secara objektif dari data sekunder tanpa membebani aparatur desa dengan survei atau pengisian kuesioner mandiri.
+
+Halaman ini menjelaskan gambaran besar arsitektur pengolahan data: bagaimana jutaan titik data mentah disaring, disambungkan ke dalam tabel induk, dimodelkan menggunakan kecerdasan buatan (*Machine Learning*) dan riset operasi, hingga akhirnya dirakit menjadi dua fitur utama yang disajikan kepada pengguna.
+
+---
+
+## Arsitektur Alur Data (*End-to-End*)
+
+Alur pengolahan data SIMPUL DESA terbagi menjadi empat tahapan berurutan:
+
+```
+[ Tahap 1: Panen Data ]
+BPS · IDM Kemendesa · Sensus Pertanian · Kemenpar · KKP · OpenStreetMap · Citra SRTM
+                           │
+                           ▼ (panen_ml.py & cek_panen.py)
+[ Tahap 2: Tabel Induk Terpadu ]
+panen/gabung/desa_ml.csv (17.467 desa × 127 kolom indikator)
+                           │
+         ┌─────────────────┼─────────────────┐
+         ▼                 ▼                 ▼
+[ Tahap 3: Tiga Komponen Machine Learning & Optimisasi ]
+Citra Potensi Desa       Desa Kembar       Jalur Ekonomi
+(Katalog v5 Komoditas)   (kNN Profil v3)   (MILP CP-SAT + Matriks OSRM)
+57 Sel Teruji            AP 0,723          4 Varian Penempatan Aset
+         │                 │                 │
+         └────────────┬────┴─────────────────┘
+                      ▼
+[ Tahap 4: Dua Perakitan Fitur Produk ]
+1. Peta Peran (Skor Potensi, Skor Kesiapan, 4 Kuadran Zona Kebijakan)
+2. Kartu Ekonomi Desa (11 Seksi Profil Lengkap 360° per Desa)
+                      │
+                      ▼
+[ Penyajian Publik: REST APIs & Dasbor Portal ]
+```
+
+---
+
+## Empat Tahapan Pemrosesan
+
+### 1. Panen & Validasi Data Mentah
+Data dihimpun per kabupaten untuk 97 kabupaten/kota menggunakan skrip otomatis `panen_ml.py`. Setiap unduhan diverifikasi kesehatannya oleh validator `cek_panen.py` guna mendeteksi berkas yang rusak, anomali angka ekstrem, atau kekosongan sebelum masuk ke tahap penggabungan.
+
+### 2. Tabel Induk Terpadu (`desa_ml.csv`)
+Seluruh indikator yang telah dibersihkan disatukan ke dalam satu tabel acuan tunggal berdimensi **17.467 baris × 127 kolom**. Semua model *machine learning* dan perakitan fitur diwajibkan membaca basis data yang sama agar tidak terjadi perbedaan angka antar-halaman.
+
+### 3. Tiga Komponen Pemodelan Khusus
+Tiga masalah analitik diselesaikan oleh tiga mesin komputasi terpisah:
+- [**Citra Potensi Desa**](/docs/pengolahan-data/citra-potensi-desa) — Memprediksi sentra komoditas pertanian, perkebunan, peternakan, dan perikanan per desa murni dari citra tutupan lahan dan topografi geospasial terbuka.
+- [**Desa Kembar**](/docs/pengolahan-data/desa-kembar) — Menemukan desa-desa yang memiliki karakteristik struktural paling serupa menggunakan algoritma *k-Nearest Neighbors* (kNN) tanpa mengandalkan kedekatan geografis.
+- [**Jalur Ekonomi**](/docs/pengolahan-data/jalur-ekonomi) — Menyelesaikan persoalan optimisasi penempatan fasilitas bersama (*Capacitated Facility Location Problem*) menggunakan *Mixed-Integer Linear Programming* (MILP) berbantukan matriks waktu tempuh nyata jaringan jalan.
+
+### 4. Dua Perakitan Fitur Produk
+Keluaran dari ketiga komponen pemodelan disatukan di lapisan fitur:
+- [**Peta Peran**](/docs/pengolahan-data/peta-peran) — Menghitung Skor Potensi (SP) dan Skor Kesiapan (SK), lalu memetakan posisi setiap desa ke salah satu dari 4 zona intervensi kebijakan (Poros, Mitra, Bantuan, Pemerintah).
+- [**Kartu Ekonomi Desa**](/docs/pengolahan-data/kartu-ekonomi-desa) — Merangkum seluruh dimensi desa ke dalam 11 seksi profil komprehensif 360°, dilengkapi rekomendasi aksi dan fakta program riil dari kementerian.
+
+---
+
+## Prinsip Integritas & Kejujuran Ilmiah
+
+Pengolahan data SIMPUL DESA berpegang teguh pada prinsip keterbukaan metodologi (*scientific transparency*):
+
+> [!IMPORTANT]
+> **Data yang Tidak Lolos Uji Ditolak Secara Terbuka**  
+> Pada komponen Citra Potensi Desa, eksperimen estimasi potensi wisata menghasilkan skor validasi di bawah standar kelayakan (AP di bawah 0,40). Alih-alih memaksakan estimasi yang tidak akurat, tim pengembang memutuskan secara sadar bahwa **skor wisata tidak dimasukkan ke dalam perhitungan Skor Potensi**. Registri desa wisata dari Kemenpar tetap dilampirkan murni sebagai fakta program terdaftar.
+
+1. **Anti Saling-Menghapus pada Potensi Desa**:  
+   Skor Potensi dihitung menggunakan operator nilai maksimum antar-komoditas, bukan rata-rata. Hal ini memastikan desa yang sangat unggul pada satu komoditas spesialis (misal penghasil kopi atau lada unggulan) tidak diturunkan nilainya hanya karena tidak membudidayakan komoditas lain.
+2. **Pemisahan Dimensi Potensi dan Kesiapan**:  
+   Indeks Desa Membangun (IDM) dan fasilitas fisik sengaja **tidak dijadikan fitur input** dalam memprediksi potensi komoditas, untuk menghindari bias di mana desa yang kaya fasilitas otomatis dianggap memiliki potensi alam yang tinggi.
+3. **Penanganan Transparan untuk Data Kosong**:  
+   Tidak ada data kosong yang dimanipulasi dengan mengisi angka nol sembarangan. Setiap sel yang kosong diberikan kode penjelas standar internasional seperti `TIDAK-DINILAI` (untuk kelurahan non-IDM) atau `TIDAK-BERLAKU` (perikanan laut pada wilayah daratan).
+
+---
+
+## Panduan Membaca Dokumentasi Pengolahan Data
+
+Pilihlah dokumentasi berikut sesuai fokus kebutuhan analisis Anda:
+
+- 🗺️ **[Perhitungan Peta Peran](/docs/pengolahan-data/peta-peran)** — Pelajari rumus Skor Potensi, Skor Kesiapan, bobot pilar, dan penetapan 4 zona intervensi.
+- 📋 **[Perakitan Kartu Ekonomi Desa](/docs/pengolahan-data/kartu-ekonomi-desa)** — Pahami susunan 11 seksi kartu profil desa dan pembentukan rekomendasi aksinya.
+- 🛰️ **[ML Citra Potensi Desa](/docs/pengolahan-data/citra-potensi-desa)** — Selami arsitektur model geospasial, uji tanding algoritma, dan katalog 57 komoditas layak.
+- 👥 **[ML Desa Kembar](/docs/pengolahan-data/desa-kembar)** — Ketahui cara kerja kNN 16 fitur tanpa koordinat dalam mengidentifikasi desa-desa serupa.
+- 🚚 **[Optimisasi Jalur Ekonomi](/docs/pengolahan-data/jalur-ekonomi)** — Pelajari pemecahan matematis MILP penempatan aset bersama untuk 4 varian rantai pasok.

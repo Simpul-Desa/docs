@@ -2,7 +2,7 @@
 
 Situs dokumentasi publik SIMPUL DESA, dibangun dengan
 [Docusaurus](https://docusaurus.io/) 3.10: panduan produk, satu bagian per
-fitur, dan rujukan REST API yang dibangkitkan dari skema OpenAPI.
+fitur, dan rujukan REST APIs yang dibangkitkan dari skema OpenAPI.
 
 Repo ini adalah modul Dokumentasi, satu dari empat modul SIMPUL DESA (DATATHON 2026 — Sistem
 Intelijen Potensi dan Kesiapan Ekonomi Desa):
@@ -23,13 +23,13 @@ Dua instance docs berjalan berdampingan:
 | Sumber | Rute | Sidebar | Isi |
 |---|---|---|---|
 | `docs/` | `/docs/*` | `sidebars.js` — dua sidebar | Panduan (5 butir) + Fitur (`docs/fitur/`) |
-| `docs-api/` | `/api/*` | `sidebarsApi.js` (eksplisit) | Rujukan REST API |
+| `docs-api/` | `/api/*` | `sidebarsApi.js` (eksplisit) | Rujukan REST APIs |
 
 Isi halaman di bawah `docs/` masih kerangka: judul dan definisi satu paragraf
 yang disalin dari glosarium proyek. Salinan yang terbit ada di halaman
 Glosarium, `docs/glosarium.mdx`.
 
-Navbar punya empat butir: Panduan, Fitur, REST API, Sumber Daya. Sidebar
+Navbar punya empat butir: Panduan, Fitur, REST APIs, Sumber Daya. Sidebar
 Panduan memuat lima butir pengantar; sidebar Fitur memuat kesembilan fitur
 sebagai satu pohon bersarang di bawah `/docs/fitur`, dipisah Fitur Utama dan
 Fitur Tambahan. Menambah fitur berarti menambah folder di `docs/fitur/`, entri
@@ -65,7 +65,7 @@ jadi keduanya bisa berjalan berdampingan.
 `onBrokenLinks: 'throw'` membuat tautan mati menggagalkan `npm run build`, jadi
 build hijau adalah bukti bahwa navigasi utuh.
 
-## Rujukan REST API
+## Rujukan REST APIs
 
 Halaman `/api/*` dibangkitkan dari skema OpenAPI milik repo API, bukan ditulis
 tangan. Alurnya dua langkah, keduanya manual dan sengaja tidak menempel di
@@ -105,8 +105,8 @@ diperbaiki di sana diperbaiki di repo API, lalu dibangkitkan ulang di sini.
 
 ## Rupa
 
-Kanvas putih, Inter untuk badan teks, Plus Jakarta Sans untuk judul, Fira
-Code untuk kode.
+Kanvas putih, Google Sans Flex untuk teks dan judul, Geist Mono & Fira Code
+untuk kode.
 
 Warna aksi dan tangga sudut mengikuti sistem desain Portal: oranye sebagai
 satu-satunya voltase, sudut 16/12/10/6/pil. Kanvas dan tangga abunya **tidak**

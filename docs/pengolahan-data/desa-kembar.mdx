@@ -1,0 +1,115 @@
+---
+title: 👥 ML Desa Kembar
+sidebar_position: 5
+sidebar_label: Desa Kembar
+description: Cara kerja model k-Nearest Neighbors (kNN v3) tanpa koordinat untuk mencocokkan desa-desa dengan struktur ekonomi dan lanskap fisik paling serupa.
+---
+
+# Machine Learning Desa Kembar
+
+Fitur **Desa Kembar** (*Twin Villages*) bekerja dengan prinsip pencarian tetangga terdekat berbasis profil: setiap desa dipetakan ke dalam ruang multidimensi, lalu dicari desa-desa lain yang memiliki **karakteristik struktur ekonomi, biofisik, dan aksesibilitas paling mirip**.
+
+Fitur ini menjawab kebutuhan replikasi program pembangunan: *"Jika suatu program pemberdayaan ekonomi atau intervensi teknologi berhasil diterapkan di Desa A, desa mana saja yang memiliki karakteristik serupa sehingga memiliki peluang keberhasilan yang sama tingginya?"*
+
+---
+
+## Mengapa Pendekatan Desa Kembar Diperlukan?
+
+Dalam perencanaan pembangunan daerah konvensional, penentuan lokasi program sering kali hanya didasarkan pada kedekatan wilayah administratif (misalnya memilih desa-desa di satu kecamatan). 
+
+Kelemahannya, dua desa yang berdampingan bisa memiliki kondisi yang bertolak belakang (misalnya desa pesisir nelayan dan desa perbukitan kapur di batas kecamatan). Desa Kembar memungkinkan perencana menemukan **"kembaran struktural"** desa:
+
+```
+[ Desa Sasaran: Desa Wonosari ]
+Profil: Dataran Tinggi · Sentra Kopi & Hortikultura · Jauh dari Pelabuhan · Petani Milenial Tinggi
+                                  │
+                                  ▼ (Model kNN v3 Tanpa Koordinat)
+        ┌─────────────────────────┼─────────────────────────┐
+        ▼                         ▼                         ▼
+   Desa Kembar 1             Desa Kembar 2             Desa Kembar 3
+   Desa Tlogorejo            Desa Candisari            Desa Sukomakmur
+   Kemiripan: 94,2%          Kemiripan: 91,8%          Kemiripan: 89,5%
+   (Zona Poros)              (Zona Mitra)              (Zona Mitra)
+        │                         │                         │
+        └─────────────────────────┴─────────────────────────┘
+                                  ▼
+[ Manfaat Replikasi: Standardisasi Intervensi Rantai Pasok & Benchmarking ]
+```
+
+---
+
+## Arsitektur Model: kNN v3 Tanpa-Koordinat
+
+Model yang digunakan pada sistem produksi adalah **versi 3 (v3)** dengan konfigurasi beku yang telah melalui optimisasi hiperparameter bertingkat (*nested search*).
+
+### Spesifikasi Teknis:
+- **Algoritma**: *k-Nearest Neighbors* (`KNeighborsClassifier` / `NearestNeighbors`) dengan pencarian *brute-force*.
+- **Jumlah Tetangga ($k$)**: $k = 12$.
+- **Metrik Jarak**: Minkowski $p=1$ (**Jarak Manhattan**). Jarak Manhattan dipilih karena lebih tahan (*robust*) terhadap dimensi tinggi dan variasi pencilan dibandingkan jarak Euclidean.
+- **Pembobotan Jarak**: `weights="distance"` (tetangga yang lebih dekat memiliki pengaruh kuadrat terbalik yang lebih kuat).
+- **Kolam Pencarian**: Dicari di antara seluruh desa dalam **satu kabupaten yang sama**.
+
+> [!IMPORTANT]
+> **Aturan Baku: DILARANG Menggunakan Koordinat Lintang dan Bujur**  
+> Koordinat geografis (`latitude`/`longitude`) sengaja **dikeluarkan dari seluruh fitur model**. Jika koordinat disertakan, algoritma kNN akan mengalami bias spasial dan hanya mencocokkan desa dengan tetangga fisiknya di sebelah. Yang dicari adalah **kembaran profil ekonomi**, bukan batas tetangga desa.
+
+---
+
+## Enam Belas Fitur Pilihan & Pembobotannya
+
+Model menyaring 96 fitur kandidat menjadi **16 fitur utama** yang menggabungkan skala absolut (jumlah riil) dan skala persentil intra-kabupaten:
+
+| No | Fitur | Bobot | Deskripsi Indikator |
+|:---:|---|:---:|---|
+| 1 | `share_utp_ikan` | **2,0** | Pangsa rumah tangga tani perikanan terhadap total petani. |
+| 2 | `share_utp_ternak` | **2,0** | Pangsa rumah tangga tani peternakan terhadap total petani. |
+| 3 | `jlh_utp` | **2,0** | Total unit usaha pertanian perorangan di desa. |
+| 4 | `pr:jlh_utp` | 1,0 | Peringkat persentil total unit usaha tani se-kabupaten. |
+| 5 | `n_ruta_tani` | 1,0 | Jumlah rumah tangga tani (Sensus Pertanian 2023). |
+| 6 | `pr:n_ruta_tani` | 1,0 | Peringkat persentil jumlah rumah tangga tani se-kabupaten. |
+| 7 | `pr:elevasi_m` | 1,0 | Peringkat persentil elevasi lahan di atas permukaan laut. |
+| 8 | `tl_tegalan` | 1,0 | Proporsi tutupan lahan tegalan/ladang kering. |
+| 9 | `pr:share_utp_holti` | 1,0 | Peringkat persentil spesialisasi hortikultura. |
+| 10 | `share_utp_tp` | 1,0 | Pangsa rumah tangga tani tanaman pangan (padi/jagung). |
+| 11 | `share_utp_kebun` | 1,0 | Pangsa rumah tangga tani perkebunan. |
+| 12 | `pr:share_utp_kebun` | 1,0 | Peringkat persentil spesialisasi perkebunan. |
+| 13 | `pr:tl_kebun_campuran` | 1,0 | Peringkat persentil tutupan kebun campuran. |
+| 14 | `pr:menit_ke_pelabuhan` | 1,0 | Peringkat persentil aksesibilitas waktu tempuh ke pelabuhan. |
+| 15 | `pr:km_lurus_ke_pusat_kota`| 1,0 | Peringkat persentil jarak fisik ke pusat kota kabupaten. |
+| 16 | `km_lurus_ke_pusat_kota` | **0,25**| Jarak absolut ke ibu kota kabupaten (bobot diredam agar tidak mendominasi). |
+
+### Alur Normalisasi Fitur:
+1. Kolom berskala besar ditransformasi menggunakan fungsi `log(1 + x)`.
+2. Nilai kosong ditambal menggunakan imputasi median bertingkat (median kabupaten -> median provinsi).
+3. Seluruh fitur distandardisasi menggunakan `StandardScaler` di tingkat kabupaten.
+
+---
+
+## Formula Persentase Kemiripan
+
+Untuk menyajikan hasil yang mudah dipahami oleh perencana non-teknis, jarak matematis multidimensi dikonversi menjadi angka **persentase kemiripan (0–100%)**:
+
+```text
+Kemiripan = 1 - (d_ij / P95_jarak_kabupaten)
+```
+
+Di mana `d_ij` adalah jarak Manhattan antara desa sasaran dengan kandidat desa kembar, dan `P95` adalah persentil ke-95 jarak antar-seluruh pasangan desa di kabupaten tersebut.
+
+Jika jarak dua desa identik sempurna (jarak = 0), kemiripan bernilai **100%**. Seluruh kartu menampilkan **tiga desa kembar teratas** beserta persentase kecocokannya.
+
+---
+
+## Hasil Evaluasi & Uji Buta (*Blind Test*)
+
+Model dievaluasi kemampuannya dalam memprediksi sentra komoditas dari konsensus 12 tetangga terdekatnya pada 374 pasangan kabupaten × komoditas di 17.467 desa:
+
+| Provinsi | Average Precision (AP) | Precision@25 | Keterangan Uji |
+|---|:---:|:---:|---|
+| **Lampung** | **0,674** | **0,619** | **Uji Murni (*Blind Test*)** — data tidak pernah disentuh saat penalaan parameter |
+| **Jawa Tengah** | 0,648 | 0,598 | Provinsi Latih Nested LOO |
+| **Nusa Tenggara Barat** | 0,759 | 0,684 | Provinsi Latih Nested LOO |
+| **Kalimantan Selatan** | **0,813** | **0,720** | **Uji Murni (*Blind Test*)** — data tidak pernah disentuh saat penalaan parameter |
+| **Sulawesi Selatan** | 0,723 | 0,658 | Provinsi Latih Nested LOO |
+| **Rata-Rata Nasional** | **0,723** | **0,656** | **Performa Konsisten di Seluruh Wilayah** |
+
+Skor **ROC-AUC sebesar 0,937** membuktikan bahwa ruang fitur 16 dimensi yang dirancang berhasil menangkap profil komparatif desa dengan sangat kuat tanpa memerlukan koordinat spasial.

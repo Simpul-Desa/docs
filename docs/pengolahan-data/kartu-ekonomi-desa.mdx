@@ -1,0 +1,89 @@
+---
+title: 📋 Perakitan Kartu Ekonomi Desa
+sidebar_position: 3
+sidebar_label: Kartu Ekonomi Desa
+description: Proses perakitan profil 360° untuk 17.467 desa tanpa kuesioner, bedah 11 seksi kartu, dan sistem penanganan data kosong berintegritas.
+---
+
+# Perakitan Kartu Ekonomi Desa
+
+**Kartu Ekonomi Desa** adalah dokumen profil digital yang merangkum seluruh potensi, kesiapan, lanskap fisik, dan keterhubungan ekonomi desa ke dalam satu tampilan terpadu. 
+
+Setiap kartu merangkum **"jiwa dan denyut ekonomi desa"** secara objektif tanpa memerlukan pengisian formulir atau survei mandiri dari aparatur desa. Sebanyak **17.467 kartu** (mencakup seluruh desa dan kelurahan di 97 kabupaten/kota pada 5 provinsi percontohan) dirakit secara otomatis melalui skrip `bangun_kartu.py`.
+
+---
+
+## Filosofi Desain: Profil 360° Berbasis Bukti
+
+Pendekatan Kartu Ekonomi Desa mengadopsi praktik terbaik dari lembaga statistik dan pembangunan internasional:
+
+1. **Rekomendasi Berbasis Aturan Baku (*Deterministic Rules*)**:  
+   Kalimat rekomendasi aksi disusun dari perkalian logis antara **zona kebijakan × potensi dominan × status program kementerian**. SIMPUL DESA sengaja tidak menggunakan model bahasa generatif (LLM) untuk narasi kartu profil guna meniadakan risiko halusinasi data dan menjamin konsistensi hukum bagi perencana daerah.
+2. **Penyajian Volume Mentah di Samping Indeks Skor**:  
+   Mengikuti standar *SDGs Desa* dan *US Census QuickFacts*, setiap nilai skor persentil selalu didampingi oleh angka mentah fisiknya (misalnya skor hortikultura didampingi jumlah rumah tangga petani cabai atau tonase produksi).
+3. **Pemisahan Tegas Antara Skor Model dan Fakta Program**:  
+   Keberadaan program kementerian (seperti penetapan Desa Wisata oleh Kemenpar atau Kampung Nelayan oleh KKP) **tidak diizinkan mengerek Skor Potensi desa**. Registri tersebut disajikan murni sebagai lapisan fakta keterlayanan program guna menghindari sirkularitas analisis.
+
+---
+
+## Anatomi Sebelas Seksi Kartu
+
+Setiap kartu desa disimpan dalam format JSON berstruktur standar yang terdiri dari 11 seksi:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    KARTU EKONOMI DESA                           │
+├─────────────────────────────────────────────────────────────────┤
+│ 1. IDENTITAS       : Kode BPS, Kemendagri, Lintang/Bujur, Luas │
+│ 2. PETA PERAN      : Zona (1-4), SP/SK, Desil & Peringkat Kab   │
+│ 3. REKOMENDASI     : Tindakan Konkret Pemda / Swasta / Desa     │
+│ 4. POTENSI         : Komoditas Pemenang, 8 Sub-skor, Status Uji│
+│ 5. KESIAPAN        : IDM 2024, IKS/IKE/IKL, Kelembagaan, POI    │
+│ 6. BIOFISIK        : Tutupan Lahan, Elevasi, Relief, Garis Pantai│
+│ 7. PERTANIAN       : Ruta Tani, Petani Milenial, Komoditas Top-5│
+│ 8. LOGISTIK        : Menit OSRM ke Kota/Pelabuhan, Sentralitas │
+│ 9. JALUR EKONOMI   : Peran Poros/Sejalur (4 Varian Rantai Pasok)│
+│ 10. DESA KEMBAR    : 3 Desa Termirip Struktural (kNN v3)        │
+│ 11. FAKTA PROGRAM  : Registri Kemenpar/KKP, Status Rantai Dingin│
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Rincian Isi Setiap Seksi:
+
+| No | Seksi | Indikator yang Disajikan | Sumber Data Utama |
+|:---:|---|---|---|
+| 1 | `identitas` | Nama desa/kelurahan, kecamatan, kabupaten, provinsi, kode BPS 10-digit, kode Kemendagri, tipe wilayah (desa/kelurahan), titik koordinat sentroid, dan luas wilayah ($km^2$). | SIG BPS (*bridging* ke Kemendagri) |
+| 2 | `peta_peran` | Penempatan zona (Poros, Mitra, Bantuan, Pemerintah), status keyakinan (tinggi/rendah), skor SP dan SK, desil dan peringkat relatif dalam kabupaten, serta ambang median kabupaten. | Fitur Peta Peran |
+| 3 | `rekomendasi_aksi` | 1–2 kalimat arahan kebijakan operasional yang menyebutkan aktor penanggung jawab utama, bentuk intervensi prioritas, dan komoditas sasaran. | Mesin Aturan Baku (*Rule-based engine*) |
+| 4 | `potensi` | Sektor unggulan utama beserta status validasinya (`citra`, `heuristik-tervalidasi`, `heuristik-belum-teruji`, `fallback-heuristik`), nama komoditas spesifik pemenang, dan nilai 8 persentil sub-skor. | Citra Potensi v5 & ST2023 |
+| 5 | `kesiapan` | Skor komposit IDM 2024 beserta status desa, rincian indeks ketahanan (IKS, IKE, IKL), rasio lumbung dan koperasi per 1.000 ruta tani, serta sebaran 6 jenis fasilitas umum. | IDM Kemendesa & OpenStreetMap |
+| 6 | `biofisik` | Komposisi persentase tutupan lahan 100m (sawah, kebun campuran, perkebunan monokultur, tegalan, permukiman terbangun, hutan, tambak), elevasi rata-rata, rentang relief topografi, dan status pesisir. | Peta Tutupan Lahan BPS & SRTM |
+| 7 | `pertanian` | Jumlah rumah tangga usaha pertanian, unit usaha berbadan hukum, sebaran tenaga kerja per subsektor, rasio adopsi teknologi dan petani milenial, serta daftar nama 5 komoditas teratas. | Sensus Pertanian 2023 |
+| 8 | `logistik` | Waktu tempuh berkendara (menit OSRM) ke ibu kota kabupaten, pelabuhan komersial, dan bandara terdekat beserta nama fasilitasnya, jarak garis lurus (km), dan indeks sentralitas intra-kabupaten. | Matriks OSRM & Registri Transportasi |
+| 9 | `jalur_ekonomi` | Peran desa pada empat varian rantai pasok (Komoditas, Gudang Kopdes, Cold Storage, Wisata): status Desa Poros (tuan rumah aset) atau Desa Sejalur (pengguna manfaat), nama poros pelayan, dan menit angkut. | Hasil Optimisasi MILP |
+| 10 | `desa_kembar` | Tiga desa se-kabupaten yang memiliki struktur profil paling identik hasil pemodelan kNN v3, persentase derajat kemiripan, dan perbandingan zona masing-masing desa kembar. | Model kNN v3 Tanpa Koordinat |
+| 11 | `fakta_program` | Status keterdaftaran pada registri resmi pemerintah (Desa Wisata Jadesta, registri Sisparnas, Kampung Nelayan/Budidaya KKP, unit *cold storage* eksisting), serta bendera penanda wilayah `belum_tersentuh`. | Registri Terbuka Kementerian |
+
+---
+
+## Standar Penanganan Data Kosong Berintegritas
+
+Sesuai standar statistik modern (*UK Office for National Statistics*), SIMPUL DESA **menolak menyembunyikan data kosong** atau memanipulasinya menjadi angka nol palsu. Setiap data yang tidak tersedia selalu disertai dengan kode alasan terstandarisasi:
+
+- `TIDAK-DINILAI` — Komponen yang secara hukum/regulasi memang tidak diterapkan (misalnya: kelurahan perkotaan yang tidak dinilai dalam instrumen IDM Kemendesa).
+- `TIDAK-TERPETAKAN` — Ketiadaan data akibat keterbatasan survei partisipatif (misalnya: fasilitas publik tertentu yang belum tercatat pada peta OpenStreetMap).
+- `TIDAK-BERLAKU` — Kondisi geografis yang tidak memungkinkan indikator tersebut hadir (misalnya: subsektor perikanan laut pada desa di kabupaten pegunungan yang tidak berbatasan dengan pantai).
+- `TIDAK-ADA-DATA` — Terjadi pada 52 desa baru hasil pemekaran yang belum memiliki delimitasi batas poligon resmi pada peta Wilkerstat BPS.
+
+Seluruh berkas JSON disimpan dengan parameter `allow_nan=False` untuk menjamin integritas data dan mencegah kesalahan komputasi pada aplikasi hilir.
+
+---
+
+## Fakta Angka Hasil Perakitan (Rilis 5 September 2026)
+
+Dari **17.467 kartu desa** yang selesai dirakit:
+- **15.609 desa (89,4%)** mendapatkan peran aktif dalam skema Jalur Ekonomi (baik sebagai Desa Poros penyedia aset maupun Desa Sejalur penerima manfaat rantai pasok).
+- **100% desa** berhasil dipasangkan dengan 3 Desa Kembar yang relevan secara profil struktural.
+- **254 desa** ditetapkan mengampu peran dalam jaringan rantai dingin (*Cold Storage*), di mana 32 di antaranya merupakan usulan titik baru fasilitas pendingin.
+- **76 desa** tercatat telah terlayani oleh unit *cold storage* eksisting yang sudah beroperasi sebelumnya.
+- **1.229 desa** teridentifikasi telah tersentuh oleh setidaknya satu program afirmasi kementerian (Jadesta, Sisparnas, Kampung KKP). Sisanya (16.238 desa) membawa penanda khusus **`belum_tersentuh`**, yang menjadi sinyal utama bagi prioritas belanja negara di masa depan.

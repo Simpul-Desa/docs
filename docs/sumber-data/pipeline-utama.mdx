@@ -1,26 +1,25 @@
 ---
-title: Sumber pipeline utama
+title: Sumber Pipeline Utama
 sidebar_position: 1
-description: Sembilan sumber yang mengisi tabel induk SIMPUL DESA, beserta apa yang diambil dari masing-masing.
+description: Sembilan sumber data resmi yang membentuk tabel induk SIMPUL DESA beserta peruntukannya bagi model analitik.
 ---
 
-# Sumber pipeline utama
+# Sumber Pipeline Utama
 
-Sembilan sumber di halaman ini mengisi tabel induk — satu baris per wilayah
-desa dan kelurahan, dibaca oleh semua model. Kalau sebuah kolom dipakai lebih
-dari satu fitur, kolom itu datang dari sini.
+Sembilan sumber data di halaman ini menjadi fondasi penyusun **tabel induk (*master table*)** SIMPUL DESA. Tabel ini memuat satu baris data terpadu untuk setiap wilayah dari total 17.467 desa dan kelurahan di lima provinsi percontohan.
 
-| Sumber | Yang diambil |
+Setiap variabel yang digunakan oleh lebih dari satu model analitik atau fitur antarmuka diproses dan disatukan melalui *pipeline* utama ini:
+
+| Sumber Data & Instansi | Data yang Digunakan & Fungsinya |
 | --- | --- |
-| [SIG BPS](https://sig.bps.go.id) | kerangka 17.467 wilayah dan bridging kode BPS ke kode Kemendagri |
-| [GeoServer ST2023 BPS](https://geoserver.bps.go.id/st2023/ows) | poligon batas desa, agregat Sensus Pertanian 2023, landmark pertanian |
-| [WebGIS ST2023 BPS](https://webgis-st2023.web.bps.go.id) | kamus nama komoditas per peringkat per provinsi |
-| [WMS Tutupan Lahan BPS](https://geoserver.bps.go.id/tutupan_lahan/wms) | dua belas proporsi tutupan lahan resolusi 100 m per desa |
-| [OpenTopoData](https://api.opentopodata.org) | elevasi dan relief per desa dari SRTM 90 m |
-| [OSRM publik](https://router.project-osrm.org) | waktu tempuh ke pusat kota, bandara, dan pelabuhan, serta matriks waktu tempuh antar desa |
-| [Overpass OpenStreetMap](https://overpass-api.de/api/interpreter) | enam hitungan titik minat per desa dan titik acuan tujuan waktu tempuh |
-| [IDM Kemendesa](https://idm.kemendesa.go.id) | IKS, IKE, IKL, skor dan status Indeks Desa Membangun 2024 |
-| [Jadesta Kemenpar](https://jadesta.kemenpar.go.id) | registri desa wisata beserta kategori verifikasinya; halaman detailnya menjadi bobot varian Wisata |
+| [**SIG BPS**](https://sig.bps.go.id) | Kerangka wilayah acuan untuk seluruh 17.467 desa/kelurahan, serta tabel penghubung (*bridging*) antara kode wilayah BPS dan kode Kemendagri. |
+| [**GeoServer ST2023 BPS**](https://geoserver.bps.go.id/st2023/ows) | Data poligon batas geografis desa, agregat statistik hasil Sensus Pertanian 2023, serta titik penanda (*landmark*) pertanian. |
+| [**WebGIS ST2023 BPS**](https://webgis-st2023.web.bps.go.id) | Kamus klasifikasi komoditas unggulan dan peringkat produksi pertanian per provinsi. |
+| [**WMS Tutupan Lahan BPS**](https://geoserver.bps.go.id/tutupan_lahan/wms) | Data spasial 12 proporsi tutupan lahan dengan resolusi spasial 100 meter untuk setiap desa. |
+| [**OpenTopoData**](https://api.opentopodata.org) | Data kontur ketinggian (elevasi) dan relief topografi per desa berbasis data satelit SRTM 90 meter. |
+| [**OSRM Publik**](https://router.project-osrm.org) | Perhitungan waktu tempuh jalan raya menuju pusat kota, bandara, dan pelabuhan terdekat, serta matriks jarak tempuh antar-desa. |
+| [**Overpass OpenStreetMap**](https://overpass-api.de/api/interpreter) | Ekstraksi 6 kategori titik minat (*points of interest*) per desa (seperti toko/warung, pasar, bank/ATM) dan titik simpul rute perjalanan. |
+| [**IDM Kemendesa**](https://idm.kemendesa.go.id) | Data skor Indeks Desa Membangun (IDM) 2024 beserta ketiga indeks penyusunnya: Indeks Ketahanan Sosial (IKS), Ekonomi (IKE), dan Lingkungan (IKL). |
+| [**Jadesta Kemenpar**](https://jadesta.kemenpar.go.id) | Registri resmi desa wisata beserta status kategori verifikasinya; data profil atraksi dan akomodasi menjadi pembobot varian Wisata. |
 
-Cakupan wilayahnya, kunci join antar sumber, dan catatan mutu tiap sumber ada
-di [Sumber Data](/docs/sumber-data).
+Informasi mengenai cakupan provinsi, metode integrasi kode wilayah, dan catatan mutu data selengkapnya dapat dilihat pada halaman [Sumber Data](/docs/sumber-data).
