@@ -1,10 +1,95 @@
 ---
-title: Pengenalan Desa Kembar
+title: Desa Kembar
 sidebar_position: 1
+description: Penjelasan lengkap fitur Desa Kembar, kartu komparasi antardesa, indikator pembanding, dan visualisasi spasial pada SIMPUL DESA.
 ---
 
-# Pengenalan Desa Kembar
+# Desa Kembar
 
-Desa Kembar mencari desa yang profilnya paling mirip dengan desa yang sudah
-terbukti berhasil, sehingga jalur suksesnya bisa ditiru dengan modal kemiripan
-yang terukur.
+**Desa Kembar** adalah lensa analitik komparatif dalam **SIMPUL DESA** yang mengidentifikasi desa-desa dengan kemiripan karakteristik profil sosial-ekonomi tertinggi terhadap suatu **Desa Acuan**.
+
+Fitur ini menjawab tantangan replikasi keberhasilan pembangunan antardaerah: **"Jalur sukses apa yang dapat diadopsi dari desa lain yang memiliki profil dan modal dasar serupa?"** — memungkinkan perencana pembangunan melihat desa pembanding (*benchmark*) yang sudah berkembang atau mandiri untuk diadopsi strategi ekonominya secara realistis.
+
+---
+
+## Hak Akses Pengguna
+
+Lensa Desa Kembar dapat diakses oleh seluruh pengguna terautentikasi:
+
+| Peran Pengguna | Status Akses | Perilaku Antarmuka |
+| :--- | :---: | :--- |
+| **Tamu / Pemerintah / Swasta / Admin** | ✅ Terbuka | Akses penuh untuk memilih desa acuan, mencari pasangan desa kembar, dan menelaah komparasi indikator. |
+| **Anonim** | 🔒 Terkunci | Menampilkan dialog modal *Fitur Terkunci* yang mengarahkan pengguna untuk masuk akun (*Sign In*). |
+
+---
+
+## Integrasi Tata Letak & Alur Antarmuka
+
+Lensa Desa Kembar mengintegrasikan panel analitik komparasi di sisi kiri dan panggung visualisasi geospasial di sisi kanan:
+
+1. **Keadaan Awal (*Empty State*)**: Jika pengguna belum memilih desa di peta atau bilah pencarian, panel kiri memandu pengguna dengan pesan *"Pilih desa di peta atau kolom pencarian terlebih dahulu"*.
+2. **Setelah Desa Acuan Dipilih**: Panel kiri secara otomatis memuat kartu komparasi atas dan daftar desa yang memiliki kemiripan profil tertinggi.
+
+![Tampilan Antarmuka Dasbor dan Kartu Komparasi Desa Kembar](/screenshoot/desa-kembar-1.png)
+
+---
+
+## Komponen Panel Analitik Komparasi
+
+### 1. Kartu Komparasi Atas (`KartuKomparasiAtas`)
+Menyajikan dua kartu berdampingan di bagian atas panel untuk membandingkan entitas desa secara langsung:
+
+* **Card Kiri — Desa Acuan**:
+  * Menampilkan nama desa acuan, kecamatan, kabupaten, dan indikator kemiripan dasar (`100% Acuan`).
+  * Dilengkapi tombol tautan cepat ke **Kartu Ekonomi Desa** di sudut kanan atas.
+* **Card Kanan — Desa Kembar**:
+  * **Menu Pemilih Desa Kembar (`ComboboxKembar`)**: Dropdown pencarian interaktif yang menyajikan daftar kandidat desa kembar beserta persentase kemiripannya (misal: `87% mirip`).
+  * **Status Visual Dinamis**:
+    * *Mode Belum Dipilih (OFF)*: Menampilkan kartu bergaris putus-putus (*dashed border*) dengan ajakan memilih desa kembar.
+    * *Mode Aktif (ON)*: Berubah warna dengan latar gradasi oranye tegas saat desa kembar dipilih.
+  * Dilengkapi tombol tautan langsung ke **Kartu Ekonomi Desa** untuk desa kembar terpilih.
+
+---
+
+### 2. Detail Komparasi Indikator (`BandingKembar`)
+
+Setelah pasangan desa kembar dipilih, panel bawah memuat tabel perbandingan indikator pembangunan yang terstruktur rapi.
+
+<img
+  src="/screenshoot/desa-kembar-2.png"
+  alt="Tampilan Detail Komparasi Indikator dan Radial Gauge Kesiapan"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+#### Format Matriks 3 Kolom:
+* **Kolom Kiri**: Nilai metrik dari **Desa Acuan**.
+* **Kolom Tengah**: Nama **Indikator Pembangunan** yang dibandingkan, dilengkapi tombol bantuan tooltip glosarium (`?`) tanpa garis bawah yang mengganggu keterbacaan.
+* **Kolom Kanan**: Nilai metrik dari **Desa Kembar**, dilengkapi penanda arah komparatif:
+  * `ChevronUp` (Hijau / `positive`): Nilai desa kembar lebih tinggi daripada desa acuan.
+  * `ChevronDown` (Merah / `critical`): Nilai desa kembar lebih rendah daripada desa acuan.
+
+#### Penanganan Khusus Indikator:
+* **Badge Status Zona**: Nilai kategori zonasi Peta Peran dirender dalam bentuk *pill badge* berwarna khas zona masing-masing (Zona Pemerintah, Zona Mitra, Zona Poros, Zona Bantuan).
+* **Komparasi Pasangan Lintas Kabupaten**: Jika kedua desa berada di kabupaten berbeda, sistem menyertakan catatan kontekstual bahwa skor dihitung relatif terhadap kabupaten masing-masing dan disandingkan sebagai fakta tanpa perbandingan langsung.
+* **Visualisasi Radial Kesiapan (`RadialKesiapan`)**: Menampilkan grafik *Radial Gauge Chart* berdampingan untuk membandingkan Skor Kesiapan Ekonomi (0–100) kedua desa secara intuitif.
+
+---
+
+## Lapisan Visual Peta Spasial (*MapLibre Layer*)
+
+Pada panggung peta di sisi kanan, hubungan antardesa divisualisasikan secara dinamis melalui lapisan spasial interaktif:
+
+<img
+  src="/screenshoot/desa-kembar-3.png"
+  alt="Tampilan Lapisan Peta dan Garis Animasi Penghubung Antardesa"
+  style={{ maxWidth: '680px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+* **Sorotan Poligon Ganda**: Poligon batas wilayah Desa Acuan dan Desa Kembar diwarnai dan disorot secara tegas di atas peta satelit.
+* **Titik Pin Pusat (*Marker Points*)**: Menandai koordinat pusat geografis kedua desa yang sedang dibandingkan.
+* **Garis Animasi Penghubung (*Connecting Line with Halo*)**:
+  * Menarik garis lurus beranimasi halus dari titik pusat Desa Acuan menuju titik pusat Desa Kembar.
+  * Dilengkapi efek pendaran luar (*halo*) agar garis tetap kontras terlihat di atas kontur peta maupun citra satelit.
+* **Penyesuaian Kamera Otomatis (*Dynamic fitBounds*)**:
+  * Kamera peta secara otomatis menyesuaikan tingkat perbesaran (*zoom*) dan batas pandang (*bounding box*) agar kedua desa dan garis penghubung terlihat utuh pada layar pengguna.
+

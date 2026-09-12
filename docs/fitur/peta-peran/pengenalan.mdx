@@ -1,31 +1,132 @@
 ---
-title: Pengenalan Peta Peran
+title: Peta Peran
 sidebar_position: 1
+description: Penjelasan lengkap antarmuka, matriks kuadran, zonasi penanganan, dan alur interaksi fitur Peta Peran pada aplikasi SIMPUL DESA.
 ---
 
-# Pengenalan Peta Peran
+# Peta Peran
 
-Peta Peran menempatkan tiap desa ke satu dari empat zona penanganan, sehingga
-jelas siapa yang harus bergerak lebih dulu: pemerintah, mitra swasta, atau
-perlindungan sosial.
+**Peta Peran** adalah lensa analitik spasial utama dalam **SIMPUL DESA** yang memetakan dan mengelompokkan setiap desa serta kelurahan ke dalam salah satu dari **empat zona penanganan ekonomi** berdasarkan persilangan antara **Skor Potensi (SP)** dan **Skor Kesiapan (SK)** terhadap nilai median di kabupaten masing-masing.
 
-Isi halaman ini masih kerangka. Definisi sah tiap istilah ada di
-[Glosarium](/docs/glosarium); angka dibaca dari keluaran data.
+Fitur ini menjawab pertanyaan paling mendasar bagi perencana pembangunan dan pengambil kebijakan daerah: **"Pihak mana yang harus bertindak lebih dulu di desa mana?"** — apakah pemerintah melalui intervensi infrastruktur dasar, kemitraan strategis dengan investor dan *offtaker* swasta, pemanfaatan desa sebagai sentra poros pengolahan kawasan, atau perlindungan sosial terarah.
 
-## Dua sumbu
+---
 
-Keluarannya matriks dua sumbu dengan empat kuadran. Nomor kuadran berjalan
-searah jarum jam dari kiri-atas.
+## Hak Akses & Pembatasan Peran
 
-| Kuadran | Zona | Potensi | Kesiapan |
-| --- | --- | --- | --- |
-| 1 | Zona Pemerintah | tinggi | rendah |
-| 2 | Zona Mitra | tinggi | tinggi |
-| 3 | Zona Poros | rendah | tinggi |
-| 4 | Zona Bantuan | rendah | rendah |
+Lensa Peta Peran dapat diakses oleh hampir seluruh tingkatan pengguna terautentikasi:
 
-## Membaca zona sebuah desa
+| Peran Pengguna | Status Akses | Perilaku Antarmuka |
+| :--- | :---: | :--- |
+| **Tamu** | ✅ Terbuka | Dapat menelusuri seluruh provinsi, kabupaten, matriks kuadran, dan detail desa. |
+| **Pemerintah** | ✅ Terbuka | Akses penuh untuk perumusan prioritas kebijakan pembangunan dan alokasi anggaran. |
+| **Swasta** | ✅ Terbuka | Akses penuh untuk memetakan desa mitra (*offtaker*) dan potensi investasi komoditas. |
+| **Admin** | ✅ Terbuka | Akses penuh untuk pengawasan sistem dan validasi data. |
+| **Anonim** | 🔒 Terkunci | Lensa ditandai dengan ikon gembok di bilah navigasi. Memilih lensa ini akan memunculkan dialog modal *Fitur Terkunci* yang mengarahkan pengguna untuk masuk akun. |
 
-```bash
-curl -s "https://api.simpul-desa.example/v1/peta-peran?iddesa=3204120001"
-```
+---
+
+## Integrasi Tata Letak Antarmuka
+
+Lensa Peta Peran diakses melalui ikon pertama pada bilah navigasi kiri (*Rail Navigation*). Antarmuka mengintegrasikan dua panggung kerja yang tersinkronisasi secara langsung (*real-time*):
+
+1. **Panggung Peta (*Map Stage*)** di sebelah kanan: Menampilkan peta tematik poligon batas desa dengan pewarnaan zona (*choropleth*).
+2. **Panel Analitik Kiri (*Left Panel*, 480px)**: Menampilkan hierarki informasi yang adaptif secara otomatis mengikuti status pemilihan wilayah pengguna.
+
+---
+
+## Tiga Alur Antarmuka Utama
+
+### 1. Keadaan Pemilihan Wilayah (*Empty State*)
+
+Saat pengguna baru membuka lensa Peta Peran atau hanya memilih provinsi tanpa memilih kabupaten, panel analitik kiri akan menampilkan status panduan awal.
+
+![Tampilan Antarmuka Panduan Pemilihan Wilayah pada Lensa Peta Peran](/screenshoot/peta-peran-1.png)
+
+#### Perilaku & Interaksi:
+* **Pesan Panduan (*Empty State Box*)**: Panel menampilkan kartu instruksi bertuliskan *"Pilih provinsi dan kabupaten di peta atau kolom pencarian terlebih dahulu"*.
+* **Aksi Pengguna**: Pengguna dapat memilih wilayah melalui:
+  * Mengeklik poligon kabupaten langsung pada peta satelit.
+  * Memilih melalui menu pencarian wilayah (*Global Search Bar*) di bagian atas dasbor.
+
+---
+
+### 2. Tampilan Tingkat Kabupaten (*County Quadrant Scatter Plot*)
+
+Ketika kabupaten aktif dipilih, panel analitik kiri secara otomatis memuat instrumen visual utama: **Matriks Plot Kuadran Dua Sumbu** dan kartu ringkasan kabupaten.
+
+![Tampilan Antarmuka Matriks Kuadran Peta Peran Tingkat Kabupaten](/screenshoot/peta-peran-2.png)
+
+#### A. Bidang Matriks Kuadran (*Scatter Plot Matrix*)
+* **Sumbu Y (Vertikal) — Skor Potensi (SP)**: Bergerak dari **Bawah (Rendah)** ke **Atas (Tinggi)**, dilengkapi label miring dan tombol tooltip glosarium (`?`).
+* **Sumbu X (Horizontal) — Skor Kesiapan (SK)**: Bergerak dari **Kiri (Rendah)** ke **Kanan (Tinggi)**, dilengkapi label miring dan tombol tooltip glosarium (`?`).
+* **Garis Potong Median Kabupaten**: Garis putus-putus (*dashed line*) di tengah matriks membagi bidang menjadi 4 kuadran kebijakan pada persentil 50% (nilai median kabupaten).
+* **Empat Kuadran Kebijakan**:
+
+| Kuadran | Nama Zona | Karakteristik Skor | Arah Intervensi Kebijakan Utama | Warna Visual |
+| :---: | :--- | :--- | :--- | :--- |
+| **I** | **Zona Pemerintah** | Potensi Tinggi, Kesiapan Rendah | Pembangunan konektivitas jalan poros tani, irigasi, dan sarana produksi oleh pemerintah. | Magenta (`#d6338f`) |
+| **II** | **Zona Mitra** | Potensi Tinggi, Kesiapan Tinggi | Kemitraan komersial langsung dengan *offtaker*, perbankan, dan investor swasta. | Violet (`#7d5ae0`) |
+| **III** | **Zona Poros** | Potensi Rendah, Kesiapan Tinggi | Penempatan sarana pascapanen/pengolahan komoditas untuk melayani desa sekitar. | Cyan (`#00a9bf`) |
+| **IV** | **Zona Bantuan** | Potensi Rendah, Kesiapan Rendah | Bantuan sosial langsung, pemenuhan gizi, air bersih, dan jaring pengaman sosial. | Slate (`#8d9aab`) |
+| **Non** | **Belum Terpetakan** | Kelengkapan Data &le; 50% | Pendataan lapangan intensif sebelum penetapan klasifikasi zona. | Garis Putus-putus |
+
+* **Titik Sebaran Desa (*Interactive Data Dots*)**:
+  * Setiap desa diposisikan pada koordinat desilnya dengan *jitter* deterministik aman (&plusmn;2.5%) agar titik tidak bertumpuk tanpa melompati batas kuadran.
+  * **Arah Kursor (*Hover Tooltip*)**: Mengarahkan kursor ke titik desa menampilkan kartu popover berisi nama desa, kecamatan, dot warna zona, desil SP, desil SK, serta teks ajakan *"Klik untuk membuka detail desa ini"*.
+  * **Garis Bidik (*Crosshair Guide Lines*)**: Saat sebuah desa aktif, muncul garis bidik horizontal dan vertikal yang menghubungkan posisi desa langsung ke kedua sumbu matriks.
+  * **Aksi Klik Titik**: Mengeklik titik desa akan langsung membuka tampilan **Detail Desa** di panel kiri dan menyorot batas poligon desa di peta.
+
+#### B. Tombol Filter & Legenda Zona Interaktif
+* Daftar vertikal di bawah matriks menyajikan dot warna, nama zona, badge kuadran, tombol tooltip penjelasan (`?`), ringkasan strategi kebijakan, serta cacah desa (`... wilayah`).
+* **Tombol Interaksi Baris Zona (*Zone Highlight Filter*)**:
+  * Mengeklik salah satu baris zona akan menyorot titik zona tersebut (100% *opacity*), sementara titik dari zona lain meredup (*opacity* 15%).
+* **Tombol "Reset sorotan zona"**:
+  * Tombol aksi teks yang muncul di kanan atas header matriks ketika filter aktif, berfungsi menghapus sorotan zona dan mengembalikan seluruh titik ke tampilan normal dalam satu klik.
+
+#### C. Kartu Indikator Ringkasan Kabupaten (`RingkasanKabupaten`)
+* **Kartu Total Wilayah**: Menghitung total desa dan kelurahan yang dievaluasi di kabupaten tersebut.
+* **Kartu Keyakinan Rendah**: Menghitung berapa banyak desa yang posisinya berada dalam rentang &plusmn;2 poin dari garis ambang batas median (area batas kuadran), dilengkapi tombol tooltip glosarium (`?`) yang menjelaskan sensitivitas data.
+
+---
+
+### 3. Tampilan Detail Satu Desa (*Village Analytic Profile*)
+
+Ketika pengguna memilih salah satu desa (melalui klik titik matriks, klik poligon peta, atau kotak pencarian), panel kiri bertransisi menampilkan profil kebijakan terperinci desa tersebut.
+
+![Tampilan Antarmuka Panel Detail Desa Peta Peran pada Portal SIMPUL DESA](/screenshoot/peta-peran-3.png)
+
+#### A. Tombol Aksi & Navigasi Penting:
+1. **Tombol "Kembali ke Kab. [Nama Kabupaten]"**:
+   * Terletak di bagian paling atas panel dengan ikon panah kiri (`ChevronLeftIcon`), berfungsi menutup detail desa dan kembali ke tampilan matriks kuadran kabupaten.
+2. **Tombol Tautan "Kartu Ekonomi Desa"**:
+   * Terletak di pojok kanan atas hero card (dengan ikon panah keluar `ArrowUpRightIcon`), berfungsi memindahkan navigasi pengguna secara instan ke fitur **Kartu Ekonomi Desa** untuk desa yang bersangkutan.
+
+#### B. Hero Card Profil Desa:
+* **Latar Belakang Gradasi**: Memakai gradasi warna khas zona penanganan (dengan perlakuan nada gelap untuk Zona Bantuan agar teks putih tetap memiliki kontras tajam).
+* **Baris Status**: Badge nama zona penanganan, nomor kuadran (*Kuadran I / II / III / IV / Non-Kuadran*), serta chip status *Keyakinan Rendah* (jika skor desa berada dekat garis ambang batas).
+* **Baris Identitas**: Nama desa/kelurahan (tipografi tebal besar), pill tipe wilayah (`desa` atau `kelurahan`), serta teks hierarki administratif (*Kecamatan • Kabupaten • Provinsi*).
+* **Banner Arahan Kebijakan**: Kotak penjelasan di bagian bawah kartu yang merangkum rekomendasi tindakan nyata yang harus diprioritaskan untuk desa tersebut.
+
+#### C. Card Koordinat Matriks Analitik:
+* **Kotak Skor Potensi**:
+  * Nilai numerik komposit (skor besar / 100), pill badge desil beraksen oranye (`#ff7300`), teks peringkat se-kabupaten (`Peringkat #X se-Kab.`), dan tombol tooltip glosarium (`?`).
+* **Kotak Skor Kesiapan**:
+  * Nilai numerik komposit (skor besar / 100), pill badge desil beraksen hijau (`#31a863`), teks peringkat se-kabupaten (`Peringkat #X se-Kab.`), dan tombol tooltip glosarium (`?`).
+* **Daftar 4 Metrik Terukur**:
+  1. **Jarak ke Ambang Batas**: Selisih nilai skor terhadap garis median kabupaten (&plusmn; poin) + tooltip (`?`).
+  2. **Kelengkapan Bukti SK**: Persentase pilar kesiapan yang berhasil terukur (%) + tooltip (`?`).
+  3. **Status IDM Kemendesa**: Status Indeks Desa Membangun (*Mandiri, Maju, Berkembang, Tertinggal, Sangat Tertinggal*) + tooltip (`?`).
+  4. **Sentralitas Waktu Tempuh**: Estimasi waktu tempuh rute jalan OSRM ke seluruh desa lain di kabupaten terkait (dalam menit) + tooltip (`?`).
+
+---
+
+## Lapisan Visual Peta (*MapLibre Zone Choropleth Layer*)
+
+Pada panggung peta geospasial, poligon setiap desa dirender secara tematik menggunakan palet warna dwivariat (*bivariate choropleth*):
+
+* **Warna Poligon (*Fill Layer*)**: Setiap poligon desa diisi warna zona masing-masing pada tingkat transparansi 45% (*fill-opacity 0.45*), sehingga citra satelit di bawahnya tetap terlihat jelas.
+* **Garis Batas (*Stroke Line Layer*)**: Garis tepi poligon setebal 2px dengan warna zona penuh (100% *opacity*).
+* **Perlakuan Kategori "Belum Terpetakan"**: Poligon desa tanpa klasifikasi kuadran tidak memiliki warna isian (*no fill*) dan hanya digambar dengan garis putus-putus putih 1.5px (`dasharray [3, 3]`).
+* **Sorotan Desa Terpilih (*Active Selection Line*)**: Desa yang sedang dipilih ditandai dengan garis batas putih tegas 2px (`map-outline-selected`) di lapisan teratas agar langsung mencuri fokus mata pengguna.
+* **Interaksi Peta Langsung**: Mengklik poligon desa manapun di peta secara instan menyinkronkan panel kiri ke tampilan profil *DetailDesa*.

@@ -1,9 +1,95 @@
 ---
-title: Pengenalan Citra Potensi Desa
+title: Citra Potensi Desa
 sidebar_position: 1
+description: Penjelasan lengkap fitur Citra Potensi Desa, identifikasi komoditas berbasis satelit, metrik mutu uji, peringkat desa, dan visualisasi spasial pada SIMPUL DESA.
 ---
 
-# Pengenalan Citra Potensi Desa
+# Citra Potensi Desa
 
-Citra Potensi Desa menemukan sentra komoditas dari pembacaan citra satelit dan
-peta, sehingga potensi desa terbaca tanpa desa perlu melaporkannya.
+**Citra Potensi Desa** adalah lensa analitik geospasial berbasis kecerdasan buatan dalam **SIMPUL DESA** yang mengidentifikasi dan memetakan sentra komoditas unggulan desa melalui pembacaan citra satelit dan data Sensus Pertanian (ST2023).
+
+Fitur ini mengatasi kendala klasik pelaporan manual: **"Bagaimana memetakan potensi riil desa tanpa bergantung pada laporan berkas yang kerap terlambat atau belum seragam?"** — dengan analisis citra satelit dan model *machine learning*, potensi komoditas setiap desa terbaca secara objektif, terukur, dan transparan.
+
+---
+
+## Hak Akses Pengguna
+
+Lensa Citra Potensi Desa dapat diakses oleh seluruh pengguna terautentikasi:
+
+| Peran Pengguna | Status Akses | Perilaku Antarmuka |
+| :--- | :---: | :--- |
+| **Tamu / Pemerintah / Swasta / Admin** | ✅ Terbuka | Akses penuh untuk menelusuri komoditas tervalidasi, peringkat desa per kabupaten, dan metrik akurasi model. |
+| **Anonim** | 🔒 Terkunci | Menampilkan dialog modal *Fitur Terkunci* yang mengarahkan pengguna untuk masuk akun (*Sign In*). |
+
+---
+
+## Integrasi Tata Letak 2 Kolom
+
+Antarmuka panel analitik Citra Potensi Desa dirancang dengan tata letak dua kolom terstruktur di sisi kiri yang berdampingan dengan panggung peta satelit di sisi kanan:
+
+![Tampilan Antarmuka Dasbor Citra Potensi Desa Tata Letak 2 Kolom](/screenshoot/citra-potensi-1.png)
+
+* **Header Wilayah**: Menampilkan nama kabupaten dan provinsi yang sedang aktif, dilengkapi tombol **"Ganti Kab."** untuk beralih kabupaten secara cepat tanpa harus kembali ke navigasi awal.
+* **Kolom Kiri (220px)**: Daftar komoditas tervalidasi per subsektor beserta metrik mutu uji model.
+* **Kolom Kanan**: Panduan pemilihan wilayah kabupaten atau daftar desa berperingkat untuk komoditas yang dipilih.
+
+---
+
+## 1. Daftar Komoditas Tervalidasi (`DaftarSel`)
+
+Kolom kiri mengelompokkan seluruh komoditas yang berhasil tervalidasi oleh model analitik ke dalam 6 subsektor resmi:
+
+1. **Tanaman Pangan** (Padi sawah, jagung, ubi kayu, dsb.)
+2. **Hortikultura** (Cabai, bawang merah, pisang, dsb.)
+3. **Perkebunan** (Kopi, kelapa sawit, kakao, karet, lada, dsb.)
+4. **Peternakan** (Sapi potong, kambing, unggas, dsb.)
+5. **Perikanan Budidaya** (Tambak udang, kolam air tawar, dsb.)
+6. **Kehutanan** (Sengon, jati, hasil hutan bukan kayu)
+
+<img
+  src="/screenshoot/citra-potensi-2.png"
+  alt="Tampilan Rincian Mutu Uji dan Rentang Keyakinan Komoditas"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+### Rincian Metrik Akurasi Ilmiah:
+Setiap baris komoditas dilengkapi tombol panah akordion (`ChevronRight`) yang dapat dilipat/dibuka (*collapsible*):
+* **Mutu Uji (*Average Precision / Holdout Score*)**: Nilai skor ketepatan deteksi model pada sampel data uji independen yang sengaja ditahan dari proses pelatihan.
+* **Rentang Keyakinan (*95% Confidence Interval*)**: Estimasi rentang nilai akurasi minimum dan maksimum hasil inferensi model.
+* **Pemberitahuan Cakupan Data**: Keterangan informatif jika masih terdapat komoditas di provinsi terkait yang sedang dalam proses pengolahan data.
+
+---
+
+## 2. Daftar Desa Berperingkat (`DaftarDesaSel`)
+
+Ketika suatu kabupaten dan komoditas aktif dipilih, kolom kanan menyajikan daftar desa di kabupaten tersebut yang diurutkan berdasarkan skor potensi komoditas dari peringkat tertinggi ke terendah.
+
+#### Fitur & Anatomi Baris Peringkat:
+* **Header Peringkat**: Menampilkan nama kabupaten terpilih, nama komoditas aktif, dan total desa yang tercakup.
+* **Kotak Pencarian Cepat**: Input pencarian untuk memfilter nama desa atau kecamatan dalam kabupaten secara instan.
+* **Badge Nomor Urut Peringkat**:
+  * Peringkat **#1**: Lencana Emas (*Gold Badge*).
+  * Peringkat **#2**: Lencana Perak (*Silver Badge*).
+  * Peringkat **#3**: Lencana Perunggu (*Bronze Badge*).
+  * Peringkat lainnya: Lencana netral berpenomoran urut.
+* **Nilai Skor Relatif (0–100)**: Skor potensi komoditas desa yang dihitung relatif terhadap seluruh desa lain di kabupaten tersebut.
+* **Tautan Langsung ke Kartu Ekonomi Desa (`ArrowUpRightIcon`)**: Tombol aksi cepat untuk membuka lembar profil lengkap desa bersangkutan di lensa Kartu Ekonomi Desa.
+* **Paginasi Efisien**: Daftar disajikan secara bertahap sebanyak 25 desa per halaman (`Pagination`) demi performa rendering yang optimal.
+
+---
+
+## Lapisan Visual Peta Satelit (*MapLibre Layer*)
+
+Pada panggung peta geospasial di sisi kanan, sebaran potensi komoditas dirender secara tematik:
+
+<img
+  src="/screenshoot/citra-potensi-3.png"
+  alt="Tampilan Lapisan Peta Tematik Sebaran Citra Potensi Satelit"
+  style={{ maxWidth: '680px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+* **Pewarnaan Intensitas Komoditas**: Poligon setiap desa diwarnai dengan gradasi intensitas sesuai skor potensi komoditas yang sedang aktif.
+* **Legenda Peta Interaktif**: Panel legenda di atas peta yang menjelaskan gradasi warna dari potensi terendah hingga tertinggi.
+* **Interaksi Sinkronisasi Dwiarah**:
+  * Mengeklik poligon desa pada peta satelit secara instan menyinkronkan status seleksi, mengarahkan tampilan halaman paginasi, dan menggulir (*auto-scroll*) baris desa terkait ke posisi tengah layar di kolom peringkat.
+

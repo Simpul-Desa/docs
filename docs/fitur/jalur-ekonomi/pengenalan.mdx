@@ -1,16 +1,124 @@
 ---
-title: Pengenalan Jalur Ekonomi
+title: Jalur Ekonomi
 sidebar_position: 1
+description: Penjelasan lengkap fitur Jalur Ekonomi, 4 varian aset bersama (Komoditas, Gudang Kopdes, Cold Storage, Wisata), penentuan Desa Poros dan Desa Sejalur, parameter batasan, serta visualisasi jaringan rute spasial pada SIMPUL DESA.
 ---
 
-# Pengenalan Jalur Ekonomi
+# Jalur Ekonomi
 
-Jalur Ekonomi menyambung sekumpulan desa ke satu aset bersama di lokasi
-optimal, agar skalanya cukup besar untuk hidup.
+**Jalur Ekonomi** adalah lensa analitik jaringan spasial berbasis kecerdasan buatan dalam **SIMPUL DESA** yang menghubungkan klaster desa-desa produsen ke satu fasilitas atau aset bersama di lokasi paling strategis guna mencapai **skala keekonomian (*economies of scale*)** yang layak dan menguntungkan.
 
-## Empat varian
+Fitur ini menjawab kendala klasik hilirisasi dan rantai pasok perdesaan: **"Bagaimana mengatasi keterbatasan volume komoditas per desa yang terlalu kecil untuk membiayai fasilitas pascapanen atau logistik modern secara mandiri?"** — dengan model optimisasi berkendala (*Mixed-Integer Linear Programming* / MILP) berbantukan matriks waktu tempuh nyata jaringan jalan (OSRM), SIMPUL DESA merumuskan jejaring kerja sama antardesa yang presisi, efisien, dan siap diimplementasikan di lapangan.
 
-- Komoditas
-- Gudang Kopdes
-- Cold Storage
-- Wisata
+---
+
+## Hak Akses Pengguna
+
+Lensa Jalur Ekonomi dapat diakses oleh seluruh tingkatan pengguna terautentikasi:
+
+| Peran Pengguna | Status Akses | Perilaku Antarmuka |
+| :--- | :---: | :--- |
+| **Tamu / Pemerintah / Swasta / Admin** | ✅ Terbuka | Akses penuh untuk menjelajahi 4 varian hilirisasi, mencari Desa Poros, menelaah daftar desa sejalur, dan melihat rute spasial. |
+| **Anonim** | 🔒 Terkunci | Menampilkan dialog modal *Fitur Terkunci* yang mengarahkan pengguna untuk masuk akun (*Sign In*). |
+
+---
+
+## Integrasi Tata Letak & Navigasi Antarmuka
+
+Lensa Jalur Ekonomi diakses melalui ikon ketiga pada bilah navigasi kiri (*Side Rail*). Antarmuka mengintegrasikan dua panggung kerja yang tersinkronisasi secara dwiarah:
+
+1. **Panel Analitik Kiri (380–480px)**: Menyajikan pemilih 4 varian hilirisasi, panel akordion ketentuan batasan model, kotak pencarian *Combobox* Desa Poros, serta kartu rincian rute keterlayanan antardesa.
+2. **Panggung Peta (*Map Stage*)**: Memvisualisasikan jaringan konektivitas jalan OSRM dengan garis rute emas yang menghubungkan simpul Desa Poros dengan titik-titik desa sejalur.
+
+![Tampilan Antarmuka Dasbor Lensa Jalur Ekonomi pada SIMPUL DESA](/screenshoot/jalur-ekonomi-1.png)
+
+---
+
+## Empat Varian Jalur Ekonomi (`PilihVarian`)
+
+Di bagian atas panel analitik, pengguna dapat beralih di antara 4 varian hilirisasi melalui tombol tab interaktif berikon:
+
+1. **Komoditas**:
+   * Menghubungkan desa-desa produsen komoditas unggulan dalam 6 subsektor pertanian (Tanaman Pangan, Hortikultura, Perkebunan, Peternakan, Perikanan Budidaya, Kehutanan) ke satu Desa Poros pengolahan bersama.
+2. **Gudang Kopdes (Koperasi Desa)**:
+   * Mengoptimalkan lokasi penempatan gudang konsolidasi logistik Koperasi Desa untuk mengumpulkan pasokan komoditas dari desa-desa sekitar sebelum didistribusikan ke pasar induk.
+3. **Cold Storage (Rantai Dingin)**:
+   * Memetakan penempatan fasilitas pendingin beku untuk komoditas yang mudah rusak (*perishable goods*). Mencakup **Unit Baru (Usulan Model)** dan **Unit Eksisting** yang telah beroperasi di lapangan.
+4. **Wisata Perdesaan**:
+   * Merangkai klaster desa wisata bertetangga ke dalam satu koridor perjalanan terpadu dengan titik poros penghubung utama.
+
+---
+
+## 1. Ketentuan & Batasan Varian (`ParameterVarian`)
+
+Setiap varian beroperasi di bawah batasan matematis yang ketat agar rekomendasi jalur tetap realistis dan ekonomis. Informasi ini disajikan dalam panel akordion *collapsible* (default terlipat):
+
+<img
+  src="/screenshoot/jalur-ekonomi-2.png"
+  alt="Tampilan Parameter Batasan Waktu Tempuh dan Volume Minimum Jalur Ekonomi"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+### Rincian Batasan Model Optimisasi:
+* **Batas Anggota**: Rentang jumlah desa yang dapat dirangkai ke dalam satu jalur (standar: **2–25 desa per jalur**).
+* **Waktu Tempuh Maksimum (`t_maks`)**: Batas toleransi durasi perjalanan armada logistik dari desa anggota menuju simpul poros berbasis jaringan jalan raya OSRM nyata (misal: &le; 30 menit untuk tanaman pangan, &le; 60 menit untuk kehutanan).
+* **Volume Minimum (`v_min`)**: Ambang batas akumulasi produksi minimum gabungan agar unit fasilitas bersama layak secara finansial.
+* **Tautan Metodologi Lengkap**: Tombol tautan cepat menuju dokumentasi [Optimisasi Jalur Ekonomi](/docs/pengolahan-data/jalur-ekonomi) untuk mempelajari formulasi fungsi objektif MILP dan matriks OSRM.
+
+---
+
+## 2. Pencarian & Pemilihan Jalur (`CariJalurCombobox`)
+
+Untuk efisiensi antarmuka pengguna, pemilihan jalur menggunakan komponen input pencarian *Combobox* pintar:
+
+* **Pencarian Cepat**: Pengguna dapat mengetikkan nama desa poros, kecamatan, kabupaten, atau jenis komoditas untuk menyaring rute secara instan.
+* **Informasi Baris Dropdown**: Setiap item menyajikan nama desa poros, label komoditas/varian, jumlah desa sejalur yang dilayani, serta hierarki administratif kecamatan dan kabupaten.
+* **Aksi Reset Sekali Klik**: Tombol silang (`X`) pada kolom pencarian memungkinkan pengguna mengosongkan pilihan jalur aktif dan kembali ke tampilan umum kabupaten.
+
+---
+
+## 3. Detail Jalur Terpilih & Jaringan Desa (`DetailJalur`)
+
+Ketika sebuah jalur atau Desa Poros dipilih, panel analitik bertransisi menyajikan lembar rincian rantai pasok:
+
+<img
+  src="/screenshoot/jalur-ekonomi-3.png"
+  alt="Tampilan Rincian Desa Poros dan Daftar Desa Sejalur dengan Estimasi Waktu Tempuh"
+  style={{ maxWidth: '540px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+### A. Kartu Sorotan Desa Poros (Pusat Jalur):
+* **Identitas Poros**: Nama desa pusat, kecamatan, dan lencana emas bertuliskan `Desa Poros (Pusat Jalur)` lengkap dengan tooltip glosarium (`?`).
+* **Akumulasi Bobot Layanan**: Total potensi volume gabungan seluruh desa anggota (misal: `2.297 rumah tangga` atau tonase komoditas).
+* **Cakupan Keterlayanan**: Informasi jumlah total desa sekitar yang terlayani oleh fasilitas poros ini.
+* **Tombol Navigasi**: Tombol *Ganti jalur* untuk beralih ke jalur lain, serta tombol *Sorot poros di peta* untuk memfokuskan pandangan kamera peta ke lokasi simpul pusat.
+
+### B. Daftar Desa Sejalur (`DaftarDesaSejalur`):
+* **Baris Entitas Desa Anggota**: Menampilkan nama setiap desa pengirim pasokan beserta nama kecamatannya.
+* **Kontribusi Volume**: Besaran volume pasokan yang disumbangkan oleh masing-masing desa anggota ke titik poros.
+* **Waktu Tempuh Logistik (`m`)**: Estimasi waktu tempuh perjalanan darat satu arah dari desa anggota menuju Desa Poros (dalam satuan menit, misal: `9,5 m`, `12,8 m`).
+* **Interaktivitas Baris**: Mengeklik salah satu baris desa anggota akan langsung menyorot posisi desa tersebut di peta dan membuka kartu informasi mengambang (*Floating Village Card*).
+
+---
+
+## Lapisan Visual Spasial Peta (*MapLibre Layer*)
+
+Pada panggung peta di sebelah kanan, jaringan rantai pasok dirender melalui lapisan geospasial tematik berstandar tinggi:
+
+<img
+  src="/screenshoot/jalur-ekonomi-4.png"
+  alt="Tampilan Lapisan Peta Geospasial Jaringan Rute Emas Antardesa"
+  style={{ maxWidth: '680px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+* **Garis Jaringan Rute Emas (`LAYER_JALUR_LINE`)**:
+  * Garis vektor tebal 2px berwarna emas (`#d9a13b`) dengan tingkat transparansi 85% (*opacity 0.85*) dan ujung bulat (*round cap/join*).
+  * Menghubungkan titik koordinat pusat geografis setiap desa anggota langsung menuju titik pusat Desa Poros.
+* **Simpul Desa Poros (`LAYER_JALUR_POROS`)**:
+  * Penanda lingkaran berukuran lebih besar (*radius 7px*) dengan warna isian putih bersih (*surface-float*) dan garis tepi emas tegas setebal 2px.
+* **Simpul Desa Anggota (`LAYER_JALUR_ANGGOTA`)**:
+  * Penanda titik lingkaran emas padat (*radius 4px*) pada setiap desa sejalur.
+* **Kartu Status Desa Mengambang (`KartuDesaJalurMap`)**:
+  * Ketika salah satu desa di peta diklik, muncul kartu popover mengambang di pojok kiri bawah peta yang menjelaskan peran desa bersangkutan (apakah sebagai *Desa Poros*, *Desa Sejalur*, atau *Belum Termasuk Jalur*).
+  * Dilengkapi tombol aksi untuk mengaktifkan seluruh jaringan rute poros tersebut di peta hanya dalam satu klik.
+

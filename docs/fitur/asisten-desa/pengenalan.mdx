@@ -1,10 +1,178 @@
 ---
 title: Asisten Desa
 sidebar_position: 1
+description: Penjelasan lengkap antarmuka, komponen visual, dan alur interaksi fitur Asisten Desa (AI Chatbot) pada aplikasi SIMPUL DESA.
 ---
 
 # Asisten Desa
 
-Antarmuka percakapan berbasis LLM yang menjawab hanya dari data SIMPUL DESA —
-keluaran model, kartu, berita, termasuk metodologi skor — dan menolak topik di
-luar itu. Bukan sumber angka baru.
+**Asisten Desa** adalah antarmuka percakapan cerdas (*AI Chatbot*) yang dirancang untuk mendampingi pengguna dalam mengeksplorasi, memahami, dan memvalidasi data analitik pada platform **SIMPUL DESA**.
+
+Asisten ini beroperasi dengan prinsip *Strict Domain Grounding* — hanya menjawab pertanyaan yang bersumber dari basis data SIMPUL DESA (skor kesiapan, skor potensi ekonomi, klasifikasi kuadran Peta Peran, profil komoditas Citra Potensi, konektivitas Jalur Ekonomi, hingga agregasi Berita Desa). Asisten secara eksplisit menolak topik di luar domain data SIMPUL DESA dan **bukan merupakan sumber angka baru**; seluruh fakta dan data numerik yang disajikan merujuk pada perhitungan model analitik yang sudah terverifikasi.
+
+---
+
+## Hak Akses & Pembatasan Peran
+
+Asisten Desa adalah kemampuan terproteksi (*gated feature*) yang dioptimalkan untuk pengambil keputusan dan mitra strategis. Pengaturannya mengikuti matriks akses aplikasi:
+
+| Peran Pengguna | Status Akses | Perilaku Antarmuka |
+| :--- | :---: | :--- |
+| **Pemerintah** | ✅ Terbuka | Akses penuh untuk interaksi, analisis kebijakan, dan pendalaman profil desa. |
+| **Swasta** | ✅ Terbuka | Akses penuh untuk eksplorasi potensi investasi, komoditas, dan rantai pasok desa. |
+| **Admin** | ✅ Terbuka | Akses penuh untuk penelusuran data dan pengawasan operasional sistem. |
+| **Tamu** / **Anonim** | 🔒 Terkunci | Tombol pemicu menampilkan lencana gembok (*lock badge*). Menekan tombol akan memunculkan dialog modal *Fitur Terkunci* dengan ajakan masuk (*Sign In*). |
+
+---
+
+## Anatomi & Tata Letak Antarmuka
+
+Panel Asisten Desa terintegrasi ke dalam tata letak utama dasbor (*companion panel*) yang berdiri berdampingan secara sejajar dengan panggung peta.
+
+![Tampilan Antarmuka Tombol Pemicu dan Panel Asisten Desa di Samping Panggung Peta](/screenshoot/asisten-desa-1.png)
+
+### 1. Tombol Pemicu (*Floating Trigger Button*)
+* **Posisi**: Terletak melayang di pojok kanan atas panggung peta (*Map Stage*), sejajar dengan bilah navigasi akun.
+* **Tampilan Visual**: Ikon bot Asisten Desa (`asisten-desa.svg`) dengan efek animasi denyut halus (*ambient pulse*) saat aktif, serta lencana gembok bagi pengunjung tamu/anonim.
+* **Interaksi**: Mengklik tombol akan membuka atau menutup panel asisten di sisi kanan layar.
+
+### 2. Header Panel
+* **Identitas Fitur**: Ikon Asisten Desa, judul `"Asisten Desa"`, dan lencana kategori `AI Chatbot`.
+* **Tombol Percakapan Baru (`RotateCcw`)**: Tombol putar-ulang yang muncul saat terdapat riwayat obrolan. Berfungsi mereset seluruh percakapan sesi dan mengembalikan panel ke keadaan awal (*empty state*).
+* **Tombol Tutup Panel (`CloseIcon` / Tombol `Esc`)**: Tombol silang untuk menutup panel. Menekan tombol `Escape` pada keyboard juga akan menutup panel seketika tanpa membatalkan konteks peta.
+
+### 3. Perilaku Responsif Antarmuka
+* **Desktop (≥1024px)**: Panel hadir sebagai kolom keempat berukuran tetap `380px` (`w-asisten`). Membuka panel akan menyesuaikan lebar panggung peta secara proporsional tanpa saling menumpuk (*no overlap*).
+* **Tablet (768px – 1023px)**: Panel bertindak sebagai laci melayang (*overlay drawer*) penuh setinggi layar dari sisi kanan.
+* **Ponsel / Mobile (di bawah 768px)**: Panel bertransformasi menjadi lembar penuh (*full-screen sheet*) yang menutup area layar untuk memaksimalkan kenyamanan membaca.
+
+---
+
+## Keadaan Awal (*Empty State*)
+
+Saat panel dibuka pertama kali atau setelah percakapan direset, pengguna disajikan tampilan awal yang memandu interaksi tanpa kesan kosong.
+
+<img
+  src="/screenshoot/asisten-desa-2.png"
+  alt="Tampilan Keadaan Awal Empty State dan Rekomendasi Pertanyaan Asisten Desa"
+  style={{ maxWidth: '380px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+### Komponen Keadaan Awal:
+1. **Avatar & Salam Sambutan**: Ikon besar Asisten Desa di tengah panel disertai sapaan hangat *"Halo, Saya Asisten Desa!"*.
+2. **Kejujuran Batasan Data**: Teks informatif: *"Tanya apa saja tentang data SIMPUL DESA. Tekan kirim untuk memulai percakapan."* (Sesi percakapan bersifat *ephemeral* dan akan dibersihkan saat halaman dimuat ulang).
+3. **Contoh Pertanyaan Cepat (*Quick Prompts*)**: Tiga kartu tombol pertanyaan instan:
+   * *"Desa mana di Kabupaten Tanggamus yang masuk Zona Poros?"* — contoh menelusuri klasifikasi kuadran Peta Peran.
+   * *"Apa isi Kartu Ekonomi Desa Sukarame di Kabupaten Tanggamus?"* — contoh menggali indikator profil komprehensif satu desa.
+   * *"Bagaimana Skor Kesiapan Ekonomi Desa dihitung?"* — contoh mempelajari metodologi, formula, dan variabel penyusun skor.
+
+> **Interaksi Cepat**: Mengeklik salah satu contoh pertanyaan akan otomatis mengisikan teks tersebut ke dalam komposer dan mengarahkan kursor fokus ke akhir baris kalimat, siap untuk langsung dikirimkan atau diedit oleh pengguna.
+
+---
+
+## Komposer Input Pertanyaan
+
+Komposer merupakan area input di bagian bawah panel yang kaya akan fitur bantuan pengetikan dan penandaan konteks spasial.
+
+<img
+  src="/screenshoot/asisten-desa-3.png"
+  alt="Tampilan Komposer Input Pertanyaan dan Menu Pencarian Sebut Desa"
+  style={{ maxWidth: '380px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+### Fitur Utama Komposer:
+
+* **Kotak Teks Multiline (*Auto-growing Textarea*)**:
+  * Dirancang dengan sudut melengkung modern (`rounded-3xl`) dan berlatar `bg-inset`.
+  * Tinggi area teks bertambah secara otomatis (*auto-grow*) mengikuti panjang kalimat (mulai tinggi minimal 50px hingga maksimal 128px sebelum *scroll* internal aktif).
+* **Fitur Sebut Desa (@ Mention / Spasial Context Tagging)**:
+  * Pengguna dapat menekan tombol **`+` (Sebut Desa)** atau mengetik karakter `@` secara langsung di dalam kotak teks untuk memicu menu sembul pencarian wilayah (*Combobox*).
+  * Menyediakan pencarian cepat nama desa, kecamatan, dan kabupaten (`useCariDesa`).
+  * Desa yang dipilih akan disematkan sebagai **Chip Konteks** di atas kotak ketik (misal: `[Desa Sukarame, Kec. Balik Bukit, Kab. Lampung Barat]`) lengkap dengan tombol `✕` untuk menghapusnya kapan saja.
+* **Prefill Konteks Wilayah Otomatis (*Auto Context Prefill*)**:
+  * Apabila pengguna sedang membuka suatu desa atau kabupaten di peta utama ketika membuka panel asisten, asisten secara cerdas menambahkan awalan `"Tentang [Nama Wilayah]: "` ke dalam komposer pada pembukaan pertama tanpa menimpa teks yang sedang diketik.
+* **Tombol Kirim (*Primary Action Button*)**:
+  * Tombol bulat berwarna oranye voltase SIMPUL DESA (`#ff7300`) dengan ikon panah ke atas. Otomatis dalam keadaan *disabled* saat area teks kosong atau saat asisten sedang menyusun jawaban.
+* **Pintasan Keyboard (*Keyboard Shortcuts*)**:
+  * `Enter` : Mengirim pertanyaan ke asisten.
+  * `Shift + Enter` : Membuat baris baru di dalam area penulisan.
+  * `Escape` : Menutup panel asisten.
+* **Indikator Batas Karakter & Kuota Pesan**:
+  * **Batas Karakter**: Maksimal **1.000 karakter** per pertanyaan. Penghitung karakter muncul otomatis saat panjang teks melampaui 90% batas (900 karakter).
+  * **Batas Kuota Sesi**: Maksimal **20 pesan** per sesi percakapan untuk menjaga efisiensi konteks LLM dan konsistensi inferensi.
+  * Ketika kuota 20 pesan tercapai, komposer bertransisi menjadi panel peringatan *"Percakapan penuh"* yang menyediakan tombol **"Percakapan baru"**.
+
+---
+
+## Alur Percakapan & Format Balasan
+
+Transkrip percakapan tersusun secara kronologis dalam wadah *scrollable* yang selalu otomatis menempel ke pesan paling bawah (*stick to bottom*).
+
+<img
+  src="/screenshoot/asisten-desa-4.png"
+  alt="Tampilan Balon Pesan Pengguna dan Format Balasan Terstruktur Asisten Desa"
+  style={{ maxWidth: '380px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+### 1. Balon Pesan Pengguna (*User Turn*)
+* Rata kanan layar dengan sudut membulat asimetris (`rounded-2xl rounded-tr-sm`) dan latar `bg-surface`.
+* Lebar maksimal dibatasi 85% dari lebar panel.
+* Token sebutan wilayah (seperti `[@Desa Sukarame]`) dirender visual sebagai lencana tag konteks yang menonjol di dalam pesan.
+
+### 2. Format Balasan Asisten (*Assistant Turn*)
+* Rata kiri layar didahului oleh avatar ikon Asisten Desa di sebelah kiri.
+* Menggunakan format teks terstruktur yang memanfaatkan lebar penuh panel (tanpa bentuk balon sempit) demi memaksimalkan kenyamanan membaca penjelasan analitik.
+* **Struktur Paragraf & Butir**: Paragraf dipisahkan dengan renggang yang teratur, dan daftar rincian disajikan dalam bentuk butir-butir rapi (*bullet points*).
+* **Tipografi Terstandarisasi**: Penanda tebal (*bold*) markdown dinormalisasi ke bobot sedang (*medium weight*) agar selaras dengan hierarki tipografi sistem desain SIMPUL DESA.
+
+### 3. Penanda Peringatan (*Caution Marker*)
+* Jika pertanyaan berada di luar cakupan data SIMPUL DESA atau menyentuh batasan sistem, asisten menyertakan kotak penanda peringatan berlatar kuning-oranye (*caution/10*) dengan ikon `AlertCircle`.
+
+---
+
+## Transparansi Data: Jejak Alat (*Tool Calls / Trace Block*)
+
+Sebagai wujud nyata prinsip *Explainable AI*, setiap kali Asisten Desa mengeksekusi alat (*tool/function calling*) untuk mengambil data sistem, komponen **Jejak Alat** (*Trace Block*) akan disertakan tepat di bawah jawaban terkait.
+
+<img
+  src="/screenshoot/asisten-desa-5.png"
+  alt="Tampilan Blok Jejak Alat Sumber Jawaban dan Tombol Pintas Buka Lensa"
+  style={{ maxWidth: '380px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+### Elemen Jejak Alat:
+1. **Header Sumber Jawaban (*Collapsible Card*)**:
+   * Ikon kunci pas (`Wrench`) disertai nama fungsi/alat yang dieksekusi (misalnya: *Pencarian Desa*, *Profil Desa*, *Peta Peran*, *Jalur Ekonomi*).
+   * **Lencana Status**: Menampilkan status eksekusi alat:
+     * `COMPLETED` (hijau / `positive`) : Data berhasil diambil dari API.
+     * `ERROR` (merah / `critical`) : Terjadi kendala pemanggilan fungsi.
+   * **Tombol Lipat/Buka (*Accordion Toggle*)**: Mengontrol keterlihatan rincian parameter teknis (`ChevronUp` / `ChevronDown`).
+2. **Aksi Pintas "Buka Lensa" (*Deep Linking to Map & Lens*)**:
+   * Pada baris alat yang mereferensikan desa atau lensa data spesifik, tersedia tombol **"Buka lensa ↗"**.
+   * Mengeklik tombol ini akan secara instan memperbarui parameter URL dasbor, menggeser fokus peta ke desa terkait, dan membuka lensa data bersangkutan di panel kiri utama secara mulus tanpa *page refresh*.
+3. **Inspeksi Argumen Mentah (*Raw JSON Payload*)**:
+   * Menampilkan blok kode JSON berformat rapi yang memuat argumen asli keluaran model kecerdasan buatan untuk kebutuhan audit dan validasi data.
+
+---
+
+## Indikator Status & Penanganan Galat
+
+Antarmuka Asisten Desa menyediakan umpan balik visual yang jelas untuk setiap kondisi komunikasi sistem:
+
+<img
+  src="/screenshoot/asisten-desa-6.png"
+  alt="Tampilan Animasi Memuat dan Blok Penanganan Galat Asisten Desa"
+  style={{ maxWidth: '380px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+### 1. Animasi Memuat (*Pending State*)
+* Saat pertanyaan sedang diproses oleh model LLM, muncul animasi tiga titik memantul (*bouncing dots*) di samping avatar asisten.
+* Pengguna tetap dapat berinteraksi dengan peta dan panel dasbor lain secara bebas selama proses inferensi berlangsung.
+
+### 2. Blok Galat (*Error State* / `BlokGalat`)
+* Apabila terjadi gangguan jaringan, batas kuota API terlampaui, atau kendala server:
+  * Ditampilkan kartu peringatan berlatar `bg-inset` dengan titik indikator merah `critical`.
+  * Memuat **Judul & Pesan Galat** komunikatif (seperti *"Gagal menghubungi asisten"*, *"Koneksi terputus"*).
+  * Menyertakan **Kode Galat Mesin** (misal: `500_SERVER_ERROR`, `429_RATE_LIMIT`) di sudut kanan untuk mempermudah identifikasi teknis.
+  * Menyediakan tombol **"Kirim ulang"** yang mengeksekusi ulang pesan terakhir tanpa menduplikasi pertanyaan ke dalam riwayat. Tidak ada mekanisme *retry* otomatis tersembunyi yang berisiko menghabiskan kuota inferensi.
+

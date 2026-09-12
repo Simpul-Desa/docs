@@ -1,12 +1,223 @@
 ---
-title: Pengenalan Kartu Ekonomi Desa
+title: Kartu Ekonomi Desa
 sidebar_position: 1
+description: Penjelasan lengkap fitur Kartu Ekonomi Desa, profil analitik multidimensi, rekomendasi aksi, integrasi program nasional, dan pemantauan mutu data pada SIMPUL DESA.
 ---
 
-# Pengenalan Kartu Ekonomi Desa
+# Kartu Ekonomi Desa
 
-Profil ekonomi lengkap tiap desa tanpa satu pun formulir. Seluruh
-desa/kelurahan di provinsi percontohan terdata otomatis: nol kuesioner, nol
-beban bagi perangkat desa.
+**Kartu Ekonomi Desa** adalah modul profil analitik komprehensif dalam **SIMPUL DESA** yang menyajikan profil ekonomi, potensi unggulan, kesiapan infrastruktur, dan keterkaitan program nasional tiap desa secara otomatis tanpa memerlukan pengisian formulir manual (*zero survey burden*).
 
-Cakupan wilayahnya ada di [Sumber Data](/docs/sumber-data).
+Seluruh desa dan kelurahan di provinsi percontohan terdata secara instan melalui agregasi otomatis data sensus (BPS ST2023), data kementerian (IDM Kemendesa, Kemenparekraf, KKP), citra satelit, serta analisis geospasial jaringan logistik.
+
+---
+
+## Hak Akses Pengguna
+
+Lensa Kartu Ekonomi Desa dapat diakses oleh seluruh tingkatan pengguna dengan pembagian otorisasi fitur interaktif sebagai berikut:
+
+| Peran Pengguna | Akses Profil & Tab Analitik | Ekspor Laporan Desa (PDF) | Akses Berita Desa |
+| :--- | :---: | :---: | :---: |
+| **Admin / Pemerintah** | ✅ Terbuka Penuh | ✅ Diizinkan | ✅ Diizinkan |
+| **Swasta / Tamu** | ✅ Terbuka Penuh | ✅ Diizinkan | ✅ Diizinkan |
+| **Anonim** | 🔒 Terkunci (Perlu Sign In) | 🔒 Terkunci | 🔒 Terkunci |
+
+---
+
+## Tata Letak & Alur Antarmuka
+
+Antarmuka Kartu Ekonomi Desa memadukan panggung peta geospasial interaktif di sebelah kanan dan panel profil terstruktur di sebelah kiri.
+
+1. **State Awal (*Empty State*)**: Sebelum desa dipilih, panel kiri menampilkan instruksi panduan: *"Pilih desa di peta atau kolom pencarian terlebih dahulu"*.
+2. **Pencarian Wilayah (`SearchBox`)**: Pengguna dapat mencari desa dengan mengetikkan minimal 2 karakter pada bilah pencarian cerdas yang dilengkapi *autocomplete* nama desa, kecamatan, dan kabupaten.
+3. **Pemilihan Langsung via Peta**: Mengklik poligon batas administrasi desa pada peta geospasial secara langsung membuka Kartu Ekonomi Desa yang bersangkutan.
+
+![Tampilan Dasbor Kartu Ekonomi Desa dan Kolom Pencarian](/screenshoot/kartu-ekonomi-desa-1.png)
+
+---
+
+## Anatomi Komponen Kartu Ekonomi Desa
+
+Panel Kartu Ekonomi Desa tersusun atas 6 blok komponen analitik modular:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. Hero Card: Zona Penanganan, Identitas Desa, & Ekspor PDF │
+├─────────────────────────────────────────────────────────────┤
+│ 2. Quick Links: Tautan Cepat Desa Kembar, Citra, & Jalur    │
+├─────────────────────────────────────────────────────────────┤
+│ 3. Rekomendasi Aksi: Arahan Kebijakan Strategis Kuadran     │
+├─────────────────────────────────────────────────────────────┤
+│ 4. Tab Analitik Desa (Potensi | Kesiapan | Program | Alam) │
+├─────────────────────────────────────────────────────────────┤
+│ 5. Berita Desa: Informasi Aktual Wilayah Terkait            │
+├─────────────────────────────────────────────────────────────┤
+│ 6. Integritas & Mutu Data: Kelengkapan Sumber & Bukti SK    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 1. Hero Card Identitas Desa (`SeksiEntitas`)
+
+Kartu sorotan utama di bagian atas panel yang dirancang dengan gradasi warna latar dinamis sesuai zona penanganan ekonomi desa:
+
+* **Header Zona Interaktif**: Menampilkan nama zona penanganan (misal: *Sentra Tumbuh*, *Lumbung Mandiri*, *Rintisan Cepat*, *Tertinggal*) dengan tautan langsung menuju lensa **Peta Peran**.
+* **Kotak Informasi Entitas (*Inner Card*)**:
+  * Tipe wilayah (`Desa` / `Kelurahan`).
+  * Nama resmi desa dalam tipografi tegas.
+  * Hirarki administratif lengkap: Kecamatan, Kabupaten, dan Provinsi.
+* **Baris Data Dasar & Tombol Ekspor**:
+  * Luas wilayah dalam kilometer persegi (km²).
+  * Kode wilayah resmi Kemendagri.
+  * **Tombol Ekspor Laporan (`useUnduhLaporan`)**: Mengunduh berkas laporan eksekutif desa dalam format PDF secara instan dengan indikator status (*Menyusun...*).
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-2.png"
+  alt="Hero Card Identitas Wilayah, Indikator Zona, dan Tombol Ekspor PDF"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+---
+
+### 2. Tautan Cepat Wilayah (`QuickLinksDesa`)
+
+Panel navigasi pintas yang menghubungkan analisis desa terpilih ke tiga lensa analitik turunan:
+
+1. **Desa Kembar**: Menavigasikan pengguna untuk membandingkan profil desa terpilih dengan desa-desa berkarakteristik serupa di wilayah lain.
+2. **Citra Potensi Desa**: Membuka pembacaan citra satelit resolusi tinggi dan peringkat komoditas pertanian/perkebunan desa.
+3. **Jalur Ekonomi**:
+   * Menampilkan deteksi status keterhubungan desa dalam koridor logistik pasar secara *real-time*.
+   * **Badge Poros**: Ditandai lencana emas jika desa terpilih merupakan pusat konsolidasi (*Desa Poros*).
+   * **Badge Sejalur**: Ditandai lencana biru jika desa terhubung sebagai anggota koridor dari suatu desa poros.
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-3.png"
+  alt="Tautan Cepat Fitur Wilayah - Desa Kembar, Citra Potensi, dan Jalur Ekonomi"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+---
+
+### 3. Rekomendasi Aksi (`SeksiRekomendasi`)
+
+Kotak arahan kebijakan strategis terkurasi yang diterjemahkan secara otomatis berdasarkan kombinasi Skor Potensi (SP), Skor Kesiapan (SK), serta posisi kuadran desa, memberikan rekomendasi praktis bagi pengambil keputusan (seperti penguatan rantai pasok, penyediaan modal, atau penguatan aksesibilitas dasar).
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-4.png"
+  alt="Kotak Rekomendasi Aksi Kebijakan Strategis Kuadran"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+---
+
+### 4. Tab Analitik Desa (`TabAnalitikDesa`)
+
+Panel tab interaktif 4 dimensi yang mengupas tuntas profil desa secara modular:
+
+#### A. Tab Potensi Dominan (`SeksiPotensi`)
+* **Sektor Unggulan Komparatif**: Menampilkan sektor ekonomi dengan daya saing tertinggi beserta label sumber data (`BPS ST2023`, `Satelit`, atau `Gabungan ST+Satelit`).
+* **Detail Komoditas & Peringkat**: Nama komoditas unggulan spesifik, skor daya saing (skala 0–100), dan peringkat desa di tingkat kabupaten (misal: `#1 dari 120 desa`).
+* **Profil 8 Sektor Potensi**: Visualisasi persentil kompetitif (skala 0–100) untuk 8 tema ekonomi pedesaan:
+  1. Tanaman Pangan
+  2. Hortikultura
+  3. Perkebunan
+  4. Peternakan
+  5. Perikanan Air Tawar / Budidaya
+  6. Kehutanan
+  7. Perikanan Tangkap
+  8. Simpul Jasa / Perdagangan
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-5.png"
+  alt="Tab Analitik: Potensi Dominan Sektor dan Profil 8 Sektor Persentil"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+#### B. Tab Kesiapan Desa (`SeksiKesiapan`)
+* **4 Pilar Kesiapan**:
+  * **Indeks Desa Membangun (IDM)**: Kemandirian tata kelola sosial, ekonomi, dan ketahanan lingkungan.
+  * **Kelembagaan Ekonomi**: Kapasitas BUMDes, koperasi, kelompok tani, dan lumbung desa.
+  * **Amenitas & Keuangan**: Akses perbankan, agen transaksi, dan pasar desa.
+  * **Konektivitas Wilayah**: Kualitas jalan, moda transportasi, dan jaringan telekomunikasi/internet.
+* **Klasifikasi Pilar**: Dikelompokkan ke dalam kategori status *Tinggi* (≥ 0.75), *Sedang* (≥ 0.50), atau *Perlu Penguatan* (&lt; 0.50).
+* **Penilaian Resmi IDM Kemendesa**: Menampilkan status resmi (Mandiri, Maju, Berkembang, Tertinggal, Sangat Tertinggal) beserta skor 3 indeks komposit penyusun:
+  * **IKS**: Indeks Ketahanan Sosial
+  * **IKE**: Indeks Ketahanan Ekonomi
+  * **IKL**: Indeks Ketahanan Lingkungan
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-6.png"
+  alt="Tab Analitik: 4 Pilar Kesiapan Desa dan Penilaian Resmi IDM Kemendesa"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+---
+
+#### C. Tab Fakta Program (`SeksiFaktaProgram`)
+Menyajikan catatan registri program prioritas kementerian teknis dan ketersediaan infrastruktur pasca-panen:
+
+* **Status Registri Program**: Banner penanda apakah desa telah terdaftar dalam program pembinaan nasional atau berstatus *Belum Masuk Registri Program* (indikasi prioritas afirmasi bantuan baru).
+* **Pariwisata & Budaya (Kemenparekraf)**:
+  * **Jadesta (Jejaring Desa Wisata)**: Status kategori desa wisata, jumlah atraksi, paket wisata, dan *homestay*.
+  * **Sisparnas**: Entitas wisata terdaftar pada Sistem Informasi Kepariwisataan Nasional.
+  * **Daya Tarik Wisata**: Jumlah sebaran titik daya tarik wisata terdata.
+* **Kelautan & Perikanan (KKP)**:
+  * **Kampung Perikanan Budidaya**: Komoditas budidaya binaan KKP.
+  * **Kampung Nelayan Maju (Kalaju)**: Program pembinaan dan tahun penetapan.
+* **Rantai Dingin (*Cold Storage*)**:
+  * Unit *cold storage* eksisting di desa (kapasitas tonase dan status operasional).
+  * Unit *cold storage* terlayani di wilayah sekitar beserta jarak tempuh logistiknya.
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-7.png"
+  alt="Tab Analitik: Catatan Registri Fakta Program Nasional dan Cold Storage"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+---
+
+#### D. Tab Biofisik & Logistik (`SeksiBiofisikLogistik`)
+Menyajikan parameter geografis alam dan metrik aksesibilitas transportasi:
+
+* **Bentang Alam Biofisik**:
+  * **Elevasi**: Ketinggian wilayah dalam meter di atas permukaan laut (*Dataran Rendah*, *Perbukitan Sedang*, *Dataran Tinggi*).
+  * **Relief / Kelerengan**: Karakteristik kontur (*Datar/Landai*, *Bergelombang*, *Curam/Terjal*).
+  * **Jarak Garis Pantai**: Posisi wilayah (*Zona Pesisir*, *Dekat Pantai*, *Pedalaman*).
+  * **Tutupan Lahan Dominan**: Jenis tutupan lahan terbesar (sawah, perkebunan, hutan, permukiman).
+* **Aksesibilitas Logistik ke Simpul Ekonomi**:
+  * Waktu tempuh perjalanan darat (dalam menit) menuju **Pusat Kota / Ibukota Kabupaten**, **Bandar Udara**, dan **Pelabuhan Terdekat**.
+  * Label efisiensi rute: *Akses Cepat* (≤ 45 menit), *Akses Sedang* (≤ 90 menit), atau *Akses Terbatas* (> 90 menit).
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-8.png"
+  alt="Tab Analitik: Parameter Bentang Alam Biofisik dan Aksesibilitas Logistik"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+---
+
+### 5. Berita Desa (`SeksiBerita`)
+
+Menampilkan feed warta dan publikasi berita aktual yang terasosiasi secara spesifik dengan desa terkait. Informasi berita dapat dikelola langsung oleh administrator wilayah melalui modul Berita Desa maupun Halaman Admin.
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-9.png"
+  alt="Seksi Berita Aktual Desa"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>
+
+---
+
+### 6. Integritas & Mutu Data (`SeksiMutuData`)
+
+Indikator transparansi data yang memberikan gambaran reliabilitas informasi analitik:
+
+* **Status Ketersediaan Sumber Data Primer**: Indikator kelengkapan Geometri Batas Wilayah, Sensus Pertanian ST2023, dan IDM Kemendesa.
+* **Kelengkapan Bukti SK**: Persentase rasio ketersediaan dokumen Surat Keputusan (SK) resmi pendukung keabsahan entitas dan program desa.
+
+<img
+  src="/screenshoot/kartu-ekonomi-desa-10.png"
+  alt="Seksi Integritas dan Mutu Data Wilayah"
+  style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
+/>

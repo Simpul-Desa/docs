@@ -1,22 +1,31 @@
 ---
 title: Desa Kembar
 sidebar_position: 4
-description: Desa Kembar seperti yang terlihat di Portal, beserta tautan ke halaman lengkapnya.
+description: Pengenalan visual antarmuka fitur Desa Kembar pada Portal SIMPUL DESA.
 ---
 
 # Desa Kembar
 
-Desa Kembar mencari desa yang profilnya paling mirip dengan desa yang sudah
-terbukti berhasil, sehingga jalur suksesnya bisa ditiru dengan modal kemiripan
-yang terukur. Kemiripannya relatif dalam kabupaten.
+**Desa Kembar** adalah fitur komparasi analitik (*peer benchmarking*) berbasis kecerdasan buatan (*k-Nearest Neighbors*) yang mencari desa-desa dengan profil paling serupa terhadap desa acuan yang telah terbukti berhasil.
 
-Halaman ini menunjukkan Desa Kembar **seperti yang terlihat di Portal**.
-Penjelasan konsepnya, termasuk istilah dan cara angkanya dihitung, ada di
-[halaman Desa Kembar](/docs/fitur/desa-kembar/pengenalan).
+Fitur ini memungkinkan perangkat desa dan perencana daerah meniru praktik baik (*best practice*) dan peta jalan keberhasilan (*success blueprint*) dari desa lain yang memiliki kemiripan karakteristik terukur di kabupaten yang sama.
 
-<div className="sd-shot" role="img" aria-label="Slot tangkapan layar Desa Kembar, belum diisi">Tangkapan layar menyusul — desa acuan beserta tetangga terdekatnya</div>
+---
 
-Yang perlu terlihat: desa acuan, daftar tetangga terdekat, dan angka
-kemiripannya.
+## Tampilan Antarmuka di Portal
 
-Slotnya masih kosong sampai Portal dan API-nya dijalankan pemilik proyek.
+Pada antarmuka portal, Desa Kembar menyajikan perbandingan indikator antara desa terpilih dengan tetangga terdekatnya:
+
+![Tampilan Antarmuka Desa Kembar pada Portal SIMPUL DESA](/screenshoot/pengenalan-desa-kembar.png)
+
+* **Desa Acuan (*Anchor Village*)**: Menampilkan desa terpilih sebagai tolok ukur perbandingan.
+* **Daftar Desa Kembar Terdekat**: Daftar desa dengan nilai kemiripan tertinggi beserta skor jarak kemiripan terukur.
+* **Grafik Perbandingan Sumbu**: Komparasi langsung antar indikator potensi, kesiapan, aksesibilitas, dan fasilitas penunjang.
+
+---
+
+## Panduan Lengkap & Metodologi
+
+Untuk mempelajari detail metrik jarak kemiripan (*Euclidean distance*), normalisasi fitur, dan formulasi Desa Kembar, silakan kunjungi halaman dokumentasi fitur:
+
+👉 **[Buka Dokumentasi Lengkap Desa Kembar](/docs/fitur/desa-kembar/pengenalan)**

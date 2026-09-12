@@ -1,14 +1,106 @@
 ---
 title: Halaman Admin
 sidebar_position: 1
+description: Penjelasan lengkap antarmuka, hak akses, dan tiga modul utama Halaman Admin (Manajemen Pengguna, Kurasi Berita, dan Status Sistem) pada SIMPUL DESA.
 ---
 
 # Halaman Admin
 
-Halaman pengelola sistem, hanya untuk peran admin. Dari sini penyegaran Berita
-Desa dijalankan, berita dihapus, daftar pengguna dibaca, peran pengguna
-dinaikkan, dan status sistem dibaca — versi data, cacah isi, dan pekerjaan
-latar yang sedang berjalan.
+**Halaman Admin** (`/admin`) adalah portal pengelolaan dan pengawasan internal **SIMPUL DESA** yang dirancang khusus bagi pengguna dengan peran **Admin**. 
 
-Isi halaman ini masih kerangka. Kontrak tiap operasinya sudah lengkap di
-[rujukan REST APIs](/api/endpoint/administrasi).
+Melalui portal ini, administrator dapat mengelola hak akses akun pengguna, memicu dan mengkurasi pemanenan Berita Desa, serta memantau kesehatan server, waktu aktif (*uptime*) komponen, integritas versi data, dan kesiapan integrasi model kecerdasan buatan secara *real-time*.
+
+---
+
+## Hak Akses & Mekanisme Pengamanan
+
+Akses ke halaman ini dilindungi oleh gerbang peran ketat (*Role-Based Access Control*):
+
+| Peran Pengguna | Status Akses | Perilaku Antarmuka |
+| :--- | :---: | :--- |
+| **Admin** | ✅ Terbuka Penuh | Akses seluruh tab administrasi (Pengguna, Berita, Status). |
+| **Pemerintah / Swasta / Tamu** | 🔒 Terkunci | Menampilkan layar *Halaman Admin Terkunci* dengan dialog penjelasan batas wewenang. |
+| **Anonim** | 🔒 Terkunci | Menampilkan dialog modal *Fitur Terkunci* yang mengarahkan pengguna untuk masuk akun (*Sign In*). |
+
+---
+
+## Anatomi & Tata Letak Antarmuka
+
+Antarmuka Halaman Admin mengusung tata letak kerja dua panel yang bersih dan terfokus:
+
+1. **Header Administrator**: Menampilkan identitas *"Halaman Admin"* beserta lencana status *"Akses Administrator"*.
+2. **Sidebar Menu Navigasi (Kiri)**: Menyediakan tiga menu tab utama (*Pengguna*, *Berita*, *Status*) lengkap dengan ikon, deskripsi fungsi, indikator aktif, identitas email admin yang sedang masuk, serta dukungan navigasi keyboard (*roving tabindex*).
+3. **Panel Konten Utama (Kanan)**: Area kerja dinamis yang menampilkan konten dari tab menu yang sedang aktif.
+
+---
+
+## Tiga Tab Utama Halaman Admin
+
+### 1. Tab Manajemen Pengguna (`TabPengguna`)
+
+Tab **Pengguna** memungkinkan administrator memantau seluruh akun yang terdaftar pada platform SIMPUL DESA serta mengatur tingkatan peran (*role*) masing-masing pengguna.
+
+![Tampilan Tab Manajemen Pengguna pada Halaman Admin](/screenshoot/hal-admin-1.png)
+
+#### Fitur & Interaksi Utama:
+* **Statistik Akun**: Menampilkan jumlah total pengguna terdaftar pada sistem di bagian atas.
+* **Pencarian Email Akun Terdaftar**:
+  * Kotak input pencarian email dengan mekanisme *debounce* halus (`useNilaiTelat`) untuk efisiensi kueri.
+  * Dilengkapi validasi format karakter (`cariPenggunaSah`) dan tombol pembersih kata kunci (**"Reset"**).
+* **Daftar Baris Pengguna (`BarisPengguna`)**:
+  * Menampilkan inisial avatar pengguna, alamat email lengkap, tanggal akun dibuat (`dibuat_pada`), serta tanggal terakhir peran diperbarui (`diubah_pada`).
+* **Pengubah Peran Akun (`SelectPeran`)**:
+  * Menu dropdown interaktif untuk menaikkan atau menurunkan peran pengguna ke salah satu dari empat tingkatan: **Tamu**, **Pemerintah**, **Swasta**, atau **Admin**.
+  * **Proteksi Akun Sendiri**: Sistem secara otomatis menolak dan menampilkan pesan galat jika seorang admin berusaha menurunkan hak akses akunnya sendiri.
+* **Navigasi Halaman (*Pagination*)**: Paginasi interaktif yang otomatis kembali ke halaman pertama saat kata kunci pencarian diperbarui.
+
+---
+
+### 2. Tab Kurasi & Penyegaran Berita (`TabBerita`)
+
+Tab **Berita** berfungsi sebagai pusat kendali pemanenan feed RSS berita per desa dan kurasi artikel agar tidak terjadi salah pengaitan informasi antar-desa yang memiliki kesamaan nama (*berita nyasar*).
+
+![Tampilan Tab Kurasi dan Penyegaran Berita pada Halaman Admin](/screenshoot/hal-admin-2.png)
+
+#### Rujukan Dokumentasi Fitur:
+> [!TIP]
+> Penjelasan mendalam mengenai mekanisme pemanenan otomatis, ekstraksi model NLP, tampilan di Kartu Ekonomi Desa, dan panduan kurasi berita dapat dipelajari pada halaman:  
+> 👉 **[Buka Dokumentasi Lengkap Fitur Berita Desa](/docs/fitur/berita-desa/pengenalan)**
+
+#### Ringkasan Dua Modul Kerja:
+1. **Modul Segarkan Berita Desa (Panen RSS)**:
+   * Memilih daftar desa secara multi-pilih (`PemilihDesa`) dan mengeksekusi pemanenan massal via tombol **"Segarkan berita"**.
+   * Menampilkan status live pemanenan dengan animasi radar berputar (*ping pulse + spin*), penghitung progres riil (`X dari Y selesai`), tombol **"Batalkan Program"**, serta proteksi konkurensi (HTTP 409).
+2. **Modul Hapus Berita Nyasar (`KartuHapusBeritaNyasar`)**:
+   * Menampilkan daftar desa yang telah memiliki arsip berita serta pencarian desa cepat (`CariDesaAdmin`).
+   * Menyajikan tabel rincian berita per desa dengan tombol aksi **"Hapus"** berkonfirmasi dua tahap (**"Batal"** / **"Ya, hapus"**) dan manajemen fokus keyboard otomatis ke baris tetangga.
+
+---
+
+### 3. Tab Status Sistem & Layanan (`TabStatus`)
+
+Tab **Status** menyajikan pemantauan diagnostik menyeluruh mengenai waktu aktif (*uptime*) komponen sistem secara live, versi data manifest, serta kesiapan konfigurasi layanan backend.
+
+![Tampilan Tab Status Sistem dan Layanan pada Halaman Admin](/screenshoot/hal-admin-3.png)
+
+#### Fitur & Komponen Diagnostik:
+
+* **Tombol "Periksa Ulang" / "Memeriksa live…"**:
+  * Tombol aksi di kanan atas untuk memicu pengecekan ulang kesehatan seluruh endpoint secara instan.
+* **Banner Status Uptime Keseluruhan**:
+  * Lampu indikator visual (*glowing pulse*) yang menandakan kondisi sistem: **Hijau** (Semua Sistem Beroperasi Normal), **Kuning** (Sedang Memeriksa), atau **Merah** (Kendala Terdeteksi).
+  * Menampilkan persentase ketersediaan (*misal: 99.9% Uptime*) dan stempel waktu pemeriksaan terakhir.
+* **Kartu Pemantauan Waktu Aktif Komponen Sistem**:
+  1. **API Backend**: Menampilkan status FastAPI REST Server, latensi respons dalam milidetik (ms), dan kode respons HTTP.
+  2. **Dokumentasi (DOCS)**: Memantau ketersediaan portal OpenAPI & Redocly.
+  3. **Supabase Cloud**: Memantau konektivitas basis data PostgreSQL dan mesin autentikasi.
+  * **Visualizer Uptime Bars**: Bilah 24 sampel historis waktu aktif per komponen untuk memvisualisasikan stabilitas layanan dalam 24 jam terakhir.
+* **Informasi Versi Data Manifest**:
+  * **Kode Build Manifest (Hash)**: Menampilkan hash SHA versi data analitik yang sedang dimuat server.
+  * **Tanggal Rilis Data**: Tanggal resmi sinkronisasi artefak data desa.
+* **Status Kesiapan Layanan Terintegrasi**:
+  * Daftar lencana kesiapan konfigurasi kredensial lingkungan (`.env`):
+    * *Database Supabase*: PostgreSQL, RLS, & Autentikasi.
+    * *Gemini API (Panen Berita)*: Ekstraksi & kurasi feed RSS desa.
+    * *Gemini API (Asisten Desa)*: Model AI percakapan & analisis cerdas.
+

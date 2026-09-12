@@ -1,10 +1,68 @@
 ---
 title: Laporan Desa
-sidebar_position: 3
+sidebar_position: 1
+description: Panduan fitur ekspor Laporan Desa (PDF), hak akses, letak tombol unduh pada Kartu Ekonomi Desa, dan struktur dokumen hasil cetak pada SIMPUL DESA.
 ---
 
 # Laporan Desa
 
-Dokumen PDF per desa yang memuat sekurangnya Peta Peran dan Kartu Ekonomi Desa.
-Hanya peran pemerintah dan admin yang boleh membuatnya — lihat
-[Peran Pengguna](/docs/peran-pengguna).
+**Laporan Desa** adalah fitur penyusunan dan ekspor dokumen resmi berformat **PDF** dalam **SIMPUL DESA** yang merangkum profil analitik, status zonasi kebijakan, indikator potensi ekonomi, dan rekomendasi pembangunan satu desa secara komprehensif.
+
+Dokumen ini dirancang khusus sebagai bahan rujukan siap cetak (*briefing document*) bagi para pengambil kebijakan, bupati/wali kota, kepala dinas, maupun perencana anggaran daerah dalam merumuskan program intervensi yang tepat sasaran.
+
+---
+
+## Hak Akses & Pembatasan Fitur
+
+Penyusunan dokumen Laporan Desa melibatkan komputasi perakitan data analitik di sisi server. Fitur ini dilindungi oleh gerbang peran (*Role-Based Access Control*):
+
+| Peran Pengguna | Status Akses | Perilaku Antarmuka |
+| :--- | :---: | :--- |
+| **Pemerintah** | ✅ Terbuka | Dapat mengekspor dan mengunduh dokumen Laporan Desa PDF untuk seluruh desa. |
+| **Admin** | ✅ Terbuka | Akses penuh untuk ekspor dokumen laporan desa. |
+| **Swasta** | 🔒 Terkunci | Tombol ekspor laporan tidak ditampilkan pada kartu identitas desa. |
+| **Tamu** / **Anonim** | 🔒 Terkunci | Tombol ekspor laporan tidak ditampilkan; pengguna diarahkan untuk masuk dengan akun pemerintah/admin. |
+
+---
+
+## 1. Lokasi & Cara Mengakses Tombol Ekspor
+
+Tombol ekspor Laporan Desa terintegrasi secara praktis pada **Hero Card Identitas Desa** di panel analitik **Kartu Ekonomi Desa**.
+
+![Tampilan Tombol Ekspor Laporan pada Kartu Ekonomi Desa](/screenshoot/laporan-desa-1.png)
+
+### Alur Interaksi Tombol Ekspor:
+* **Posisi Tombol**: Terletak di baris bawah Hero Card Identitas Desa, sejajar dengan informasi luas wilayah dan kode Kemendagri.
+* **Tampilan Visual**: Tombol berlatar kontras dengan ikon unduh (`Download`) dan teks **"Ekspor Laporan"**, disertai *tooltip* penjelas *"Unduh Laporan Desa (PDF)"*.
+* **Proses Perakitan Dokumen (*On-Demand Generation*)**:
+  * Saat tombol diklik, frontend mengirim permintaan pembuatan laporan ke endpoint backend.
+  * Tombol otomatis mengunci diri (`aria-busy`), menampilkan ikon animasi putar (`Loader2 animate-spin`), dan mengubah label menjadi **"Menyusun..."** untuk mencegah klik ganda (*multi-trigger*).
+* **Pengunduhan Otomatis**: Setelah berkas PDF selesai dirakit oleh server, berkas langsung diunduh ke peramban pengguna dengan format penamaan terstandarisasi: `laporan-desa-[iddesa].pdf`.
+* **Penanganan Galat**: Jika terjadi kendala jaringan atau kegagalan server, sistem memunculkan notifikasi *toast* interaktif yang menjelaskan penyebab kendala tanpa merusak tampilan dasbor.
+
+---
+
+## 2. Struktur & Output Dokumen Laporan (PDF)
+
+Dokumen Laporan Desa yang dihasilkan menyajikan ringkasan eksekutif dua pilar data utama: **Peta Peran** dan **Kartu Ekonomi Desa**.
+
+![Tampilan Output Dokumen Laporan Desa PDF](/screenshoot/laporan-desa-2.png)
+
+### Muatan Informasi dalam Dokumen PDF:
+
+1. **Header & Identitas Administratif**:
+   * Nama resmi desa/kelurahan, lencana jenis wilayah (`Desa` atau `Kelurahan`), kode wilayah resmi Kemendagri, kecamatan, kabupaten, dan provinsi.
+   * Luas total wilayah administratif (km²).
+2. **Ringkasan Klasifikasi Peta Peran**:
+   * Status zona penanganan ekonomi definitif (**Zona Pemerintah**, **Zona Mitra**, **Zona Poros**, atau **Zona Bantuan**).
+   * Nomor kuadran kebijakan, skor numerik Skor Potensi (SP) dan Skor Kesiapan (SK), desil posisi, serta peringkat komparatif desa se-kabupaten.
+3. **Potret Indikator Kartu Ekonomi Desa**:
+   * Komoditas unggulan dominan dan basis bukti data validasi (citra satelit, kepmen, atau sensus).
+   * Status Indeks Desa Membangun (IDM Kemendesa) beserta pilar-pilar kesiapan sosial, ekonomi, dan lingkungan.
+   * Kesiapan kelembagaan lokal (koperasi, BUMDes) dan ketersediaan amenitas dasar.
+   * Aksesibilitas dan sentralitas waktu tempuh jaringan jalan (OSRM).
+4. **Arahan Rekomendasi Aksi Strategis**:
+   * Narasi rekomendasi kebijakan terarah mengenai tindakan pembangunan yang harus diprioritaskan bagi desa terkait.
+5. **Stempel Waktu & Mutu Data**:
+   * Informasi tanggal dan waktu dokumen dirakit (*timestamp* perakitan) serta indikator kelengkapan data desa untuk transparansi data analitik.
+

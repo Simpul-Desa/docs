@@ -1,9 +1,86 @@
 ---
 title: Berita Desa
-sidebar_position: 2
+sidebar_position: 1
+description: Penjelasan fitur Berita Desa pada Kartu Ekonomi Desa dan modul kurasi/penyegaran berita pada Halaman Admin di SIMPUL DESA.
 ---
 
 # Berita Desa
 
-Kumpulan berita per desa hasil panen otomatis, tersimpan per `iddesa`, tampil
-sebagai bagian Kartu Ekonomi Desa.
+**Berita Desa** adalah fitur pengayaan informasi kualitatif dalam **SIMPUL DESA** yang menyajikan kumpulan artikel dan kabar terkini seputar desa hasil pemanenan otomatis dari umpan berita (*RSS Feeds*) media massa terpercaya. Rangkuman setiap berita diproses dan diringkas secara cerdas oleh model pemrosesan bahasa alami (*NLP*), kemudian diindeks secara presisi per kode wilayah desa (`iddesa`).
+
+Fitur ini menjembatani data kuantitatif dengan dinamika lapangan yang nyata — seperti peristiwa panen raya komoditas, kegiatan UMKM desa, perkembangan Badan Usaha Milik Desa (BUMDes), pembangunan sarana desa, hingga mitigasi bencana setempat.
+
+---
+
+## Hak Akses Pengguna
+
+Fitur Berita Desa memiliki dua titik interaksi antarmuka yang disesuaikan dengan peran pengguna:
+
+| Modul Antarmuka | Peran Pengguna | Status Akses | Deskripsi Fungsional |
+| :--- | :--- | :---: | :--- |
+| **Seksi Berita Desa** (Kartu Ekonomi Desa) | Tamu, Pemerintah, Swasta, Admin | ✅ Terbuka | Membaca daftar artikel berita, rangkuman, kategori, dan tautan sumber asli desa terpilih. |
+| **Kurasi & Penyegaran Berita** (Halaman Admin) | Admin | 🔒 Khusus Admin | Memicu pemanenan RSS per desa (*background job*) dan menghapus berita yang keliru terindeks (*berita nyasar*). |
+
+---
+
+## 1. Berita Desa pada Kartu Ekonomi Desa
+
+Pada antarmuka publik, Berita Desa disajikan sebagai **Seksi ke-9** dalam lembar profil analitik **Kartu Ekonomi Desa** (setelah rincian indikator komoditas, IDM, dan infrastruktur dasar).
+
+![Tampilan Seksi Berita Desa pada Kartu Ekonomi Desa](/screenshoot/berita-desa-1.png)
+
+### A. Anatomi Komponen Baris Berita (`BarisBerita`)
+Setiap artikel berita dalam daftar disajikan dengan elemen visual terstandarisasi:
+* **Judul Berita Bertautan**: Judul artikel resmi yang dilengkapi dengan ikon tautan eksternal (`ExternalLink`). Mengeklik judul akan membuka halaman berita asli dari media penerbit di tab peramban baru secara aman (*noopener noreferrer*).
+* **Baris Metadata (`labelMeta`)**: Menampilkan nama media penerbit (*publisher*) dan tanggal publikasi resmi (misal: `Antara News • 10 September 2026`). Jika tanggal publikasi tidak tercantum, sistem menampilkan tanggal artikel berhasil dipanen.
+* **Rangkuman Terpotong (*AI-Generated Summary*)**: Tiga baris kalimat intisari (*line-clamp-3*) yang merangkum inti peristiwa tanpa memenuhi ruang layar.
+* **Chip Kategori**: Lencana kategori tematik (seperti `Pertanian`, `Ekonomi`, `BUMDes`, atau `Pemerintahan`) untuk memudahkan pemindaian topik secara cepat.
+
+### B. Alur Interaksi & Kontrol Tampilan:
+* **Mode Pratinjau Default**: Saat pertama kali dibuka, seksi ini menampilkan **3 artikel berita teratas** agar halaman kartu tetap ringkas dan cepat dimuat.
+* **Tombol "Tampilkan semua X berita" / "Ringkas lagi"**:
+  * Jika suatu desa memiliki lebih dari 3 berita, tombol aksi di bagian bawah daftar memungkinkan pengguna memperluas (*expand*) daftar lengkap.
+  * Aksi buka/tutup ini bekerja secara instan memanfaatkan data cache lokal tanpa melakukan permintaan jaringan baru (*zero network refetch*).
+* **Catatan Informasi Terpotong**: Memberikan keterangan jika terdapat batasan jumlah arsip berita yang tersimpan di sistem.
+* **Status Pemuatan & Penanganan Galat**: Menyediakan kerangka muat (*skeleton loader*), status sambungan terputus, serta tombol **"Coba lagi"** (`RotateCcw`) jika terjadi kendala jaringan saat memuat daftar berita.
+
+---
+
+## 2. Manajemen & Kurasi Berita pada Halaman Admin
+
+Bagi pengguna dengan peran **Admin**, sistem menyediakan panel pengelolaan khusus yang dapat diakses melalui **Halaman Admin &rarr; Tab Kurasi & Penyegaran Berita**. Panel ini terdiri dari dua modul independen untuk memastikan akurasi data.
+
+![Tampilan Manajemen Berita Desa pada Halaman Admin](/screenshoot/berita-desa-2.png)
+
+### A. Modul 1: Segarkan Berita Desa (Panen RSS)
+Modul ini digunakan untuk memicu pemanenan ulang feed RSS berita untuk satu atau beberapa desa terpilih.
+
+* **Pemilih Desa Multi-Pilih (`PemilihDesa`)**: Admin dapat mencari dan memilih daftar desa yang ingin dipanen beritanya secara massal.
+* **Tombol "Segarkan berita"**: Mengirim perintah ke backend API untuk memulai *background job* pemanenan.
+* **Indikator Progres Live & Animasi Berputar**:
+  * Ketika pekerjaan sedang berlangsung di server, muncul banner status aktif dengan animasi denyut radar (*ping effect*) dan ikon putar (`RotateCcw animate-spin`).
+  * Menampilkan penghitung kemajuan riil (misal: `Penyegaran Berita: 4 dari 10 desa selesai`).
+* **Tombol "Batalkan Program"**: Memungkinkan Admin menghentikan pekerjaan pemanenan di latar belakang kapan saja jika diperlukan.
+* **Proteksi Pekerjaan Tunggal (HTTP 409 Conflict)**: Server menerapkan penguncian proses (*single-job concurrency*) agar pemanenan tidak berjalan ganda dan mencegah pemborosan sumber daya server.
+
+### B. Modul 2: Hapus Berita Nyasar (`KartuHapusBeritaNyasar`)
+Karena pemanenan artikel menggunakan kata kunci nama desa, desa dengan nama yang identik di kabupaten/provinsi berbeda berpotensi kebagian artikel yang keliru dikaitkan (*berita nyasar*). Modul ini menyediakan mekanisme kurasi manual yang cepat dan aman.
+
+* **Daftar Desa yang Sudah Dipanen**: Menampilkan kartu grid seluruh desa yang memiliki arsip berita tersimpan beserta tanggal pemanenan terakhirnya.
+* **Pencarian Desa Cepat (`CariDesaAdmin`)**: Kotak pencarian untuk menemukan desa spesifik di luar daftar ringkasan.
+* **Tabel Rincian Berita Desa**: Saat suatu desa dipilih, ditampilkan tabel interaktif yang memuat:
+  1. *Judul Berita* (dengan tautan verifikasi ke situs asli).
+  2. *Sumber Media*.
+  3. *Tanggal Publikasi / Waktu Panen*.
+  4. *Kolom Aksi Hapus*: Tombol **"Hapus"** dengan mekanisme konfirmasi dua tahap (*Inline Confirmation*).
+* **Konfirmasi Hapus Aman & Fokus Aksesibilitas**:
+  * Menekan tombol "Hapus" akan memunculkan pilihan **"Batal"** dan **"Ya, hapus"**.
+  * Dilengkapi manajemen fokus keyboard otomatis: setelah artikel berhasil dihapus dari basis data, fokus kursor berpindah secara mulus ke tombol hapus pada baris tetangga berikutnya.
+* **Tombol "← Kembali ke Daftar Desa"**: Memudahkan Admin kembali ke daftar induk desa setelah menyelesaikan kurasi artikel.
+
+---
+
+## Prinsip Integritas & Validitas Data
+
+> [!NOTE]
+> Seluruh artikel Berita Desa dipanen secara otomatis dari feed RSS media massa dan diringkas menggunakan model NLP. Rangkuman berita ditujukan sebagai pelengkap wawasan kontekstual, bukan sebagai penetapan hukum atau data statistik definitif. Pengguna disarankan selalu memeriksa tautan media sumber asli dan tanggal terbit artikel sebelum mengambil keputusan strategis.

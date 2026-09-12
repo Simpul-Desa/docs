@@ -1,24 +1,31 @@
 ---
 title: Citra Potensi Desa
 sidebar_position: 5
-description: Citra Potensi Desa seperti yang terlihat di Portal, beserta tautan ke halaman lengkapnya.
+description: Pengenalan visual antarmuka fitur Citra Potensi Desa pada Portal SIMPUL DESA.
 ---
 
 # Citra Potensi Desa
 
-Citra Potensi Desa menemukan sentra komoditas dari pembacaan citra satelit dan
-peta, sehingga potensi desa terbaca tanpa desa perlu melaporkannya. Sel yang
-lolos uji tertahan itulah yang menyusun enam sub-skor subsektor pada Skor
-Potensi.
+**Citra Potensi Desa** adalah model analitik penginderaan jauh (*Computer Vision & Satellite Earth Observation*) yang mengidentifikasi sebaran dan konsentrasi sentra komoditas pertanian, perkebunan, dan perikanan langsung dari citra satelit tanpa perlu laporan manual dari desa.
 
-Halaman ini menunjukkan Citra Potensi Desa **seperti yang terlihat di
-Portal**. Penjelasan konsepnya, termasuk istilah dan cara angkanya dihitung,
-ada di [halaman Citra Potensi
-Desa](/docs/fitur/citra-potensi-desa/pengenalan).
+Sel-sel spasial resolusi tinggi yang lolos uji validasi tertahan (*held-out validation*) menjadi fondasi data utama untuk menyusun 6 sub-skor komoditas pada perhitungan Skor Potensi.
 
-<div className="sd-shot" role="img" aria-label="Slot tangkapan layar Citra Potensi Desa, belum diisi">Tangkapan layar menyusul — lapisan sel skor di atas peta</div>
+---
 
-Yang perlu terlihat: petak sel di atas peta, tangga warna skornya, dan detail
-satu sel saat dipilih.
+## Tampilan Antarmuka di Portal
 
-Slotnya masih kosong sampai Portal dan API-nya dijalankan pemilik proyek.
+Ketika lensa Citra Potensi Desa diaktifkan, portal menampilkan hamparan petak sel skor di atas peta satelit:
+
+![Tampilan Antarmuka Citra Potensi Desa pada Portal SIMPUL DESA](/screenshoot/pengenalan-citra-potensi.png)
+
+* **Lapisan Sel Spasial Kontinu**: Hamparan petak sel di atas citra satelit dengan interpolasi warna 5 tingkat (*ramp-1* hingga *ramp-5*).
+* **Legenda Skala Skor (*Ramp Meter*)**: Menampilkan rentang nilai potensi komoditas relatif dalam kabupaten.
+* **Panel Detail Sel**: Menampilkan estimasi indeks vegetasi, luas tutupan komoditas, dan tingkat keyakinan deteksi model saat sel diklik.
+
+---
+
+## Panduan Lengkap & Metodologi
+
+Untuk mempelajari detail arsitektur model citra satelit, pembagian sel grid, dan proses validasi akurasinya, silakan kunjungi halaman dokumentasi fitur:
+
+👉 **[Buka Dokumentasi Lengkap Citra Potensi Desa](/docs/fitur/citra-potensi-desa/pengenalan)**

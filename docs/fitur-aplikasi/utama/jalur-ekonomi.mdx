@@ -1,23 +1,31 @@
 ---
 title: Jalur Ekonomi
 sidebar_position: 3
-description: Jalur Ekonomi seperti yang terlihat di Portal, beserta tautan ke halaman lengkapnya.
+description: Pengenalan visual antarmuka fitur Jalur Ekonomi pada Portal SIMPUL DESA.
 ---
 
 # Jalur Ekonomi
 
-Jalur Ekonomi menyambung sekumpulan desa ke satu aset bersama di lokasi
-optimal, agar skalanya cukup besar untuk hidup. Satu mesin penempatan yang
-sama menjawab empat pertanyaan berbeda lewat empat varian: Komoditas, Gudang
-Kopdes, Cold Storage, dan Wisata.
+**Jalur Ekonomi** adalah fitur pemodelan analitik jaringan spasial yang menghubungkan kelompok desa produsen komoditas ke satu aset bersama di lokasi paling optimal guna mencapai skala keekonomian yang layak.
 
-Halaman ini menunjukkan Jalur Ekonomi **seperti yang terlihat di Portal**.
-Penjelasan konsepnya, termasuk istilah dan cara angkanya dihitung, ada di
-[halaman Jalur Ekonomi](/docs/fitur/jalur-ekonomi/pengenalan).
+Satu mesin optimasi penempatan menjawab 4 varian kebutuhan hilirisasi perdesaan: **Komoditas Bersama**, **Gudang Koperasi Desa (Kopdes)**, **Cold Storage (Rantai Dingin)**, dan **Kawasan Wisata Perdesaan**.
 
-<div className="sd-shot" role="img" aria-label="Slot tangkapan layar Jalur Ekonomi, belum diisi">Tangkapan layar menyusul — satu jalur dengan Desa Poros dan Desa Sejalur</div>
+---
 
-Yang perlu terlihat: pemilih varian (Komoditas, Gudang Kopdes, Cold Storage,
-Wisata), garis jalur di peta, dan bedanya Desa Poros dengan Desa Sejalur.
+## Tampilan Antarmuka di Portal
 
-Slotnya masih kosong sampai Portal dan API-nya dijalankan pemilik proyek.
+Ketika lensa Jalur Ekonomi aktif, portal menampilkan jalur konektivitas antar-desa di atas peta beserta panel rincian rute:
+
+![Tampilan Antarmuka Jalur Ekonomi pada Portal SIMPUL DESA](/screenshoot/pengenalan-jalur-ekonomi.png)
+
+* **Pemilih 4 Varian Hilirisasi**: Tombol chip filter untuk berpindah antar varian aset bersama (Komoditas, Gudang Kopdes, Cold Storage, Wisata).
+* **Visualisasi Jaringan Rute**: Garis rute jalan OSRM emas yang menghubungkan lingkaran Desa Poros dengan titik-titik desa anggota.
+* **Panel Ringkasan Jalur**: Daftar desa anggota sejalur, total potensi tonase komoditas bersama, dan penghematan waktu tempuh logistik.
+
+---
+
+## Panduan Lengkap & Metodologi
+
+Untuk mempelajari detail formula penentuan lokasi optimal, algoritma perutean jaringan, dan analisis tiap varian, silakan kunjungi halaman dokumentasi fitur:
+
+👉 **[Buka Dokumentasi Lengkap Jalur Ekonomi](/docs/fitur/jalur-ekonomi/pengenalan)**

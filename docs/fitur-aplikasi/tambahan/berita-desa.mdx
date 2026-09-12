@@ -1,21 +1,31 @@
 ---
 title: Berita Desa
 sidebar_position: 2
-description: Berita Desa seperti yang terlihat di Portal, beserta tautan ke halaman lengkapnya.
+description: Pengenalan visual antarmuka fitur Berita Desa pada Portal SIMPUL DESA.
 ---
 
 # Berita Desa
 
-Berita Desa adalah kumpulan berita per desa hasil panen otomatis, tersimpan
-per `iddesa`, dan tampil sebagai bagian Kartu Ekonomi Desa.
+**Berita Desa** adalah fitur agregasi berita otomatis yang memanen, mengelompokkan, dan merangkum kabar perdesaan dari berbagai portal berita lokal secara berkala berdasarkan kode wilayah desa (`iddesa`).
 
-Halaman ini menunjukkan Berita Desa **seperti yang terlihat di Portal**.
-Penjelasan konsepnya, termasuk istilah dan cara angkanya dihitung, ada di
-[halaman Berita Desa](/docs/fitur/berita-desa/pengenalan).
+Kumpulan ringkasan berita ini terintegrasi langsung di dalam Kartu Ekonomi Desa, memberikan wawasan kualitatif dan informasi dinamika terkini mengenai kegiatan ekonomi, panen, maupun pembangunan di desa terkait.
 
-<div className="sd-shot" role="img" aria-label="Slot tangkapan layar Berita Desa, belum diisi">Tangkapan layar menyusul — daftar berita satu desa</div>
+---
 
-Yang perlu terlihat: berita urut tanggal terbit menurun, dan dari mana tiap
-berita dipanen.
+## Tampilan Antarmuka di Portal
 
-Slotnya masih kosong sampai Portal dan API-nya dijalankan pemilik proyek.
+Di portal SIMPUL DESA, Berita Desa disajikan sebagai salah satu bagian kartu di dalam panel Kartu Ekonomi Desa:
+
+![Tampilan Antarmuka Berita Desa pada Portal SIMPUL DESA](/screenshoot/pengenalan-berita-desa.png)
+
+* **Daftar Berita Kronologis**: Rangkuman artikel berita lokal terurut dari tanggal paling baru.
+* **Lencana Kategori**: Chip topik berita (seperti Pertanian, Infrastruktur, UMKM, Bencana).
+* **Tautan Sumber Terverifikasi**: Tautan langsung menuju situs penerbit berita resmi dengan ikon pranala luar.
+
+---
+
+## Panduan Lengkap & Metodologi
+
+Untuk mempelajari detail pipeline pemanenan berita (*scraping pipeline*), pemrosesan NLP, dan kategorisasinya, silakan kunjungi halaman dokumentasi fitur:
+
+👉 **[Buka Dokumentasi Lengkap Berita Desa](/docs/fitur/berita-desa/pengenalan)**
