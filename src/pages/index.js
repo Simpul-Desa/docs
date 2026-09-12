@@ -240,7 +240,7 @@ export default function Home() {
             <div className={styles.statSub}>BPS, IDM, Kemenpar, KKP</div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statValue}>26</div>
+            <div className={styles.statValue}>27</div>
             <div className={styles.statLabel}>Endpoint REST APIs</div>
             <div className={styles.statSub}>OpenAPI 3.1 &amp; Supabase Auth</div>
           </div>
@@ -324,7 +324,7 @@ export default function Home() {
                 <ul className={styles.trackList}>
                   <li className={styles.trackItem}>
                     <span className={styles.trackCheck}><IconCheck /></span>
-                    <span>26 endpoint terstruktur dan berkas skema OpenAPI resmi</span>
+                    <span>27 endpoint terstruktur dan berkas skema OpenAPI resmi</span>
                   </li>
                   <li className={styles.trackItem}>
                     <span className={styles.trackCheck}><IconCheck /></span>

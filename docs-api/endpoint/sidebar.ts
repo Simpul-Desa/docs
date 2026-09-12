@@ -274,6 +274,12 @@ const sidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "endpoint/batalkan-penyegaran-api-admin-berita-batal-post",
+          label: "Batalkan Pekerjaan Penyegaran",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
           id: "endpoint/hapus-berita-api-admin-berita-id-berita-delete",
           label: "Hapus Berita",
           className: "api-method delete",

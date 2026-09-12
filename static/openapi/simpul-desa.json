@@ -1183,6 +1183,36 @@
         ]
       }
     },
+    "/api/admin/berita/batal": {
+      "post": {
+        "tags": [
+          "Administrasi"
+        ],
+        "summary": "Batalkan Pekerjaan Penyegaran",
+        "description": "Batalkan pekerjaan latar penyegaran berita yang sedang berjalan.",
+        "operationId": "batalkan_penyegaran_api_admin_berita_batal_post",
+        "responses": {
+          "200": {
+            "description": "Status pembatalan pekerjaan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_dict_str__str__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter atau badan permintaan tidak lolos validasi"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/admin/berita/{id_berita}": {
       "delete": {
         "tags": [
@@ -1971,6 +2001,53 @@
           "sukses"
         ],
         "title": "Amplop[dict[str, Any]]"
+      },
+      "Amplop_dict_str__str__": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[dict[str, str]]"
       },
       "Amplop_list_BarisIndeksKartu__": {
         "properties": {

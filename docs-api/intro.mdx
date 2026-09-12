@@ -36,7 +36,7 @@ export function ContohToken() {
 
 # SIMPUL DESA REST APIs
 
-Seluruh data dan hasil pemodelan analitik pada dasbor SIMPUL DESA disajikan melalui antarmuka REST APIs berbasis HTTP. Halaman ini memuat panduan integrasi dan spesifikasi kontrak dari total 26 endpoint yang dikelompokkan berdasarkan modul fiturnya.
+Seluruh data dan hasil pemodelan analitik pada dasbor SIMPUL DESA disajikan melalui antarmuka REST APIs berbasis HTTP. Halaman ini memuat panduan integrasi dan spesifikasi kontrak dari total 27 endpoint yang dikelompokkan berdasarkan modul fiturnya.
 
 Dokumentasi rujukan untuk setiap endpoint digenerasikan langsung secara otomatis dari skema OpenAPI resmi backend SIMPUL DESA. Berkas spesifikasi lengkapnya juga dapat [diunduh dalam format JSON](/openapi/simpul-desa.json).
 
@@ -188,10 +188,17 @@ Setiap pengguna yang mendaftar mandiri (*self-registration*) otomatis memperoleh
   </div>
 </a>
 
+<a className="homepage-card" href="/api/endpoint/akun">
+  <div className="card-content">
+    <div className="title">Akun</div>
+    <div className="description">1 endpoint: membaca profil identitas dan tingkat peran akun yang sedang aktif. Akses untuk peran tamu ke atas.</div>
+  </div>
+</a>
+
 <a className="homepage-card" href="/api/endpoint/administrasi">
   <div className="card-content">
     <div className="title">Administrasi</div>
-    <div className="description">5 endpoint: sinkronisasi dan kurasi berita, audit pengguna, eskalasi peran akun, dan telemetri server. Khusus peran admin.</div>
+    <div className="description">6 endpoint: sinkronisasi dan kurasi berita, pembatalan pekerjaan latar belakang, audit pengguna, eskalasi peran akun, dan status sistem. Khusus peran admin.</div>
   </div>
 </a>
 
@@ -205,7 +212,7 @@ Tabel berikut merangkum batas hak akses (*Role-Based Access Control*) yang diteg
 | Kelompok Endpoint | Anonim | Tamu | Swasta | Pemerintah | Admin |
 |---|:--:|:--:|:--:|:--:|:--:|
 | Kartu Ekonomi Desa · Wilayah · Pencarian Desa · Batas Desa · Kesehatan | Ya | Ya | Ya | Ya | Ya |
-| Peta Peran · Jalur Ekonomi · Desa Kembar · Citra Potensi Desa · Berita Desa | — | Ya | Ya | Ya | Ya |
+| Peta Peran · Jalur Ekonomi · Desa Kembar · Citra Potensi Desa · Berita Desa · Akun | — | Ya | Ya | Ya | Ya |
 | Asisten Desa | — | — | Ya | Ya | Ya |
 | Laporan Desa | — | — | — | Ya | Ya |
 | Administrasi | — | — | — | — | Ya |
