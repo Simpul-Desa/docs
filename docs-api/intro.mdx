@@ -36,7 +36,7 @@ export function ContohToken() {
 
 # SIMPUL DESA REST APIs
 
-Seluruh data dan hasil pemodelan analitik pada dasbor SIMPUL DESA disajikan melalui antarmuka REST APIs berbasis HTTP. Halaman ini memuat panduan integrasi dan spesifikasi kontrak dari total 27 endpoint yang dikelompokkan berdasarkan modul fiturnya.
+Seluruh data dan hasil pemodelan analitik pada dasbor SIMPUL DESA disajikan melalui antarmuka REST APIs berbasis HTTP. Halaman ini memuat panduan integrasi dan spesifikasi kontrak dari total 28 endpoint yang dikelompokkan berdasarkan modul fiturnya.
 
 Dokumentasi rujukan untuk setiap endpoint digenerasikan langsung secara otomatis dari skema OpenAPI resmi backend SIMPUL DESA. Berkas spesifikasi lengkapnya juga dapat [diunduh dalam format JSON](/openapi/simpul-desa.json).
 
@@ -124,7 +124,7 @@ Setiap pengguna yang mendaftar mandiri (*self-registration*) otomatis memperoleh
 
 ### Fitur tambahan
 
-<p className="section-description">Empat fitur fungsional pendukung di luar lima lensa utama, dengan batas hak akses masing-masing. Endpoint modul Halaman Admin dikelompokkan tersendiri di bagian Administrasi.</p>
+<p className="section-description">Lima fitur fungsional pendukung di luar lima lensa utama, dengan batas hak akses masing-masing. Endpoint modul Halaman Admin dikelompokkan tersendiri di bagian Administrasi.</p>
 
 <div className="section-content">
 
@@ -132,6 +132,13 @@ Setiap pengguna yang mendaftar mandiri (*self-registration*) otomatis memperoleh
   <div className="card-content">
     <div className="title">Asisten Desa</div>
     <div className="description">1 endpoint: antarmuka percakapan interaktif berbasis AI, bersifat stateless dan non-streaming. Akses untuk peran swasta ke atas.</div>
+  </div>
+</a>
+
+<a className="homepage-card" href="/api/endpoint/ai-insight">
+  <div className="card-content">
+    <div className="title">AI Insight</div>
+    <div className="description">1 endpoint: analisis naratif kondisi ekonomi dan rekomendasi aksi aktor pembangunan berbasis LLM per desa. Akses untuk peran swasta ke atas.</div>
   </div>
 </a>
 
@@ -213,7 +220,7 @@ Tabel berikut merangkum batas hak akses (*Role-Based Access Control*) yang diteg
 |---|:--:|:--:|:--:|:--:|:--:|
 | Kartu Ekonomi Desa · Wilayah · Pencarian Desa · Batas Desa · Kesehatan | Ya | Ya | Ya | Ya | Ya |
 | Peta Peran · Jalur Ekonomi · Desa Kembar · Citra Potensi Desa · Berita Desa · Akun | — | Ya | Ya | Ya | Ya |
-| Asisten Desa | — | — | Ya | Ya | Ya |
+| Asisten Desa · AI Insight | — | — | Ya | Ya | Ya |
 | Laporan Desa | — | — | — | Ya | Ya |
 | Administrasi | — | — | — | — | Ya |
 
@@ -302,7 +309,7 @@ Server membedakan kebijakan penyimpanan singgahan (*caching*) dan kebijakan akse
 ### 1. Kebijakan Singgahan (*Cache*)
 - **Jalur Data Publik/Anonim** (`/api/wilayah`, `/api/desa`, `/api/model/kartu`, `/api/geo`):
   Respons dilengkapi dengan *header* `ETag` (yang dihitung dari versi salinan data) serta arahan `Cache-Control` publik dengan parameter `max-age`. Apabila klien mengirimkan kembali *header* `If-None-Match` dengan nilai yang cocok, server akan langsung merespons dengan kode **304 Not Modified** tanpa perlu memproses ulang data di *handler*.
-- **Jalur Bertoken / Terproteksi** (Peta Peran, Citra Potensi Desa, Jalur Ekonomi, Desa Kembar, Berita Desa, Asisten Desa, Laporan Desa, Administrasi):
+- **Jalur Bertoken / Terproteksi** (Peta Peran, Citra Potensi Desa, Jalur Ekonomi, Desa Kembar, Berita Desa, Asisten Desa, AI Insight, Laporan Desa, Administrasi):
   Seluruh respons selalu dilabeli dengan `Cache-Control: private, no-store` demi mencegah kebocoran data terproteksi di perantara singgahan publik, dan tidak pernah mengembalikan status 304.
 
 ### 2. Kebijakan Lintas Sumber (*CORS*)

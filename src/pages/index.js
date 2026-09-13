@@ -136,6 +136,15 @@ function IconAsisten({width = 20, height = 20, className}) {
   );
 }
 
+function IconAIInsight({width = 20, height = 20, className}) {
+  return (
+    <svg width={width} height={height} viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+      <path d="M10 2.5 11.8 7l4.7 1.8-4.7 1.8L10 15.1l-1.8-4.5L3.5 8.8l4.7-1.8L10 2.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+      <path d="M14.5 13.5 15.5 16l2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
 function IconBerita({width = 20, height = 20, className}) {
   return (
     <svg width={width} height={height} viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
@@ -240,7 +249,7 @@ export default function Home() {
             <div className={styles.statSub}>BPS, IDM, Kemenpar, KKP</div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statValue}>27</div>
+            <div className={styles.statValue}>28</div>
             <div className={styles.statLabel}>Endpoint REST APIs</div>
             <div className={styles.statSub}>OpenAPI 3.1 &amp; Supabase Auth</div>
           </div>
@@ -324,7 +333,7 @@ export default function Home() {
                 <ul className={styles.trackList}>
                   <li className={styles.trackItem}>
                     <span className={styles.trackCheck}><IconCheck /></span>
-                    <span>27 endpoint terstruktur dan berkas skema OpenAPI resmi</span>
+                    <span>28 endpoint terstruktur dan berkas skema OpenAPI resmi</span>
                   </li>
                   <li className={styles.trackItem}>
                     <span className={styles.trackCheck}><IconCheck /></span>
@@ -500,6 +509,14 @@ export default function Home() {
               <Heading as="h3" className={styles.addonTitle}>Asisten Desa</Heading>
               <p className={styles.addonDesc}>
                 Tanya-jawab analitik interaktif berbasis AI (RAG) yang menjawab langsung dari data desa Anda.
+              </p>
+            </Link>
+
+            <Link className={styles.addonCard} to="/docs/fitur/ai-insight/pengenalan">
+              <div className={styles.addonIcon}><IconAIInsight /></div>
+              <Heading as="h3" className={styles.addonTitle}>AI Insight</Heading>
+              <p className={styles.addonDesc}>
+                Analisis naratif kondisi ekonomi dan rekomendasi aksi aktor pembangunan berbasis LLM.
               </p>
             </Link>
 

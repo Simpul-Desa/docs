@@ -1,7 +1,7 @@
 ---
 title: Kartu Ekonomi Desa
 sidebar_position: 1
-description: Penjelasan lengkap fitur Kartu Ekonomi Desa, profil analitik multidimensi, rekomendasi aksi, integrasi program nasional, dan pemantauan mutu data pada SIMPUL DESA.
+description: Penjelasan lengkap fitur Kartu Ekonomi Desa, profil analitik multidimensi, modul AI Insight, integrasi program nasional, dan pemantauan mutu data pada SIMPUL DESA.
 ---
 
 # Kartu Ekonomi Desa
@@ -24,9 +24,9 @@ Lensa Kartu Ekonomi Desa dapat diakses oleh seluruh tingkatan pengguna dengan pe
 
 ---
 
-## Tata Letak & Alur Antarmuka
+## Alur Navigasi & Pemilihan Desa
 
-Antarmuka Kartu Ekonomi Desa memadukan panggung peta geospasial interaktif di sebelah kanan dan panel profil terstruktur di sebelah kiri.
+Pengguna dapat membuka lembar Kartu Ekonomi Desa melalui tiga cara:
 
 1. **State Awal (*Empty State*)**: Sebelum desa dipilih, panel kiri menampilkan instruksi panduan: *"Pilih desa di peta atau kolom pencarian terlebih dahulu"*.
 2. **Pencarian Wilayah (`SearchBox`)**: Pengguna dapat mencari desa dengan mengetikkan minimal 2 karakter pada bilah pencarian cerdas yang dilengkapi *autocomplete* nama desa, kecamatan, dan kabupaten.
@@ -46,7 +46,7 @@ Panel Kartu Ekonomi Desa tersusun atas 6 blok komponen analitik modular:
 ├─────────────────────────────────────────────────────────────┤
 │ 2. Quick Links: Tautan Cepat Desa Kembar, Citra, & Jalur    │
 ├─────────────────────────────────────────────────────────────┤
-│ 3. Rekomendasi Aksi: Arahan Kebijakan Strategis Kuadran     │
+│ 3. AI Insight: Sintesis Ekonomi & Rekomendasi Aksi Multi-Aktor │
 ├─────────────────────────────────────────────────────────────┤
 │ 4. Tab Analitik Desa (Potensi | Kesiapan | Program | Alam) │
 ├─────────────────────────────────────────────────────────────┤
@@ -99,13 +99,19 @@ Panel navigasi pintas yang menghubungkan analisis desa terpilih ke tiga lensa an
 
 ---
 
-### 3. Rekomendasi Aksi (`SeksiRekomendasi`)
+### 3. AI Insight (`AIInsight` / `panel-insight`)
 
-Kotak arahan kebijakan strategis terkurasi yang diterjemahkan secara otomatis berdasarkan kombinasi Skor Potensi (SP), Skor Kesiapan (SK), serta posisi kuadran desa, memberikan rekomendasi praktis bagi pengambil keputusan (seperti penguatan rantai pasok, penyediaan modal, atau penguatan aksesibilitas dasar).
+Modul analitik cerdas berbasis *Large Language Model* (LLM) yang menyajikan sintesis naratif kondisi ekonomi desa serta rekomendasi tindakan praktis multi-aktor (Pemerintah Desa, Pemerintah Pusat/Daerah, Sektor Swasta, dan Komunitas). Bagian ini menggabungkan indikator potensi, kesiapan, zonasi Peta Peran, serta data program pemerintah untuk menghasilkan arahan strategis yang kontekstual dan siap dieksekusi:
+
+* **Sintesis Kondisi Ekonomi**: Narasi ringkas mengenai posisi zona penanganan dan potensi komoditas unggulan desa.
+* **Rekomendasi Multi-Aktor**: Kartu tindakan konkret dengan penegasan tebal (**bold**) pada nama aktor pelaksana dan program terkait (seperti Dana Desa, KDMP, Desa BISA, Desa Ekspor, Jadesta).
+* **Tombol Regenerasi (`RotateCcw`)**: Pilihan untuk memicu analisis baru secara instan bagi pengguna terotorisasi.
+* **Panduan Fitur Lengkap**: Rincian arsitektur, guardrails anti-halusinasi, dan detail antarmuka dibahas lengkap di panduan fitur:
+  👉 **[Buka Dokumentasi Lengkap AI Insight](/docs/fitur/ai-insight/pengenalan)**
 
 <img
   src="/screenshoot/kartu-ekonomi-desa-4.png"
-  alt="Kotak Rekomendasi Aksi Kebijakan Strategis Kuadran"
+  alt="Modul AI Insight: Narasi Kondisi Ekonomi dan Rekomendasi Aksi Multi-Aktor"
   style={{ maxWidth: '520px', width: '100%', display: 'block', margin: '1.25rem auto', borderRadius: '8px', border: '1px solid var(--ifm-color-emphasis-200)' }}
 />
 

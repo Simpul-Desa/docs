@@ -1,0 +1,79 @@
+---
+title: AI Insight
+sidebar_position: 1
+description: Penjelasan lengkap antarmuka, komponen visual, dan alur interaksi modul AI Insight pada Kartu Ekonomi Desa di aplikasi SIMPUL DESA.
+---
+
+# AI Insight
+
+**AI Insight** adalah modul analitik cerdas pada **Kartu Ekonomi Desa** yang menyajikan analisis kondisi ekonomi dan rekomendasi aksi praktis bagi para aktor pembangunan secara langsung dari basis data SIMPUL DESA (`ai_insights`).
+
+Modul ini memadukan data numerik (seperti zona penanganan Peta Peran, skor potensi subsektor, dan status IDM) menjadi narasi analitik yang ringkas serta arahan kebijakan terstruktur bagi Pemerintah Desa, Pemerintah Daerah/Pusat, Sektor Swasta, dan Komunitas.
+
+---
+
+## Hak Akses & Pembatasan Peran
+
+Penggunaan dan pembacaan modul AI Insight pada antarmuka aplikasi diatur menurut tingkat peran pengguna:
+
+| Peran Pengguna | Akses Pembacaan | Akses Generate / Regenerasi | Perilaku Antarmuka |
+| :--- | :---: | :---: | :--- |
+| **Pemerintah** | ✅ Terbuka | ✅ Ya | Membaca insight lengkap dan dapat memicu pembuatan atau *generate ulang*. |
+| **Swasta** | ✅ Terbuka | ✅ Ya | Membaca insight lengkap dan dapat memicu pembuatan atau *generate ulang*. |
+| **Admin** | ✅ Terbuka | ✅ Ya | Membaca insight lengkap dan dapat memicu pembuatan atau *generate ulang*. |
+| **Tamu** | ✅ Terbuka | 🔒 Tidak | Dapat membaca insight yang sudah tersedia, tetapi tidak dapat men-generate data baru (muncul keterangan pembatasan). |
+| **Anonim** (Belum Masuk) | ✅ Terbuka | 🔒 Tidak | Dapat membaca insight tersimpan; jika belum ada data, tampil tombol **"Masuk untuk generate AI"**. |
+
+---
+
+## Anatomi & Komponen Visual
+
+Modul AI Insight disematkan pada lembar profil **Kartu Ekonomi Desa** dengan bingkai bergradasi halus (`rounded-card bg-gradient-to-b from-primary via-primary/30 to-line/40`) dan wadah konten berlatar terang (`bg-float rounded-[22.5px] p-4`).
+
+![Tampilan Modul AI Insight pada Kartu Ekonomi Desa dalam Keadaan Ringkas](/screenshoot/ai-insight-1.png)
+
+### 1. Header & Tombol Toggle Tunggal
+* **Ikon Bintang Analitik (`SparkIcon`)**: Ikon berlatar lingkaran oranye muda (`bg-primary/10 text-primary`) di sebelah kiri judul.
+* **Judul Modul**: Label tegas `"AI Insight"` (`text-title-sm font-semibold text-ink`).
+* **Tombol Buka/Tutup Tunggal (`Toggle Open/Close`)**:
+  * Terletak di pojok kanan atas kartu.
+  * Secara bawaan (*default*), kartu berada dalam **keadaan tertutup (*close*)** agar tampilan profil desa tetap ringkas dan tidak memakan ruang layar.
+  * Menampilkan teks `"Buka"` (`ChevronDown`) saat tertutup dan berubah menjadi `"Tutup"` (`ChevronUp`) saat dibuka.
+
+### 2. Keadaan Tertutup (*Collapsed State*)
+* Saat kartu tertutup, sistem membatasi teks narasi maksimal **3 baris pertama** (`line-clamp-3`) dengan format kata kunci penting yang ditebalkan secara otomatis (`tebalkanKataKunci`).
+* Memberikan gambaran sekilas tanpa mengganggu pembacaan indikator analitik desa lainnya.
+
+---
+
+## Tampilan Terbuka & Rekomendasi Aksi Aktor
+
+Saat tombol **"Buka"** diklik, seluruh analisis disajikan secara utuh dan terstruktur:
+
+![Tampilan Modul AI Insight Terbuka Penuh dengan Rekomendasi Aksi Aktor](/screenshoot/ai-insight-2.png)
+
+### 1. Paragraf Narasi Kondisi Ekonomi
+Menyajikan penjelasan mengalir mengenai status zona wilayah desa, basis komoditas dominan, serta potensi strategis daerah dengan penegasan tebal (**bold**) pada nama sektor dan data kunci.
+
+### 2. Daftar Rekomendasi Aksi per Aktor
+Setelah narasi kondisi ekonomi, modul menyertakan kalimat pengantar *"Berikut adalah rekomendasi aksi bagi para aktor terkait:"* yang diikuti oleh daftar butir berpenanda titik oranye (`bg-primary`):
+* **Pemerintah Desa**: Arahan pemanfaatan Dana Desa, BUMDes, atau penguatan sarana pascapanen.
+* **Pemerintah Pusat / Daerah**: Dukungan program afirmasi sektoral (seperti KDMP, Desa BISA, atau Desa Ekspor) dan infrastruktur pendukung.
+* **Sektor Swasta / Investor**: Peluang investasi komoditas, kemitraan *offtaker*, atau fasilitas rantai pasok.
+* **Komunitas / Petani**: Standardisasi mutu hasil tani dan tata kelola kelembagaan kelompok.
+
+Setiap butir secara konsisten menampilkan **nama aktor tebal** di awal kalimat (misal: `Pemerintah Desa: ...`).
+
+### 3. Tombol "Generate Ulang"
+* Saat kartu dalam keadaan terbuka, pengguna yang masuk (*logged in*) dengan peran di atas tamu disajikan tombol teks halus **"Generate ulang"** di sudut kanan bawah.
+* Mengklik tombol ini akan mengirim permintaan `generateUlang: true` ke server untuk menyegarkan analisis data dengan indikator putar animasi (*Loader2 animate-spin*).
+
+---
+
+## Keadaan Saat Belum Ada Data (*Empty & Action State*)
+
+Apabila suatu desa belum memiliki data analisis AI tersimpan di Supabase:
+1. **Pesan Informasi**: Tampil teks *"Belum ada AI Insight untuk desa ini."*
+2. **Pengguna Terverifikasi (Swasta/Pemerintah/Admin)**: Tampil tombol primer bulat oranye **"Generate AI Insight"** (`bg-primary text-white rounded-full h-8 px-3.5`) dengan ikon `SparkIcon`.
+3. **Pengunjung Anonim**: Tampil tombol tautan **"Masuk untuk generate AI"** yang mengarahkan ke halaman `/masuk`.
+4. **Pengguna Tamu**: Tampil keterangan *"Peran tamu tidak dapat men-generate AI Insight."*

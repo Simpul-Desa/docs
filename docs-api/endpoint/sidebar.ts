@@ -124,6 +124,22 @@ const sidebar: SidebarsConfig = {
     },
     {
       type: "category",
+      label: "AI Insight",
+      link: {
+        type: "doc",
+        id: "endpoint/ai-insight",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "endpoint/ai-insight-api-ai-insight-post",
+          label: "Dapatkan AI Insight Desa",
+          className: "api-method post",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Berita Desa",
       link: {
         type: "doc",

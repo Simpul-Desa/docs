@@ -1487,10 +1487,133 @@
           }
         }
       }
+    },
+    "/api/ai-insight": {
+      "post": {
+        "tags": [
+          "AI Insight"
+        ],
+        "summary": "Dapatkan AI Insight Desa",
+        "operationId": "ai_insight_api_ai_insight_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermintaanAIInsight"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Amplop_AIInsightResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
+      "AIInsightResponse": {
+        "properties": {
+          "iddesa": {
+            "type": "string",
+            "title": "Iddesa"
+          },
+          "kondisi_ekonomi": {
+            "type": "string",
+            "title": "Kondisi Ekonomi"
+          },
+          "rekomendasi_aktor": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Rekomendasi Aktor"
+          },
+          "teks_lengkap": {
+            "type": "string",
+            "title": "Teks Lengkap"
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa",
+          "kondisi_ekonomi",
+          "rekomendasi_aktor",
+          "teks_lengkap"
+        ],
+        "title": "AIInsightResponse"
+      },
+      "Amplop_AIInsightResponse_": {
+        "properties": {
+          "sukses": {
+            "type": "boolean",
+            "title": "Sukses"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AIInsightResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "galat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Galat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Meta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sukses"
+        ],
+        "title": "Amplop[AIInsightResponse]"
+      },
       "Amplop_Any_": {
         "properties": {
           "sukses": {
@@ -2691,6 +2814,19 @@
         ],
         "title": "Galat"
       },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
       "HasilPenyegaranDesa": {
         "properties": {
           "iddesa": {
@@ -3029,6 +3165,26 @@
           "peran"
         ],
         "title": "PeranDiubah"
+      },
+      "PermintaanAIInsight": {
+        "properties": {
+          "iddesa": {
+            "type": "string",
+            "title": "Iddesa",
+            "description": "Kode desa (10 digit)"
+          },
+          "generate_ulang": {
+            "type": "boolean",
+            "title": "Generate Ulang",
+            "description": "Paksa generate ulang meskipun sudah ada di database",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "iddesa"
+        ],
+        "title": "PermintaanAIInsight"
       },
       "PermintaanChat": {
         "properties": {
@@ -3441,6 +3597,46 @@
         "title": "TetanggaKembar",
         "description": "Satu desa tetangga dalam hasil desa kembar.\n\nIdentitas tetangga (`nmdesa`, `nmkec`, `idkab`, `nmkab`) diambil dari\nindeks kartu ekonomi. Bila `iddesa` tetangga tidak ada di sana, keempat\nfield itu bernilai `null` sementara `persen` tetap terisi."
       },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
       "VarianJalurEkonomi": {
         "type": "string",
         "enum": [
@@ -3484,6 +3680,10 @@
     {
       "name": "Asisten Desa",
       "description": "Antarmuka percakapan berbasis LLM yang menjawab hanya dari data SIMPUL DESA dan menolak topik di luar itu. Butuh peran di atas tamu."
+    },
+    {
+      "name": "AI Insight",
+      "description": "Insight kondisi ekonomi dan rekomendasi aktor otomatis berbasis LLM untuk tiap desa. Butuh peran di atas tamu."
     },
     {
       "name": "Berita Desa",

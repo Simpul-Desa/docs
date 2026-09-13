@@ -21,6 +21,8 @@ import {themes as prismThemes} from 'prism-react-renderer';
 // SIMPUL_URL_DOKUMENTASI — situs ini. Bawaannya `/`, jadi tautannya benar di
 //   lokal maupun produksi; isi env var-nya kalau kelak situs ini punya domain
 //   sendiri yang perlu disebut absolut.
+// SIMPUL_URL_VIDEO — tautan video demo/pengenalan SIMPUL DESA. Bawaan:
+//   `https://drive.google.com`.
 //
 // Cara mengisinya: sunting `.env` di akar folder ini (salin dari
 // `.env.contoh` kalau belum ada). `.env` tidak ikut ter-commit. Bisa juga
@@ -31,6 +33,7 @@ const URL_API =
   process.env.SIMPUL_URL_API ||
   'https://api-simpul-desa.up.railway.app';
 const URL_DOKUMENTASI = process.env.SIMPUL_URL_DOKUMENTASI || '/';
+const URL_VIDEO = process.env.SIMPUL_URL_VIDEO || 'https://drive.google.com';
 
 // Menu bertingkat Fitur. Nama fitur ditulis persis seperti di GLOSSARY.md
 // akar — termasuk yang di sana masuk kolom "Jangan pakai": bukan "Kartu
@@ -119,6 +122,18 @@ const featureMegaMenu = `
         <span class="sd-mega__row-text">Tanya jawab dari data sendiri</span>
       </span>
     </a>
+    <a class="sd-mega__row" href="/docs/fitur/ai-insight/pengenalan">
+      <span class="sd-mega__row-icon">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M10 2.5 11.8 7l4.7 1.8-4.7 1.8L10 15.1l-1.8-4.5L3.5 8.8l4.7-1.8L10 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M14.5 13.5 15.5 16l2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5Z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="sd-mega__row-body">
+        <span class="sd-mega__row-title">AI Insight</span>
+        <span class="sd-mega__row-text">Analisis ekonomi &amp; rekomendasi aksi</span>
+      </span>
+    </a>
     <a class="sd-mega__row" href="/docs/fitur/berita-desa/pengenalan">
       <span class="sd-mega__row-icon">
         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -197,7 +212,7 @@ const resourceMenu = `
     <span class="sd-res__icon">${ikonGithub}</span>
     <span class="sd-res__label">Repo GitHub — Data</span>
   </a>
-  <a class="sd-res__row" href="#">
+  <a class="sd-res__row" href="${URL_VIDEO}" target="_blank" rel="noopener noreferrer">
     <span class="sd-res__icon">
       <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <rect x="2.5" y="4" width="15" height="12" rx="2.5" stroke="currentColor" stroke-width="1.2"/>
@@ -240,6 +255,7 @@ const config = {
     urlPortal: URL_PORTAL,
     urlApi: URL_API,
     urlDokumentasi: URL_DOKUMENTASI,
+    urlVideo: URL_VIDEO,
   },
 
   headTags: [
@@ -487,8 +503,6 @@ const config = {
               {label: 'Panduan', to: '/docs/intro'},
               {label: 'Fitur', to: '/docs/fitur'},
               {label: 'REST APIs', to: '/api/intro'},
-              {label: 'Glosarium', to: '/docs/glosarium'},
-              {label: 'Peran Pengguna', to: '/docs/peran-pengguna'},
             ],
           },
           {
@@ -513,7 +527,7 @@ const config = {
                 label: 'Repo GitHub — Data',
                 href: 'https://github.com/Simpul-Desa/data',
               },
-              {label: 'Video', href: '#'},
+              {label: 'Video', href: URL_VIDEO},
             ],
           },
         ],
