@@ -331,19 +331,49 @@ nav.navbar {
   --search-local-modal-width: 30rem;
   --search-local-hit-background: var(--docs-color-background-100);
   --search-local-hit-color: var(--docs-color-text);
-  /* Baris hasil terpilih diberi latar primary oleh plugin, jadi teksnya `ink`
-     dan bukan putih. Sorot kata yang cocok dan garis fokus kotaknya memakai
-     `link` dan `focus` — keduanya beroranye sama. */
-  --search-local-hit-active-color: var(--docs-color-ink);
+  /* Baris hasil terpilih/hover memakai latar abu-abu netral desain kita (secondary-800)
+     bukan oranye. Sorot kata cocok tetap beroranye primary. */
+  --search-local-hit-active-color: var(--docs-color-text);
   --search-local-hit-shadow: none;
   --search-local-muted-color: var(--docsearch-muted-color);
-  --search-local-highlight-color: var(--docs-color-link);
+  --search-local-highlight-color: var(--docs-color-primary);
   --search-local-input-active-border-color: var(--docs-color-focus);
 }
 
 html[data-theme='dark'] {
   --search-local-modal-shadow: 0 0 0 1px var(--docs-color-border),
     0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* Dropdown hasil pencarian: latar hover/aktif memakai abu-abu netral (secondary-800) */
+[class*='dropdownMenu'] [class*='suggestion'] {
+  transition: background-color var(--ifm-transition-fast)
+    var(--ifm-transition-timing-default);
+}
+
+[class*='dropdownMenu'] [class*='suggestion'][class*='cursor'],
+[class*='dropdownMenu'] [class*='suggestion']:hover {
+  background-color: rgb(var(--docs-color-secondary-800) / 1) !important;
+  color: var(--docs-color-text) !important;
+}
+
+[class*='dropdownMenu'] [class*='suggestion'][class*='cursor'] [class*='hitTitle'],
+[class*='dropdownMenu'] [class*='suggestion']:hover [class*='hitTitle'] {
+  color: var(--docs-color-text) !important;
+}
+
+[class*='dropdownMenu'] [class*='suggestion'][class*='cursor'] mark,
+[class*='dropdownMenu'] [class*='suggestion']:hover mark {
+  color: var(--docs-color-primary) !important;
+}
+
+[class*='dropdownMenu'] [class*='suggestion'][class*='cursor'] [class*='hitTree'],
+[class*='dropdownMenu'] [class*='suggestion'][class*='cursor'] [class*='hitIcon'],
+[class*='dropdownMenu'] [class*='suggestion'][class*='cursor'] [class*='hitPath'],
+[class*='dropdownMenu'] [class*='suggestion']:hover [class*='hitTree'],
+[class*='dropdownMenu'] [class*='suggestion']:hover [class*='hitIcon'],
+[class*='dropdownMenu'] [class*='suggestion']:hover [class*='hitPath'] {
+  color: var(--docs-color-muted) !important;
 }
 
 .navbar__search {
