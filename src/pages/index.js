@@ -241,7 +241,7 @@ export default function Home() {
           <div className={styles.statItem}>
             <div className={styles.statValue}>97</div>
             <div className={styles.statLabel}>Kabupaten</div>
-            <div className={styles.statSub}>5 Provinsi di Pulau Jawa</div>
+            <div className={styles.statSub}>dari 5 Provinsi Piloting</div>
           </div>
           <div className={styles.statItem}>
             <div className={styles.statValue}>18</div>
